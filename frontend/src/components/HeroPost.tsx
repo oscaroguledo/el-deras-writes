@@ -31,11 +31,11 @@ export function HeroPost({
             {post.excerpt}
           </p>
           <div className="flex items-center">
-            {post.authorImage ? <img src={post.authorImage} alt={post.author} className="h-10 w-10 rounded-full border-2 border-white" /> : <div className="h-10 w-10 rounded-full border-2 border-white bg-gray-300 flex items-center justify-center">
-                {post.author && post.author.charAt(0).toUpperCase()}
+            {post.authorImage ? <img src={post.authorImage} alt={post.author.username} className="h-10 w-10 rounded-full border-2 border-white" /> : <div className="h-10 w-10 rounded-full border-2 border-white bg-gray-300 flex items-center justify-center">
+                {post.author && post.author.username.charAt(0).toUpperCase()}
               </div>}
             <div className="ml-3">
-              <p className="text-white font-medium">{post.author}</p>
+              <p className="text-white font-medium">{post.author.username}</p>
               <p className="text-white/70 text-sm">
                 {new Date(post.createdAt).toLocaleDateString('en-US', {
                 year: 'numeric',
