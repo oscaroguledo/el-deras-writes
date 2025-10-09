@@ -23,6 +23,7 @@ interface PaginatedResponse<T> {
 
 export async function getArticles(params: GetArticlesParams): Promise<PaginatedResponse<Article>> {
   const response = await axios.get(`${API_URL}/articles/`, { params });
+  console.log(response.data);
   return response.data;
 }
 

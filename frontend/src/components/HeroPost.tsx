@@ -19,7 +19,7 @@ export function HeroPost({
               Featured
             </span>
             {post.category && <span className="inline-block px-3 py-1 ml-2 text-xs font-medium bg-white text-gray-900 rounded-full">
-                {post.category}
+                {post.category.name}
               </span>}
           </div>
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif font-medium text-white mb-3">
