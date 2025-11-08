@@ -27,10 +27,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['0.0.0.0', 'localhost']
 
+AUTH_USER_MODEL = 'blog.CustomUser'
 
 # Application definition
-
-AUTH_USER_MODEL = 'blog.CustomUser'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -60,7 +59,6 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
 ]
 
-
 ROOT_URLCONF = 'blog_project.urls'
 
 TEMPLATES = [
@@ -86,12 +84,8 @@ WSGI_APPLICATION = 'blog_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'blog',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'db',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
