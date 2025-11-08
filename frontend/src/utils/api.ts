@@ -73,3 +73,36 @@ export async function getUsers(): Promise<CustomUser[]> {
   const response = await axios.get(`${API_URL}/users/`);
   return response.data;
 }
+
+export async function getSocialMediaLinks(): Promise<{
+  whatsapp: string;
+  tiktok: string;
+  instagram: string;
+  facebook: string;
+}> {
+  const response = await axios.get(`${API_URL}/settings/social-media/`);
+  return response.data;
+}
+
+export async function getContactInfo(): Promise<{
+  address: string;
+  phone: string;
+  email: string;
+}> {
+  const response = await axios.get(`${API_URL}/settings/contact-info/`);
+  return response.data;
+}
+
+export async function createUser(userData: any): Promise<CustomUser> {
+  const response = await axios.post(`${API_URL}/users/`, userData);
+  return response.data;
+}
+
+export async function updateUser(id: number, userData: any): Promise<CustomUser> {
+  const response = await axios.patch(`${API_URL}/users/${id}/`, userData);
+  return response.data;
+}
+
+export async function deleteUser(id: number): Promise<void> {
+  await axios.delete(`${API_URL}/users/${id}/`);
+}

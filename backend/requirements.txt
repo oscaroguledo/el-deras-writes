@@ -6,3 +6,4 @@ typing_extensions==4.15.0
 djangorestframework
 django-cors-headers
 dj_database_url
+django-ckeditor

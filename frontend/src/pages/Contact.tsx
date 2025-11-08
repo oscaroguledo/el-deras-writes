@@ -1,12 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { MailIcon, PhoneIcon, MapPinIcon, SendIcon } from 'lucide-react';
+import { getContactInfo } from '../../utils/api';
+
+interface ContactDetails {
+  address?: string;
+  phone?: string;
+  email?: string;
+}
+
 export function Contact() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [contactInfo, setContactInfo] = useState<ContactDetails | null>(null);
+
+  useEffect(() => {
+    async function fetchContactInfo() {
+      try {
+        const info = await getContactInfo();
+        setContactInfo(info);
+      } catch (error) {
+        console.error('Failed to fetch contact info:', error);
+      }
+    }
+    fetchContactInfo();
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !email || !message) {
@@ -44,8 +66,8 @@ export function Contact() {
               <h3 className="text-lg font-medium">Email</h3>
             </div>
             <p className="text-gray-600">
-              <a href="mailto:hello@el-deras-writes.com" className="hover:text-gray-900">
-                hello@el-deras-writes.com
+              <a href={`mailto:${contactInfo?.email || 'hello@el-deras-writes.com'}`} className="hover:text-gray-900">
+                {contactInfo?.email || 'hello@el-deras-writes.com'}
               </a>
             </p>
           </div>
@@ -57,8 +79,8 @@ export function Contact() {
               <h3 className="text-lg font-medium">Phone</h3>
             </div>
             <p className="text-gray-600">
-              <a href="tel:+1234567890" className="hover:text-gray-900">
-                +1 (234) 567-890
+              <a href={`tel:${contactInfo?.phone || '+1 (234) 567-890'}`} className="hover:text-gray-900">
+                {contactInfo?.phone || '+1 (234) 567-890'}
               </a>
             </p>
           </div>
@@ -70,9 +92,7 @@ export function Contact() {
               <h3 className="text-lg font-medium">Location</h3>
             </div>
             <p className="text-gray-600">
-              123 Content Street
-              <br />
-              Blogville, BL 90210
+              {contactInfo?.address || '123 Content Street\nBlogville, BL 90210'}
             </p>
           </div>
         </div>

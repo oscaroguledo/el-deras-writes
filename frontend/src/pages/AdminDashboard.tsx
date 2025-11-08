@@ -9,6 +9,7 @@ import { Category } from '../types/Category';
 import { Tag } from '../types/Tag';
 import { CustomUser } from '../types/CustomUser';
 import { PlusIcon, EditIcon, TrashIcon, LogOutIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+import { UserFormModal } from '../components/UserFormModal'; // Will create this component
 
 export function AdminDashboard() {
   const [articles, setArticles] = useState<Article[]>([]);
@@ -24,38 +25,42 @@ export function AdminDashboard() {
   const [totalPages, setTotalPages] = useState(1);
   const articlesPerPage = 10; // This should match the backend's page_size
 
-  useEffect(() => {
-    const verifyAuthAndFetchData = async () => {
-      try {
-        const isAuthenticated = await checkAuthStatus();
-        if (!isAuthenticated) {
-          navigate('/admin');
-          return;
-        }
+  const [showUserModal, setShowUserModal] = useState(false);
+  const [currentUser, setCurrentUser] = useState<CustomUser | null>(null);
 
-        const [articlesResponse, commentsData, categoriesData, tagsData, usersData] = await Promise.all([
-          getArticles({ page: currentPage, page_size: articlesPerPage }),
-          getComments(),
-          getCategories(),
-          getTags(),
-          getUsers(),
-        ]);
-
-        setArticles(articlesResponse.results);
-        setTotalPages(Math.ceil(articlesResponse.count / articlesPerPage));
-        setComments(commentsData);
-        setCategories(categoriesData);
-        setTags(tagsData);
-        setUsers(usersData);
-      } catch (error) {
-        console.error(error);
-        toast.error('Failed to fetch data');
+  const fetchData = async () => {
+    try {
+      const isAuthenticated = await checkAuthStatus();
+      if (!isAuthenticated) {
         navigate('/admin');
-      } finally {
-        setLoading(false);
+        return;
       }
-    };
-    verifyAuthAndFetchData();
+
+      const [articlesResponse, commentsData, categoriesData, tagsData, usersData] = await Promise.all([
+        getArticles({ page: currentPage, page_size: articlesPerPage }),
+        getComments(),
+        getCategories(),
+        getTags(),
+        getUsers(),
+      ]);
+
+      setArticles(articlesResponse.results);
+      setTotalPages(Math.ceil(articlesResponse.count / articlesPerPage));
+      setComments(commentsData);
+      setCategories(categoriesData);
+      setTags(tagsData);
+      setUsers(usersData);
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to fetch data');
+      navigate('/admin');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
   }, [navigate, currentPage]); // Depend on currentPage to refetch when page changes
 
   const handleDeleteArticle = async (id: string) => {
@@ -91,6 +96,34 @@ export function AdminDashboard() {
 
   const handleNextPage = () => {
     setCurrentPage(prev => Math.min(totalPages, prev + 1));
+  };
+
+  const handleCreateUser = () => {
+    setCurrentUser(null);
+    setShowUserModal(true);
+  };
+
+  const handleEditUser = (user: CustomUser) => {
+    setCurrentUser(user);
+    setShowUserModal(true);
+  };
+
+  const handleDeleteUser = async (userId: number) => {
+    if (window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+      try {
+        await deleteUser(userId);
+        toast.success('User deleted successfully');
+        fetchData(); // Refresh user list
+      } catch (error) {
+        toast.error('Failed to delete user');
+        console.error(error);
+      }
+    }
+  };
+
+  const handleUserFormSubmit = () => {
+    setShowUserModal(false);
+    fetchData(); // Refresh data after user creation/edit
   };
 
   if (loading) {
@@ -208,7 +241,9 @@ export function AdminDashboard() {
             <tr>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bio</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -216,15 +251,31 @@ export function AdminDashboard() {
               <tr key={user.id}>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.username}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.user_type}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.bio}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <div className="flex space-x-2">
+                    <button onClick={() => handleEditUser(user)} className="text-indigo-600 hover:text-indigo-900">
+                      <EditIcon className="h-5 w-5" />
+                    </button>
+                    <button onClick={() => handleDeleteUser(user.id)} className="text-red-600 hover:text-red-900">
+                      <TrashIcon className="h-5 w-5" />
+                    </button>
+                  </div>
+                </td>
               </tr>
             )) : (
               <tr>
-                <td colSpan={3} className="px-6 py-4 text-center text-sm text-gray-500">No users found.</td>
+                <td colSpan={5} className="px-6 py-4 text-center text-sm text-gray-500">No users found.</td>
               </tr>
             )}
           </tbody>
         </table>
+      </div>
+      <div className="flex justify-end mb-8">
+        <button onClick={handleCreateUser} className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+          <PlusIcon className="h-4 w-4 mr-1" /> Add User
+        </button>
       </div>
 
       {/* Categories Section */}
@@ -307,6 +358,14 @@ export function AdminDashboard() {
           </tbody>
         </table>
       </div>
+      {showUserModal && (
+        <UserFormModal
+          show={showUserModal}
+          onClose={() => setShowUserModal(false)}
+          user={currentUser}
+          onSubmit={handleUserFormSubmit}
+        />
+      )}
     </div>
   );
 }

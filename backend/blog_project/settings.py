@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'blog',
     'rest_framework',
+    'settings_api',
+    'ckeditor',
 ]
 
 MIDDLEWARE = [

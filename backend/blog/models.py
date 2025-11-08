@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 import uuid
+from ckeditor.fields import RichTextField
 
 class CustomUser(AbstractUser):
     USER_TYPE_CHOICES = (
@@ -33,7 +34,7 @@ class Article(models.Model):
     )
     title = models.CharField(max_length=255)
     excerpt = models.TextField(blank=True, null=True)
-    content = models.TextField()
+    content = RichTextField()
     image = models.URLField(max_length=200, blank=True, null=True)
     readTime = models.CharField(max_length=50, blank=True, null=True)
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='articles')
