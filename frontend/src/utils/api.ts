@@ -106,3 +106,36 @@ export async function updateUser(id: number, userData: any): Promise<CustomUser>
 export async function deleteUser(id: number): Promise<void> {
   await axios.delete(`${API_URL}/users/${id}/`);
 }
+
+export async function createCategory(categoryData: { name: string }): Promise<Category> {
+  const response = await axios.post(`${API_URL}/categories/`, categoryData);
+  return response.data;
+}
+
+export async function updateCategory(id: number, categoryData: { name: string }): Promise<Category> {
+  const response = await axios.patch(`${API_URL}/categories/${id}/`, categoryData);
+  return response.data;
+}
+
+export async function deleteCategory(id: number): Promise<void> {
+  await axios.delete(`${API_URL}/categories/${id}/`);
+}
+
+export async function createTag(tagData: { name: string }): Promise<Tag> {
+  const response = await axios.post(`${API_URL}/tags/`, tagData);
+  return response.data;
+}
+
+export async function updateTag(id: number, tagData: { name: string }): Promise<Tag> {
+  const response = await axios.patch(`${API_URL}/tags/${id}/`, tagData);
+  return response.data;
+}
+
+export async function deleteTag(id: number): Promise<void> {
+  await axios.delete(`${API_URL}/tags/${id}/`);
+}
+
+export async function updateContactInfo(contactData: { address: string; phone: string; email: string }): Promise<any> {
+  const response = await axios.patch(`${API_URL}/settings/contact-info/`, contactData);
+  return response.data;
+}

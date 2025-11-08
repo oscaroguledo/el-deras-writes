@@ -9,7 +9,9 @@ import { Category } from '../types/Category';
 import { Tag } from '../types/Tag';
 import { CustomUser } from '../types/CustomUser';
 import { PlusIcon, EditIcon, TrashIcon, LogOutIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
-import { UserFormModal } from '../components/UserFormModal'; // Will create this component
+import { UserManagement } from '../components/UserManagement';
+import { CategoryTagManagement } from '../components/CategoryTagManagement';
+import { ContactInfoManagement } from '../components/ContactInfoManagement';
 
 export function AdminDashboard() {
   const [articles, setArticles] = useState<Article[]>([]);
@@ -21,12 +23,7 @@ export function AdminDashboard() {
   const [deleting, setDeleting] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const articlesPerPage = 10; // This should match the backend's page_size
-
-  const [showUserModal, setShowUserModal] = useState(false);
-  const [currentUser, setCurrentUser] = useState<CustomUser | null>(null);
+  const [articlesPerPage] = useState(10); // This should match the backend's page_size
 
   const fetchData = async () => {
     try {
@@ -96,34 +93,6 @@ export function AdminDashboard() {
 
   const handleNextPage = () => {
     setCurrentPage(prev => Math.min(totalPages, prev + 1));
-  };
-
-  const handleCreateUser = () => {
-    setCurrentUser(null);
-    setShowUserModal(true);
-  };
-
-  const handleEditUser = (user: CustomUser) => {
-    setCurrentUser(user);
-    setShowUserModal(true);
-  };
-
-  const handleDeleteUser = async (userId: number) => {
-    if (window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
-      try {
-        await deleteUser(userId);
-        toast.success('User deleted successfully');
-        fetchData(); // Refresh user list
-      } catch (error) {
-        toast.error('Failed to delete user');
-        console.error(error);
-      }
-    }
-  };
-
-  const handleUserFormSubmit = () => {
-    setShowUserModal(false);
-    fetchData(); // Refresh data after user creation/edit
   };
 
   if (loading) {
@@ -234,99 +203,15 @@ export function AdminDashboard() {
       </div>
 
       {/* Users Section */}
-      <h2 className="text-2xl font-serif font-medium text-gray-900 mb-4">Users</h2>
-      <div className="bg-white shadow overflow-hidden rounded-lg mb-8">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bio</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {users.length > 0 ? users.map(user => (
-              <tr key={user.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.username}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.user_type}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.bio}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <div className="flex space-x-2">
-                    <button onClick={() => handleEditUser(user)} className="text-indigo-600 hover:text-indigo-900">
-                      <EditIcon className="h-5 w-5" />
-                    </button>
-                    <button onClick={() => handleDeleteUser(user.id)} className="text-red-600 hover:text-red-900">
-                      <TrashIcon className="h-5 w-5" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            )) : (
-              <tr>
-                <td colSpan={5} className="px-6 py-4 text-center text-sm text-gray-500">No users found.</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-      <div className="flex justify-end mb-8">
-        <button onClick={handleCreateUser} className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-          <PlusIcon className="h-4 w-4 mr-1" /> Add User
-        </button>
-      </div>
+      <UserManagement users={users} fetchUsers={fetchData} />
 
-      {/* Categories Section */}
-      <h2 className="text-2xl font-serif font-medium text-gray-900 mb-4">Categories</h2>
-      <div className="bg-white shadow overflow-hidden rounded-lg mb-8">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {categories.length > 0 ? categories.map(category => (
-              <tr key={category.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{category.id}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{category.name}</td>
-              </tr>
-            )) : (
-              <tr>
-                <td colSpan={2} className="px-6 py-4 text-center text-sm text-gray-500">No categories found.</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Tags Section */}
-      <h2 className="text-2xl font-serif font-medium text-gray-900 mb-4">Tags</h2>
-      <div className="bg-white shadow overflow-hidden rounded-lg mb-8">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {tags.length > 0 ? tags.map(tag => (
-              <tr key={tag.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{tag.id}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{tag.name}</td>
-              </tr>
-            )) : (
-              <tr>
-                <td colSpan={2} className="px-6 py-4 text-center text-sm text-gray-500">No tags found.</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+      {/* Categories and Tags Section */}
+      <CategoryTagManagement
+        categories={categories}
+        tags={tags}
+        fetchCategories={fetchData}
+        fetchTags={fetchData}
+      />
 
       {/* Comments Section */}
       <h2 className="text-2xl font-serif font-medium text-gray-900 mb-4">Comments</h2>
@@ -358,14 +243,9 @@ export function AdminDashboard() {
           </tbody>
         </table>
       </div>
-      {showUserModal && (
-        <UserFormModal
-          show={showUserModal}
-          onClose={() => setShowUserModal(false)}
-          user={currentUser}
-          onSubmit={handleUserFormSubmit}
-        />
-      )}
+
+      {/* Contact Info Section */}
+      <ContactInfoManagement fetchContactInfo={fetchData} />
     </div>
   );
 }
