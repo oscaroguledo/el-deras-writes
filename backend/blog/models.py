@@ -3,6 +3,11 @@ from django.contrib.auth.models import AbstractUser
 import uuid
 
 class CustomUser(AbstractUser):
+    USER_TYPE_CHOICES = (
+        ('admin', 'Admin'),
+        ('normal', 'Normal'),
+    )
+    user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, default='normal')
     bio = models.TextField(max_length=500, blank=True, null=True)
 
     def __str__(self):
