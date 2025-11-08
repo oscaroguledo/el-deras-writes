@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +26,7 @@ SECRET_KEY = 'django-insecure-4=r#=3)9z+sxmn=)*^p%ujw4!%%s)im7rka!w8mu**r(pwa&8r
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost']
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '.netlify.app', '.vercel.app', '.github.io', '.cloudflare.com']
 
 AUTH_USER_MODEL = 'blog.CustomUser'
 
@@ -57,6 +58,10 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5174",
     "http://localhost:5173",
+    "https://*.netlify.app",
+    "https://*.vercel.app",
+    "https://*.github.io",
+    "https://*.cloudflare.com",
 ]
 
 ROOT_URLCONF = 'blog_project.urls'
@@ -79,14 +84,16 @@ TEMPLATES = [
 WSGI_APPLICATION = 'blog_project.wsgi.application'
 
 
+import os
+import dj_database_url
+
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default='sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3')
+    )
 }
 
 
