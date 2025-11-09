@@ -21,6 +21,7 @@ import { Terms } from './pages/Terms';
 import { Privacy } from './pages/Privacy';
 import { ToastContainer } from 'react-toastify';
 import { incrementVisitorCount } from './utils/api'; // Import incrementVisitorCount
+import { MetaData } from './components/MetaData';
 
 
 import 'react-toastify/dist/ReactToastify.css';
@@ -31,6 +32,7 @@ export function App() {
 
   return (
       <div className="min-h-screen bg-white flex flex-col">
+        <MetaData />
         <Header />
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 w-full flex-grow">
           <Routes>
