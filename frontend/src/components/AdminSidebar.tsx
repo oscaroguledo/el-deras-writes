@@ -2,10 +2,11 @@ import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { LogOutIcon, LayoutDashboardIcon, UsersIcon, FileTextIcon, TagsIcon, MessageSquareIcon, InfoIcon } from 'lucide-react';
 import { toast } from 'react-toastify';
-import { logout } from '@/utils/auth';
+import { useAuth } from '../../hooks/useAuth'; // Import useAuth
 
-export function AdminSidebar() {
+export default function AdminSidebar() {
   const navigate = useNavigate();
+  const { logout } = useAuth(); // Use logout from useAuth
 
   const handleLogout = async () => {
     try {
