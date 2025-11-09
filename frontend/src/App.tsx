@@ -1,28 +1,28 @@
-import React, { useEffect } from 'react'; // Import useEffect
+import React, { useEffect, lazy, Suspense } from 'react'; // Import useEffect, lazy, Suspense
 import { SpeedInsights } from "@vercel/speed-insights/react"
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { Header } from './components/Header';
-import { Footer } from './components/Footer';
-import { Home } from './pages/Home';
-import { ArticleDetail } from './pages/ArticleDetail';
-import { AdminLogin } from './pages/admin/AdminLogin';
-import { AdminLayout } from './pages/admin/AdminLayout';
-import { AdminDashboardOverview } from './pages/admin/AdminDashboardOverview';
-import { AdminUsersPage } from './pages/admin/AdminUsersPage';
-import { AdminArticlesPage } from './pages/admin/AdminArticlesPage';
-import { AdminCategoriesTagsPage } from './pages/admin/AdminCategoriesTagsPage';
-import { AdminCommentsPage } from './pages/admin/AdminCommentsPage';
-import { AdminContactInfoPage } from './pages/admin/AdminContactInfoPage';
-import { CreateArticle } from './pages/CreateArticle';
-import { EditArticle } from './pages/EditArticle';
-import { About } from './pages/About';
-import { Contact } from './pages/Contact';
-import { Terms } from './pages/Terms';
-import { Privacy } from './pages/Privacy';
-import { ToastContainer } from 'react-toastify';
 import { incrementVisitorCount } from './utils/api'; // Import incrementVisitorCount
-import { MetaData } from './components/MetaData';
 
+// Layout components
+const MainLayout = lazy(() => import('./components/MainLayout')); // Lazy load MainLayout
+
+// Lazy-loaded page components
+const Home = lazy(() => import('./pages/Home'));
+const ArticleDetail = lazy(() => import('./pages/ArticleDetail'));
+const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'));
+const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'));
+const AdminDashboardOverview = lazy(() => import('./pages/admin/AdminDashboardOverview'));
+const AdminUsersPage = lazy(() => import('./pages/admin/AdminUsersPage'));
+const AdminArticlesPage = lazy(() => import('./pages/admin/AdminArticlesPage'));
+const AdminCategoriesTagsPage = lazy(() => import('./pages/admin/AdminCategoriesTagsPage'));
+const AdminCommentsPage = lazy(() => import('./pages/admin/AdminCommentsPage'));
+const AdminContactInfoPage = lazy(() => import('./pages/admin/AdminContactInfoPage'));
+const CreateArticle = lazy(() => import('./pages/CreateArticle'));
+const EditArticle = lazy(() => import('./pages/EditArticle'));
+const About = lazy(() => import('./pages/About'));
+const Contact = lazy(() => import('./pages/Contact'));
+const Terms = lazy(() => import('./pages/Terms'));
+const Privacy = lazy(() => import('./pages/Privacy'));
 
 import 'react-toastify/dist/ReactToastify.css';
 export function App() {
@@ -32,16 +32,16 @@ export function App() {
 
   return (
       <div className="min-h-screen bg-white flex flex-col">
-        <MetaData />
-        <Header />
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 w-full flex-grow">
+        <Suspense fallback={<div>Loading...</div>}>
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/article/:id" element={<ArticleDetail />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/" element={<MainLayout />}>
+              <Route index element={<Home />} />
+              <Route path="article/:id" element={<ArticleDetail />} />
+              <Route path="about" element={<About />} />
+              <Route path="contact" element={<Contact />} />
+              <Route path="terms" element={<Terms />} />
+              <Route path="privacy" element={<Privacy />} />
+            </Route>
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<Navigate to="/admin/dashboard" replace />} />
@@ -55,9 +55,7 @@ export function App() {
               <Route path="contact-info" element={<AdminContactInfoPage />} />
             </Route>
           </Routes>
-        </main>
-        <Footer />
-        <ToastContainer position="bottom-right" />
+        </Suspense>
       </div>
   );
 }
