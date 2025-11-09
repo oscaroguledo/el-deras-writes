@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { LogOutIcon, LayoutDashboardIcon, UsersIcon, FileTextIcon, TagsIcon, MessageSquareIcon, InfoIcon } from 'lucide-react';
 import { toast } from 'react-toastify';
-import { logout } from '../../utils/auth';
+import { logout } from '@/utils/auth';
 
 export function AdminSidebar() {
   const navigate = useNavigate();
