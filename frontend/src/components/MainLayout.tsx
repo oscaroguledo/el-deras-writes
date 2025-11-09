@@ -4,7 +4,7 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 import { MetaData } from './MetaData';
 
-export function MainLayout() {
+export default function MainLayout() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <MetaData />
