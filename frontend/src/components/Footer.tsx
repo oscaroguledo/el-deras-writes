@@ -4,7 +4,7 @@ import { FeedbackForm } from './FeedbackForm';
 import { getContactInfo, getTopFiveCategories } from '../utils/api';
 import { ContactInfo } from '../types/ContactInfo';
 import { Category } from '../types/Category';
-import { Instagram, Facebook, TikTok, Whatsapp } from 'lucide-react';
+import { Instagram, Facebook, LinkIcon, Whatsapp } from 'lucide-react';
 
 export function Footer() {
   const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null);
@@ -45,7 +45,7 @@ export function Footer() {
               )}
               {contactInfo?.tiktok_link && (
                 <a href={contactInfo.tiktok_link} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-900" aria-label="TikTok">
-                  <TikTok className="h-5 w-5" />
+                  <LinkIcon className="h-5 w-5" />
                 </a>
               )}
               {contactInfo?.whatsapp_link && (
