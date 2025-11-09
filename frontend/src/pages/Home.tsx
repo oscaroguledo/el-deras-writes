@@ -14,21 +14,25 @@ export function Home() {
   const [loading, setLoading] = useState(true);
   const [articles, setArticles] = useState<Article[]>([]);
   const [featuredArticle, setFeaturedArticle] = useState<Article | null>(null);
+  const [topCategories, setTopCategories] = useState<Category[]>([]); // Add state for top categories
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const articlesPerPage = 10; // This should match the backend's page_size
 
   useEffect(() => {
-    const fetchArticles = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
-        const articlesResponse = await getArticles({
-          search: searchQuery,
-          category: categoryFilter,
-          page: currentPage,
-          page_size: articlesPerPage,
-        });
+        const [articlesResponse, categoriesResponse] = await Promise.all([
+          getArticles({
+            search: searchQuery,
+            category: categoryFilter,
+            page: currentPage,
+            page_size: articlesPerPage,
+          }),
+          getTopFiveCategories(), // Fetch top categories in parallel
+        ]);
 
         // Set the first article as featured if available
         if (articlesResponse.results.length > 0) {
@@ -39,13 +43,14 @@ export function Home() {
           setArticles([]);
         }
         setTotalPages(Math.ceil(articlesResponse.count / articlesPerPage));
+        setTopCategories(categoriesResponse); // Set top categories
       } catch (error) {
-        console.error('Failed to fetch articles:', error);
+        console.error('Failed to fetch data:', error);
       } finally {
         setLoading(false);
       }
     };
-    fetchArticles();
+    fetchData();
   }, [searchQuery, categoryFilter, currentPage]);
 
   const handlePreviousPage = () => {
@@ -103,7 +108,7 @@ export function Home() {
           )}
         </div>
         <div className="md:col-span-1">
-          <CategoryList />
+          <CategoryList categories={topCategories} />
         </div>
       </div>
     </>

@@ -12,13 +12,19 @@ export function Footer() {
   const [topCategories, setTopCategories] = useState<Category[]>([]);
 
   useEffect(() => {
-    getContactInfo()
-      .then(data => setContactInfo(data))
-      .catch(error => console.error('Failed to fetch contact info:', error));
-
-    getTopFiveCategories()
-      .then(data => setTopCategories(data))
-      .catch(error => console.error('Failed to fetch top categories:', error));
+    const fetchData = async () => {
+      try {
+        const [contactInfoData, topCategoriesData] = await Promise.all([
+          getContactInfo(),
+          getTopFiveCategories(),
+        ]);
+        setContactInfo(contactInfoData);
+        setTopCategories(topCategoriesData);
+      } catch (error) {
+        console.error('Failed to fetch footer data:', error);
+      }
+    };
+    fetchData();
   }, []);
 
   return (
