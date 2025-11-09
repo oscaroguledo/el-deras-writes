@@ -1,4 +1,3 @@
-
 import os
 import django
 import uuid
@@ -10,7 +9,29 @@ django.setup()
 
 def seed_data():
     from django.contrib.auth.models import User
-    from blog.models import Article, Category, CustomUser
+    from blog.models import Article, Category, CustomUser, ContactInfo # Import ContactInfo
+
+    # Create a superuser if it doesn't exist
+    if not CustomUser.objects.filter(username='admin').exists():
+        admin_user = CustomUser.objects.create_superuser('admin', 'admin@example.com', 'adminpassword')
+        print("Superuser 'admin' created.")
+    else:
+        print("Superuser 'admin' already exists.")
+
+    # Seed ContactInfo
+    if not ContactInfo.objects.exists():
+        ContactInfo.objects.create(
+            address="123 Main St, Anytown, USA",
+            phone="+1 (555) 123-4567",
+            email="info@el-deras-writes.com",
+            whatsapp_link="https://wa.me/15551234567",
+            tiktok_link="https://www.tiktok.com/@el_deras_writes",
+            instagram_link="https://www.instagram.com/el_deras_writes",
+            facebook_link="https://www.facebook.com/el_deras_writes"
+        )
+        print("ContactInfo seeded successfully!")
+    else:
+        print("ContactInfo already exists.")
 
     mockArticles = [
       {
@@ -79,7 +100,7 @@ def seed_data():
         "excerpt":
           "Innovative approaches to designing buildings that minimize environmental impact while maximizing human wellbeing.",
         "content":
-          """<p>Architecture has always reflected society's values and aspirations. Today, as we face unprecedented environmental challenges, sustainable architecture is emerging as both a necessity and an opportunity for innovation.</p><p>Modern sustainable buildings go far beyond simple energy efficiency. They incorporate regenerative design principles, biophilic elements that connect occupants with nature, and circular economy approaches that minimize waste throughout the building lifecycle.</p><p>Materials innovation is driving much of this progress. From mass timber construction that sequesters carbon to recycled and biodegradable building components, architects now have a growing toolkit of sustainable options.</p><p>Perhaps most exciting is the development of "living buildings" that generate more energy than they consume, collect and purify their own water, and actively improve the surrounding environment. These projects demonstrate that our built environment can be a positive force for ecological restoration.</p><p>As climate concerns intensify, sustainable architecture isn't just about reducing harm—it's about creating buildings that actively contribute to environmental and human health.</p>""",
+          """<p>Architecture has always reflected society's values and aspirations. Today, as we face unprecedented environmental challenges, sustainable architecture is emerging as both a necessity and an opportunity for innovation.</p><p>Modern sustainable buildings go far beyond simple energy efficiency. They incorporate regenerative design principles, biophilic elements that connect occupants with nature, and circular economy approaches that minimize waste throughout the building lifecycle.</p><p>Materials innovation is driving much of this progress. From mass timber construction that sequesters carbon to recycled and biodegradable building components, architects now have a growing toolkit of sustainable options.</p><p>Perhaps most exciting is the development of "living buildings" that generate more energy than they consume, collect and purify their own water, and actively improve the surrounding environment. These projects demonstrate that our built environment can be a positive force for ecological restoration.</p>""",
         "image": "https://images.unsplash.com/photo-1518005020951-eccb494ad742",
         "category": "Architecture",
         "author": "Carlos Rodriguez",
@@ -215,7 +236,7 @@ def seed_data():
         "excerpt":
           "Discover how practicing mindfulness can significantly reduce stress and improve overall mental well-being.",
         "content":
-          """<p>In today's fast-paced world, stress has become an unwelcome companion for many. The constant demands of work, personal life, and societal pressures can take a toll on our mental and physical health. Mindfulness meditation offers a powerful and accessible tool to combat stress and cultivate inner peace.</p><p>Mindfulness is the practice of being present and fully aware of the current moment, without judgment. It involves paying attention to our thoughts, feelings, and bodily sensations as they arise, and observing them with a sense of curiosity and acceptance. Through regular practice, mindfulness can help us develop a greater sense of self-awareness and emotional regulation.</p><p>Numerous scientific studies have demonstrated the effectiveness of mindfulness meditation in reducing stress, anxiety, and depression. It has been shown to lower cortisol levels (the stress hormone), improve sleep quality, and enhance emotional resilience. By training our minds to stay in the present moment, we can break free from the cycle of rumination and worry that often fuels stress.</p><p>Incorporating mindfulness into your daily routine doesn't require hours of dedicated practice. Even a few minutes of mindful breathing or a short body scan can make a significant difference. As you cultivate a more mindful approach to life, you'll find yourself better equipped to navigate challenges, respond to stressors with greater calm, and experience a deeper sense of well-being.</p>""",
+          """<p>In today's fast-paced world, stress has become an unwelcome companion for many. The constant demands of work, personal life, and societal pressures can take a toll on our mental and physical health. Mindfulness meditation offers a powerful and accessible tool to combat stress and cultivate inner peace.</p><p>Mindfulness is the practice of being present and fully aware of the current moment, without judgment. It involves paying attention to our thoughts, feelings, and bodily sensations as they arise, and observing them with a sense of curiosity and acceptance. Through regular practice, mindfulness can help us develop a greater sense of self-awareness and emotional regulation.</p><p>Numerous scientific studies have demonstrated the effectiveness of mindfulness meditation in reducing stress, anxiety, and depression. It has been shown to lower cortisol levels (the stress hormone), improve sleep quality, and enhance emotional resilience. By training our minds to stay in the present moment, we can break free from the cycle of rumination and worry that often fuels stress.</p>""",
         "image": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
         "category": "Wellness",
         "author": "Dr. Emily White",
