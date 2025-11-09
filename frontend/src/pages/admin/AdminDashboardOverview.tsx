@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAdminDashboardData } from '../../utils/api';
-import { checkAuthStatus } from '../../utils/auth';
 import { toast } from 'react-toastify';
 import { UsersIcon } from 'lucide-react';
 import { AdminDashboardData } from '../../utils/api'; // Import the interface
+import { useAuth } from '../../hooks/useAuth'; // Import useAuth
 
 export default function AdminDashboardOverview() {
   const [dashboardData, setDashboardData] = useState<AdminDashboardData | null>(null); // Use AdminDashboardData
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth(); // Use isAuthenticated from useAuth
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const isAuthenticated = await checkAuthStatus();
         if (!isAuthenticated) {
           navigate('/admin');
           return;
