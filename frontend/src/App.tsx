@@ -19,7 +19,7 @@ const AdminCommentsPage = lazy(() => import('./pages/admin/AdminCommentsPage'));
 const AdminContactInfoPage = lazy(() => import('./pages/admin/AdminContactInfoPage'));
 const CreateArticle = lazy(() => import('./pages/CreateArticle'));
 const EditArticle = lazy(() => import('./pages/EditArticle'));
-const About = lazy(() => import('./pages/pages/About'));
+const About = lazy(() => import('./pages/About'));
 const Contact = lazy(() => import('./pages/Contact'));
 const Terms = lazy(() => import('./pages/Terms'));
 const Privacy = lazy(() => import('./pages/Privacy'));
