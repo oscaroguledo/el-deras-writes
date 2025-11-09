@@ -4,9 +4,10 @@ import { getAdminDashboardData } from '../../utils/api';
 import { checkAuthStatus } from '../../utils/auth';
 import { toast } from 'react-toastify';
 import { UsersIcon } from 'lucide-react';
+import { AdminDashboardData } from '../../utils/api'; // Import the interface
 
 export function AdminDashboardOverview() {
-  const [dashboardData, setDashboardData] = useState<any>(null);
+  const [dashboardData, setDashboardData] = useState<AdminDashboardData | null>(null); // Use AdminDashboardData
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -68,7 +69,7 @@ export function AdminDashboardOverview() {
             <div className="bg-white shadow rounded-lg p-6">
               <h3 className="text-lg font-medium text-gray-900 mb-2">Recently Registered Users</h3>
               <ul>
-                {dashboardData.recently_registered_users.map((user: any) => (
+                {dashboardData.recently_registered_users.map((user) => ( // Removed : any
                   <li key={user.id} className="text-sm text-gray-700">
                     {user.username} ({user.email}) - {new Date(user.date_joined).toLocaleDateString()}
                   </li>
@@ -78,7 +79,7 @@ export function AdminDashboardOverview() {
             <div className="bg-white shadow rounded-lg p-6">
               <h3 className="text-lg font-medium text-gray-900 mb-2">Recent Articles</h3>
               <ul>
-                {dashboardData.recent_articles.map((article: any) => (
+                {dashboardData.recent_articles.map((article) => ( // Removed : any
                   <li key={article.id} className="text-sm text-gray-700">
                     {article.title} by {article.author__username} - {new Date(article.created_at).toLocaleDateString()}
                   </li>
@@ -88,7 +89,7 @@ export function AdminDashboardOverview() {
             <div className="bg-white shadow rounded-lg p-6">
               <h3 className="text-lg font-medium text-gray-900 mb-2">Recent Comments</h3>
               <ul>
-                {dashboardData.recent_comments.map((comment: any) => (
+                {dashboardData.recent_comments.map((comment) => ( // Removed : any
                   <li key={comment.id} className="text-sm text-gray-700">
                     "{comment.content.substring(0, 50)}..." on "{comment.article__title}" by {comment.author__username} - {new Date(comment.created_at).toLocaleDateString()}
                   </li>
@@ -98,7 +99,7 @@ export function AdminDashboardOverview() {
             <div className="bg-white shadow rounded-lg p-6">
               <h3 className="text-lg font-medium text-gray-900 mb-2">Recent Categories</h3>
               <ul>
-                {dashboardData.recent_categories.map((category: any) => (
+                {dashboardData.recent_categories.map((category) => ( // Removed : any
                   <li key={category.id} className="text-sm text-gray-700">
                     {category.name}
                   </li>
@@ -108,7 +109,7 @@ export function AdminDashboardOverview() {
             <div className="bg-white shadow rounded-lg p-6">
               <h3 className="text-lg font-medium text-gray-900 mb-2">Recent Tags</h3>
               <ul>
-                {dashboardData.recent_tags.map((tag: any) => (
+                {dashboardData.recent_tags.map((tag) => ( // Removed : any
                   <li key={tag.id} className="text-sm text-gray-700">
                     {tag.name}
                   </li>

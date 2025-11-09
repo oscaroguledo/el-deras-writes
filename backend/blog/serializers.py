@@ -22,6 +22,8 @@ class TagSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     author = CustomUserSerializer(read_only=True)
+    ip_address = serializers.IPAddressField(read_only=True)
+    parent = serializers.PrimaryKeyRelatedField(queryset=Comment.objects.all(), required=False)
 
     class Meta:
         model = Comment

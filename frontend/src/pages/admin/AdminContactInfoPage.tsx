@@ -1,26 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { getContactInfo, updateContactInfo } from '../../utils/api'; // Adjusted import path
+import { getContactInfo, updateContactInfo } from '../../utils/api';
+import { ContactInfo } from '../../types/ContactInfo'; // Import the ContactInfo interface
 
-interface ContactDetails {
-  address: string;
-  phone: string;
-  email: string;
-  whatsapp_link: string; // Added
-  tiktok_link: string;   // Added
-  instagram_link: string; // Added
-  facebook_link: string;  // Added
-}
-
-export function AdminContactInfoPage() { // Renamed from ContactInfoManagement
-  const [contactInfo, setContactInfo] = useState<ContactDetails>({
+export function AdminContactInfoPage() {
+  const [contactInfo, setContactInfo] = useState<ContactInfo>({ // Use imported ContactInfo
     address: '',
     phone: '',
     email: '',
-    whatsapp_link: '', // Added
-    tiktok_link: '',   // Added
-    instagram_link: '', // Added
-    facebook_link: '',  // Added
+    whatsapp_link: '',
+    tiktok_link: '',
+    instagram_link: '',
+    facebook_link: '',
   });
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
@@ -62,7 +53,7 @@ export function AdminContactInfoPage() { // Renamed from ContactInfoManagement
   return (
     <div className="mb-8">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-3xl font-serif font-medium text-gray-900">Manage Contact Information</h1> {/* Changed to h1 */}
+        <h1 className="text-3xl font-serif font-medium text-gray-900">Manage Contact Information</h1>
         {!isEditing && (
           <button onClick={() => setIsEditing(true)} className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
             Edit
@@ -77,7 +68,7 @@ export function AdminContactInfoPage() { // Renamed from ContactInfoManagement
               <input
                 type="text"
                 id="address"
-                value={contactInfo.address}
+                value={contactInfo.address || ''} // Handle null
                 onChange={(e) => setContactInfo({ ...contactInfo, address: e.target.value })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md"
               />
@@ -87,7 +78,7 @@ export function AdminContactInfoPage() { // Renamed from ContactInfoManagement
               <input
                 type="text"
                 id="phone"
-                value={contactInfo.phone}
+                value={contactInfo.phone || ''} // Handle null
                 onChange={(e) => setContactInfo({ ...contactInfo, phone: e.target.value })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md"
               />
@@ -97,7 +88,7 @@ export function AdminContactInfoPage() { // Renamed from ContactInfoManagement
               <input
                 type="email"
                 id="email"
-                value={contactInfo.email}
+                value={contactInfo.email || ''} // Handle null
                 onChange={(e) => setContactInfo({ ...contactInfo, email: e.target.value })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md"
               />
@@ -108,7 +99,7 @@ export function AdminContactInfoPage() { // Renamed from ContactInfoManagement
               <input
                 type="url"
                 id="whatsapp_link"
-                value={contactInfo.whatsapp_link}
+                value={contactInfo.whatsapp_link || ''} // Handle null
                 onChange={(e) => setContactInfo({ ...contactInfo, whatsapp_link: e.target.value })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md"
               />
@@ -118,7 +109,7 @@ export function AdminContactInfoPage() { // Renamed from ContactInfoManagement
               <input
                 type="url"
                 id="tiktok_link"
-                value={contactInfo.tiktok_link}
+                value={contactInfo.tiktok_link || ''} // Handle null
                 onChange={(e) => setContactInfo({ ...contactInfo, tiktok_link: e.target.value })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md"
               />
@@ -128,7 +119,7 @@ export function AdminContactInfoPage() { // Renamed from ContactInfoManagement
               <input
                 type="url"
                 id="instagram_link"
-                value={contactInfo.instagram_link}
+                value={contactInfo.instagram_link || ''} // Handle null
                 onChange={(e) => setContactInfo({ ...contactInfo, instagram_link: e.target.value })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md"
               />
@@ -138,7 +129,7 @@ export function AdminContactInfoPage() { // Renamed from ContactInfoManagement
               <input
                 type="url"
                 id="facebook_link"
-                value={contactInfo.facebook_link}
+                value={contactInfo.facebook_link || ''} // Handle null
                 onChange={(e) => setContactInfo({ ...contactInfo, facebook_link: e.target.value })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md"
               />
@@ -157,10 +148,10 @@ export function AdminContactInfoPage() { // Renamed from ContactInfoManagement
             <p className="text-gray-700"><strong>Address:</strong> {contactInfo.address || 'N/A'}</p>
             <p className="text-gray-700"><strong>Phone:</strong> {contactInfo.phone || 'N/A'}</p>
             <p className="text-gray-700"><strong>Email:</strong> {contactInfo.email || 'N/A'}</p>
-            <p className="text-gray-700"><strong>WhatsApp:</strong> <a href={contactInfo.whatsapp_link} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">{contactInfo.whatsapp_link || 'N/A'}</a></p>
-            <p className="text-gray-700"><strong>TikTok:</strong> <a href={contactInfo.tiktok_link} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">{contactInfo.tiktok_link || 'N/A'}</a></p>
-            <p className="text-gray-700"><strong>Instagram:</strong> <a href={contactInfo.instagram_link} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">{contactInfo.instagram_link || 'N/A'}</a></p>
-            <p className="text-gray-700"><strong>Facebook:</strong> <a href={contactInfo.facebook_link} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">{contactInfo.facebook_link || 'N/A'}</a></p>
+            <p className="text-gray-700"><strong>WhatsApp:</strong> <a href={contactInfo.whatsapp_link || '#'} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">{contactInfo.whatsapp_link || 'N/A'}</a></p>
+            <p className="text-gray-700"><strong>TikTok:</strong> <a href={contactInfo.tiktok_link || '#'} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">{contactInfo.tiktok_link || 'N/A'}</a></p>
+            <p className="text-gray-700"><strong>Instagram:</strong> <a href={contactInfo.instagram_link || '#'} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">{contactInfo.instagram_link || 'N/A'}</a></p>
+            <p className="text-gray-700"><strong>Facebook:</strong> <a href={contactInfo.facebook_link || '#'} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">{contactInfo.facebook_link || 'N/A'}</a></p>
           </div>
         )}
       </div>

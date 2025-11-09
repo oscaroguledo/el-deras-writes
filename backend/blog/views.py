@@ -29,10 +29,25 @@ class ArticleViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, IsAuthorOrAdmin]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        article_id = self.request.query_params.get('article')
+        if article_id:
+            queryset = queryset.filter(article_id=article_id)
+        return queryset
 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+        if self.request.user.is_authenticated:
+            serializer.save(author=self.request.user)
+        else:
+            ip_address = self.request.META.get('REMOTE_ADDR') or self.request.META.get('HTTP_X_FORWARDED_FOR')
+            guest_username = f'guest_{ip_address}'
+            guest_user, created = CustomUser.objects.get_or_create(
+                username=guest_username,
+                defaults={'user_type': 'guest', 'ip_address': ip_address}
+            )
+            serializer.save(author=guest_user, ip_address=ip_address)
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()

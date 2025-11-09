@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { PlusIcon, EditIcon, TrashIcon } from 'lucide-react';
-import { Category } from '../../types/Category'; // Adjusted import path
-import { Tag } from '../../types/Tag'; // Adjusted import path
-import { getCategories, createCategory, updateCategory, deleteCategory, getTags, createTag, updateTag, deleteTag } from '../../utils/api'; // Adjusted import path
+import { Category } from '../../types/Category';
+import { Tag } from '../../types/Tag';
+import { getCategories, createCategory, updateCategory, deleteCategory, getTags, createTag, updateTag, deleteTag } from '../../utils/api';
 
-export function AdminCategoriesTagsPage() { // Renamed from CategoryTagManagement
+export function AdminCategoriesTagsPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
   const [newCategoryName, setNewCategoryName] = useState('');
@@ -151,53 +151,84 @@ export function AdminCategoriesTagsPage() { // Renamed from CategoryTagManagemen
             </button>
           </form>
         </div>
-        <div className="bg-white shadow overflow-hidden rounded-lg">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {categories.length > 0 ? categories.map(category => (
-                <tr key={category.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {editingCategory?.id === category.id ? (
-                      <input
-                        type="text"
-                        value={editingCategory.name}
-                        onChange={(e) => setEditingCategory({ ...editingCategory, name: e.target.value })}
-                        className="w-full px-2 py-1 border border-gray-300 rounded-md"
-                      />
-                    ) : (
-                      category.name
-                    )}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex space-x-2">
-                      {editingCategory?.id === category.id ? (
-                        <button onClick={handleUpdateCategory} className="text-green-600 hover:text-green-900">
-                          Save
-                        </button>
-                      ) : (
-                        <button onClick={() => setEditingCategory(category)} className="text-indigo-600 hover:text-indigo-900">
-                          <EditIcon className="h-5 w-5" />
-                        </button>
-                      )}
-                      <button onClick={() => handleDeleteCategory(category.id)} className="text-red-600 hover:text-red-900">
-                        <TrashIcon className="h-5 w-5" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              )) : (
+        
+        {/* Desktop Table View for Categories */}
+        <div className="hidden md:block bg-white shadow overflow-hidden rounded-lg">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
                 <tr>
-                  <td colSpan={2} className="px-6 py-4 text-center text-sm text-gray-500">No categories found.</td>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {categories.length > 0 ? categories.map(category => (
+                  <tr key={category.id}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {editingCategory?.id === category.id ? (
+                        <input
+                          type="text"
+                          value={editingCategory.name}
+                          onChange={(e) => setEditingCategory({ ...editingCategory, name: e.target.value })}
+                          className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                        />
+                      ) : (
+                        category.name
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <div className="flex space-x-2">
+                        {editingCategory?.id === category.id ? (
+                          <button onClick={handleUpdateCategory} className="text-green-600 hover:text-green-900">
+                            Save
+                          </button>
+                        ) : (
+                          <button onClick={() => setEditingCategory(category)} className="text-indigo-600 hover:text-indigo-900">
+                            <EditIcon className="h-5 w-5" />
+                          </button>
+                        )}
+                        <button onClick={() => handleDeleteCategory(category.id)} className="text-red-600 hover:text-red-900">
+                          <TrashIcon className="h-5 w-5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                )) : (
+                  <tr>
+                    <td colSpan={2} className="px-6 py-4 text-center text-sm text-gray-500">No categories found.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Mobile List View for Categories */}
+        <div className="md:hidden bg-white shadow overflow-hidden rounded-lg">
+          {categories.length > 0 ? categories.map(category => (
+            <div key={category.id} className="border-b border-gray-200 p-4 last:border-b-0">
+              <div className="flex justify-between items-center mb-2">
+                <div className="text-lg font-medium text-gray-900">{category.name}</div>
+                <div className="flex space-x-2">
+                  {editingCategory?.id === category.id ? (
+                    <button onClick={handleUpdateCategory} className="text-green-600 hover:text-green-900">
+                      Save
+                    </button>
+                  ) : (
+                    <button onClick={() => setEditingCategory(category)} className="text-indigo-600 hover:text-indigo-900">
+                      <EditIcon className="h-5 w-5" />
+                    </button>
+                  )}
+                  <button onClick={() => handleDeleteCategory(category.id)} className="text-red-600 hover:text-red-900">
+                    <TrashIcon className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )) : (
+            <div className="p-4 text-center text-sm text-gray-500">No categories found.</div>
+          )}
         </div>
       </div>
 
@@ -218,53 +249,84 @@ export function AdminCategoriesTagsPage() { // Renamed from CategoryTagManagemen
             </button>
           </form>
         </div>
-        <div className="bg-white shadow overflow-hidden rounded-lg">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {tags.length > 0 ? tags.map(tag => (
-                <tr key={tag.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {editingTag?.id === tag.id ? (
-                      <input
-                        type="text"
-                        value={editingTag.name}
-                        onChange={(e) => setEditingTag({ ...editingTag, name: e.target.value })}
-                        className="w-full px-2 py-1 border border-gray-300 rounded-md"
-                      />
-                    ) : (
-                      tag.name
-                    )}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex space-x-2">
-                      {editingTag?.id === tag.id ? (
-                        <button onClick={handleUpdateTag} className="text-green-600 hover:text-green-900">
-                          Save
-                        </button>
-                      ) : (
-                        <button onClick={() => setEditingTag(tag)} className="text-indigo-600 hover:text-indigo-900">
-                          <EditIcon className="h-5 w-5" />
-                        </button>
-                      )}
-                      <button onClick={() => handleDeleteTag(tag.id)} className="text-red-600 hover:text-red-900">
-                        <TrashIcon className="h-5 w-5" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              )) : (
+
+        {/* Desktop Table View for Tags */}
+        <div className="hidden md:block bg-white shadow overflow-hidden rounded-lg">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
                 <tr>
-                  <td colSpan={2} className="px-6 py-4 text-center text-sm text-gray-500">No tags found.</td>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {tags.length > 0 ? tags.map(tag => (
+                  <tr key={tag.id}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {editingTag?.id === tag.id ? (
+                        <input
+                          type="text"
+                          value={editingTag.name}
+                          onChange={(e) => setEditingTag({ ...editingTag, name: e.target.value })}
+                          className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                        />
+                      ) : (
+                        tag.name
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <div className="flex space-x-2">
+                        {editingTag?.id === tag.id ? (
+                          <button onClick={handleUpdateTag} className="text-green-600 hover:text-green-900">
+                            Save
+                          </button>
+                        ) : (
+                          <button onClick={() => setEditingTag(tag)} className="text-indigo-600 hover:text-indigo-900">
+                            <EditIcon className="h-5 w-5" />
+                          </button>
+                        )}
+                        <button onClick={() => handleDeleteTag(tag.id)} className="text-red-600 hover:text-red-900">
+                          <TrashIcon className="h-5 w-5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                )) : (
+                  <tr>
+                    <td colSpan={2} className="px-6 py-4 text-center text-sm text-gray-500">No tags found.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Mobile List View for Tags */}
+        <div className="md:hidden bg-white shadow overflow-hidden rounded-lg">
+          {tags.length > 0 ? tags.map(tag => (
+            <div key={tag.id} className="border-b border-gray-200 p-4 last:border-b-0">
+              <div className="flex justify-between items-center mb-2">
+                <div className="text-lg font-medium text-gray-900">{tag.name}</div>
+                <div className="flex space-x-2">
+                  {editingTag?.id === tag.id ? (
+                    <button onClick={handleUpdateTag} className="text-green-600 hover:text-green-900">
+                      Save
+                    </button>
+                  ) : (
+                    <button onClick={() => setEditingTag(tag)} className="text-indigo-600 hover:text-indigo-900">
+                      <EditIcon className="h-5 w-5" />
+                    </button>
+                  )}
+                  <button onClick={() => handleDeleteTag(tag.id)} className="text-red-600 hover:text-red-900">
+                    <TrashIcon className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )) : (
+            <div className="p-4 text-center text-sm text-gray-500">No tags found.</div>
+          )}
         </div>
       </div>
     </div>

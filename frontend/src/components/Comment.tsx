@@ -8,17 +8,17 @@ interface CommentProps {
     articleId: string;
     parentId?: string;
     content: string;
-    userName: string;
-    userId: string;
   }) => void;
+  articleId: string;
 }
 export function Comment({
   comment,
-  onReply
+  onReply,
+  articleId
 }: CommentProps) {
   const [isReplying, setIsReplying] = useState(false);
   const currentUser = getCurrentUser();
-  const formattedDate = new Date(comment.createdAt).toLocaleDateString('en-US', {
+  const formattedDate = new Date(comment.created_at).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
     day: 'numeric'
@@ -27,8 +27,6 @@ export function Comment({
     articleId: string;
     parentId?: string;
     content: string;
-    userName: string;
-    userId: string;
   }) => {
     onReply(newComment);
     setIsReplying(false);
@@ -37,14 +35,19 @@ export function Comment({
       <div className="flex items-start">
         <div className="flex-shrink-0 mr-3">
           <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 font-medium">
-            {comment.userName.charAt(0).toUpperCase()}
+            {comment.author.username.charAt(0).toUpperCase()}
           </div>
         </div>
         <div className="flex-grow">
           <div className="bg-gray-50 p-4 rounded-lg">
             <div className="flex items-center justify-between mb-2">
               <h4 className="text-sm font-medium text-gray-900">
-                {comment.userName}
+                {comment.author.username}
+                {comment.author.user_type === 'guest' && comment.ip_address && (
+                  <span className="text-xs text-gray-500 ml-2">
+                    (IP: {comment.ip_address})
+                  </span>
+                )}
               </h4>
               <span className="text-xs text-gray-500">{formattedDate}</span>
             </div>
@@ -58,10 +61,10 @@ export function Comment({
             </div>
           </div>
           {isReplying && <div className="mt-3">
-              <CommentForm articleId={comment.articleId} parentId={comment.id} onCommentSubmit={handleReply} isReply={true} onCancel={() => setIsReplying(false)} />
+              <CommentForm articleId={articleId} parentId={comment.id} onCommentSubmit={handleReply} isReply={true} onCancel={() => setIsReplying(false)} />
             </div>}
           {comment.replies && comment.replies.length > 0 && <div className="mt-4 pl-5 border-l-2 border-gray-100">
-              {comment.replies.map(reply => <Comment key={reply.id} comment={reply} onReply={onReply} />)}
+              {comment.replies.map(reply => <Comment key={reply.id} comment={reply} onReply={onReply} articleId={articleId} />)}
             </div>}
         </div>
       </div>

@@ -10,13 +10,17 @@ class CustomUser(AbstractUser):
         ('guest', 'Guest'),
     )
     ip_address = models.GenericIPAddressField(blank=True, null=True)
-    device_info = models.CharField(max_length=255, blank=True, null=True)
+    
+    country = models.CharField(max_length=100, blank=True, null=True)
+    region = models.CharField(max_length=100, blank=True, null=True)
+    city = models.CharField(max_length=100, blank=True, null=True)
+
+    last_active = models.DateTimeField(auto_now=True)
     user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, default='normal')
     bio = models.TextField(max_length=500, blank=True, null=True)
 
     def __str__(self):
         return self.username
-
 class Category(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
@@ -56,8 +60,10 @@ class Article(models.Model):
 
 class Comment(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='comments')
-    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
     content = models.TextField()
+    ip_address = models.GenericIPAddressField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

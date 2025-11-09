@@ -1,16 +1,13 @@
+import { CustomUser } from './CustomUser';
+
 export interface Comment {
   id: string;
-  articleId: string;
-  parentId?: string;
-  userId: string;
-  userName: string;
+  article: string;
+  author: CustomUser;
   content: string;
-  createdAt: string;
+  ip_address: string | null;
+  created_at: string;
+  updated_at: string;
+  parent?: string;
   replies?: Comment[];
-}
-export interface CommentUser {
-  id: string;
-  name: string;
-  email: string;
-  createdAt: string;
 }
