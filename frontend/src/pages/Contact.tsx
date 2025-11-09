@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { MailIcon, PhoneIcon, MapPinIcon, SendIcon } from 'lucide-react';
-import { getContactInfo } from '../../utils/api';
+import { getContactInfo } from '@/utils/api';
 
 interface ContactDetails {
   address?: string;
