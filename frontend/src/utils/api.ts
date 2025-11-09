@@ -31,7 +31,7 @@ interface AdminDashboardData {
   total_categories: number;
   total_tags: number;
   total_visitors: number;
-  recently_registered_users: Array<{ id: string; username: string; email: string }>;
+  recently_registered_users: Array<{ id: string; username: string; email: string; date_joined: string; }>;
   recent_articles: Array<{ id: string; title: string; author__username: string; created_at: string }>;
   recent_comments: Array<{ id: string; article__title: string; author__username: string; created_at: string }>;
   recent_categories: Array<{ id: number; name: string }>;

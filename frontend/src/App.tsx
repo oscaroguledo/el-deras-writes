@@ -55,7 +55,9 @@ export function App() {
               <Route path="contact-info" element={<AdminContactInfoPage />} />
             </Route>
           </Routes>
-        </Suspense>
-      </div>
-  );
-}
+                  </Suspense>
+                </div>
+                <ToastContainer position="bottom-right" />
+              </div>
+          );
+        }

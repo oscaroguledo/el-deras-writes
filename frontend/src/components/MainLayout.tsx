@@ -3,7 +3,6 @@ import { Outlet } from 'react-router-dom';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { MetaData } from './MetaData';
-import { ToastContainer } from 'react-toastify';
 
 export function MainLayout() {
   return (
@@ -14,7 +13,6 @@ export function MainLayout() {
         <Outlet />
       </main>
       <Footer />
-      <ToastContainer position="bottom-right" />
     </div>
   );
 }
