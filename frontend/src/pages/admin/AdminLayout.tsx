@@ -1,20 +1,26 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
-import AdminSidebar from '../../components/AdminSidebar';
-import AdminHeader from '../../components/AdminHeader'; // Import AdminHeader
-import { AdminFooter } from '../../components/AdminFooter'; // Import AdminFooter
+const AdminSidebar = lazy(() => import('../../components/AdminSidebar'));
+const AdminHeader = lazy(() => import('../../components/AdminHeader'));
+const AdminFooter = lazy(() => import('../../components/components/AdminFooter'));
 
 export default function AdminLayout() {
   return (
-    <div className="flex flex-col min-h-screen"> {/* Use flex-col and min-h-screen for sticky footer */}
-      <AdminHeader />
-      <div className="flex flex-grow"> {/* flex-grow to push footer to bottom */}
-        <AdminSidebar />
-        <main className="flex-grow p-8"> {/* Use main tag for content */}
-          <Outlet /> {/* This will render the nested admin routes */}
+    <div className="flex flex-col min-h-screen">
+      <Suspense fallback={<div>Loading Admin Header...</div>}>
+        <AdminHeader />
+      </Suspense>
+      <div className="flex flex-grow">
+        <Suspense fallback={<div>Loading Admin Sidebar...</div>}>
+          <AdminSidebar />
+        </Suspense>
+        <main className="flex-grow p-8">
+          <Outlet />
         </main>
       </div>
-      <AdminFooter />
+      <Suspense fallback={<div>Loading Admin Footer...</div>}>
+        <AdminFooter />
+      </Suspense>
     </div>
   );
 }
