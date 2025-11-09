@@ -103,6 +103,11 @@ export async function getCategories(): Promise<Category[]> {
   return response.data;
 }
 
+export async function getTopFiveCategories(): Promise<Category[]> {
+  const response = await axios.get(`${API_URL}/categories/top_five/`);
+  return response.data;
+}
+
 export async function getTags(): Promise<Tag[]> {
   const response = await axios.get(`${API_URL}/tags/`);
   return response.data;
