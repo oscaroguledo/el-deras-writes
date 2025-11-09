@@ -57,7 +57,7 @@ export function Header() {
               <Link to="/contact" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium">
                 Contact
               </Link>
-              {topCategories.map(category => (
+              {topCategories.slice(0, 2).map(category => (
                 <Link
                   key={category.id}
                   to={`/?category=${category.name}`}
@@ -108,7 +108,7 @@ export function Header() {
             <Link to="/contact" className="block px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-md" onClick={() => setIsMenuOpen(false)}>
               Contact
             </Link>
-            {topCategories.map(category => (
+            {topCategories.slice(0, 2).map(category => (
               <Link
                 key={category.id}
                 to={`/?category=${category.name}`}
