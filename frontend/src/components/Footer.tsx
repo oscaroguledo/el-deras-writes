@@ -4,7 +4,7 @@ import { FeedbackForm } from './FeedbackForm';
 import { getContactInfo, getTopFiveCategories } from '../utils/api';
 import { ContactInfo } from '../types/ContactInfo';
 import { Category } from '../types/Category';
-import { Instagram, Facebook, LinkIcon, Whatsapp } from 'lucide-react';
+import { Instagram, Facebook, LinkIcon, MessageSquare } from 'lucide-react';
 
 export function Footer() {
   const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null);
@@ -50,7 +50,7 @@ export function Footer() {
               )}
               {contactInfo?.whatsapp_link && (
                 <a href={contactInfo.whatsapp_link} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-900" aria-label="WhatsApp">
-                  <Whatsapp className="h-5 w-5" />
+                  <MessageSquare className="h-5 w-5" />
                 </a>
               )}
               
