@@ -58,6 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     checkAuthStatus,
   };
 
+  // Use React.createElement to avoid JSX parsing in a .ts file
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
