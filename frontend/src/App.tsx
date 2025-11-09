@@ -56,7 +56,7 @@ export function App() {
             </Route>
           </Routes>
                   </Suspense>
-                </div>
+                
                 <ToastContainer position="bottom-right" />
               </div>
           );
