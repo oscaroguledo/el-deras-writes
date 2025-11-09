@@ -24,9 +24,9 @@ export function BlogPostList({
         <h2 className="text-2xl md:text-3xl font-serif font-medium text-gray-900">
           Latest Articles
         </h2>
-        <a href="#" className="text-sm font-medium text-gray-900 hover:underline">
+        <Link to="/" className="text-sm font-medium text-gray-900 hover:underline">
           View all articles →
-        </a>
+        </Link>
       </div>
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
         {posts.map(post => <BlogPostCard key={post._id} post={post} />)}
