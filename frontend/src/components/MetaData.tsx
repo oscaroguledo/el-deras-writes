@@ -6,13 +6,21 @@ interface MetaDataProps {
   description?: string;
   image?: string;
   url?: string;
+  siteName?: string;
+  locale?: string;
+  twitterCreator?: string;
+  twitterSite?: string;
 }
 
 export const MetaData: React.FC<MetaDataProps> = ({
   title = "El_Dera's writes - Curating thoughtful perspectives",
   description = "El_Dera's writes is a blog curating thoughtful perspectives on technology, design, and the art of mindful living.",
-  image = "https://yourdomain.com/logo512.webp", // Replace with your actual default logo URL
-  url = "https://yourdomain.com/", // Replace with your actual base URL
+  image = "https://el-deras-writes.vercel.app/logo512.webp", // Replace with your actual default logo URL
+  url = "https://el-deras-writes.vercel.app/", // Replace with your actual base URL
+  siteName = "El_Dera's writes",
+  locale = "en_US",
+  twitterCreator = "@el_deras_writes", // Replace with your Twitter handle
+  twitterSite = "@el_deras_writes", // Replace with your Twitter handle
 }) => {
   return (
     <Helmet>
@@ -27,6 +35,8 @@ export const MetaData: React.FC<MetaDataProps> = ({
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={image} />
+      <meta property="og:site_name" content={siteName} />
+      <meta property="og:locale" content={locale} />
 
       {/* Twitter */}
       <meta property="twitter:card" content="summary_large_image" />
@@ -34,6 +44,8 @@ export const MetaData: React.FC<MetaDataProps> = ({
       <meta property="twitter:title" content={title} />
       <meta property="twitter:description" content={description} />
       <meta property="twitter:image" content={image} />
+      <meta property="twitter:creator" content={twitterCreator} />
+      <meta property="twitter:site" content={twitterSite} />
     </Helmet>
   );
 };
