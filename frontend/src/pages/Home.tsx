@@ -4,6 +4,7 @@ import { HeroPost } from '../components/HeroPost';
 import { BlogPostList } from '../components/BlogPostList';
 import { getArticles } from '../utils/api';
 import { Article } from '../types/Article';
+import { CategoryList } from '../components/CategoryList';
 
 export function Home() {
   const [searchParams] = useSearchParams();
@@ -78,26 +79,33 @@ export function Home() {
           </h2>
         </div>
       )}
-      {featuredArticle && !searchQuery && !categoryFilter && (
-        <HeroPost post={featuredArticle} />
-      )}
-      <BlogPostList
-        posts={articles}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPreviousPage={handlePreviousPage}
-        onNextPage={handleNextPage}
-      />
-      {articles.length === 0 && (
-        <div className="text-center py-12">
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
-            No articles found
-          </h3>
-          <p className="text-gray-600">
-            Try adjusting your search or filter criteria.
-          </p>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="md:col-span-2">
+          {featuredArticle && !searchQuery && !categoryFilter && (
+            <HeroPost post={featuredArticle} />
+          )}
+          <BlogPostList
+            posts={articles}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPreviousPage={handlePreviousPage}
+            onNextPage={handleNextPage}
+          />
+          {articles.length === 0 && (
+            <div className="text-center py-12">
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                No articles found
+              </h3>
+              <p className="text-gray-600">
+                Try adjusting your search or filter criteria.
+              </p>
+            </div>
+          )}
         </div>
-      )}
+        <div className="md:col-span-1">
+          <CategoryList />
+        </div>
+      </div>
     </>
   );
 }
