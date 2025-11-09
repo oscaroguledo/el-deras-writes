@@ -1,7 +1,7 @@
 import { Category } from './Category';
 
 export interface Article {
-  _id: string;
+  id: string;
   title: string;
   excerpt: string;
   content: string;

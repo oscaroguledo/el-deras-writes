@@ -99,7 +99,7 @@ export function ArticleDetail() {
         <div className="prose prose-lg max-w-none" dangerouslySetInnerHTML={{
         __html: article.content
       }} />
-        <CommentSection articleId={article._id} />
+        <CommentSection articleId={article.id} />
       </article>
     </>
   );

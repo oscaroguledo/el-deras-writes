@@ -11,7 +11,7 @@ export function BlogPostCard({
 }: BlogPostCardProps) {
   return (
     <article className="flex flex-col overflow-hidden rounded-lg transition-all duration-200 hover:shadow-md h-full">
-      <Link to={`/article/${post._id}`} className="block overflow-hidden">
+      <Link to={`/article/${post.id}`} className="block overflow-hidden">
         <div className="aspect-w-16 aspect-h-9 bg-gray-100">
           <img src={post.image} alt={post.title} className="object-cover w-full h-full transition-transform duration-500 hover:scale-105" />
         </div>
@@ -23,7 +23,7 @@ export function BlogPostCard({
           </span>
         </div>
         <h3 className="text-xl font-serif font-medium text-gray-900 mb-2">
-          <Link to={`/article/${post._id}`} className="hover:underline decoration-gray-300 underline-offset-2">
+          <Link to={`/article/${post.id}`} className="hover:underline decoration-gray-300 underline-offset-2">
             {post.title}
           </Link>
         </h3>

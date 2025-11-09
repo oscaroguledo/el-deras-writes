@@ -30,7 +30,7 @@ export function BlogPostList({
         </Link>
       </div>
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {posts.map(post => <BlogPostCard key={post._id} post={post} />)}
+        {posts.map(post => <BlogPostCard key={post.id} post={post} />)}
       </div>
       {/* Pagination Controls */}
       <div className="flex justify-between items-center mt-8">
