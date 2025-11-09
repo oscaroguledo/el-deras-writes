@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login, checkAuthStatus } from '../utils/auth';
+import { login, checkAuthStatus } from '../utils/auth.ts';
 import { toast } from 'react-toastify';
 import { LockIcon, UserIcon } from 'lucide-react';
 export function AdminLogin() {
