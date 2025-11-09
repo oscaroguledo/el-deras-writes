@@ -42,7 +42,7 @@ class Article(models.Model):
     title = models.CharField(max_length=255)
     excerpt = models.TextField(blank=True, null=True)
     content = models.TextField()
-    image = models.URLField(max_length=200, blank=True, null=True)
+    image = models.URLField(max_length=200, blank=True, null=True, default='/logo.png')
     readTime = models.CharField(max_length=50, blank=True, null=True)
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='articles')
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
@@ -78,12 +78,6 @@ class ContactInfo(models.Model):
     tiktok_link = models.URLField(max_length=200, blank=True, null=True)
     instagram_link = models.URLField(max_length=200, blank=True, null=True)
     facebook_link = models.URLField(max_length=200, blank=True, null=True)
-    twitter_link = models.URLField(max_length=200, blank=True, null=True)
-    youtube_link = models.URLField(max_length=200, blank=True, null=True)
-    linkedin_link = models.URLField(max_length=200, blank=True, null=True)
-    pinterest_link = models.URLField(max_length=200, blank=True, null=True)
-    medium_link = models.URLField(max_length=200, blank=True, null=True)
-    github_link = models.URLField(max_length=200, blank=True, null=True)
 
     class Meta:
         verbose_name = "Contact Information"

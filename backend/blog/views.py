@@ -1,3 +1,5 @@
+from django.contrib.auth import authenticate, login, logout
+from rest_framework.permissions import AllowAny
 from rest_framework import viewsets, status
 from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
@@ -21,7 +23,7 @@ class ArticleViewSet(viewsets.ModelViewSet):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
     pagination_class = CustomPagination
-    permission_classes = [IsAuthenticatedOrReadOnly, IsAuthorOrAdmin]
+    permission_classes = [IsAdminOrReadOnly]
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -117,6 +119,19 @@ class ContactInfoView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class LoginView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return Response({'message': 'Login successful', 'user': CustomUserSerializer(user).data})
+        else:
+            return Response({'message': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+
 class IncrementVisitorCountView(APIView):
     def post(self, request):
         visitor_count, created = VisitorCount.objects.get_or_create(pk=1)
@@ -124,3 +139,4 @@ class IncrementVisitorCountView(APIView):
         visitor_count.save()
         serializer = VisitorCountSerializer(visitor_count)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
