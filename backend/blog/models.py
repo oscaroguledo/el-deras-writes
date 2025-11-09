@@ -78,6 +78,12 @@ class ContactInfo(models.Model):
     tiktok_link = models.URLField(max_length=200, blank=True, null=True)
     instagram_link = models.URLField(max_length=200, blank=True, null=True)
     facebook_link = models.URLField(max_length=200, blank=True, null=True)
+    twitter_link = models.URLField(max_length=200, blank=True, null=True)
+    youtube_link = models.URLField(max_length=200, blank=True, null=True)
+    linkedin_link = models.URLField(max_length=200, blank=True, null=True)
+    pinterest_link = models.URLField(max_length=200, blank=True, null=True)
+    medium_link = models.URLField(max_length=200, blank=True, null=True)
+    github_link = models.URLField(max_length=200, blank=True, null=True)
 
     class Meta:
         verbose_name = "Contact Information"

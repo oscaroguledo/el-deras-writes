@@ -6,7 +6,6 @@ interface CommentFormProps {
   articleId: string;
   parentId?: string;
   onCommentSubmit: (comment: {
-    articleId: string;
     parentId?: string;
     content: string;
   }) => void;
@@ -35,7 +34,6 @@ export function CommentForm({
     try {
       setIsSubmitting(true);
       onCommentSubmit({
-        articleId,
         parentId,
         content,
       });

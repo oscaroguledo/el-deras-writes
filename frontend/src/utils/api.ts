@@ -83,18 +83,18 @@ export async function getComments(): Promise<Comment[]> {
 }
 
 export async function getCommentsByArticle(articleId: string): Promise<Comment[]> {
-  const response = await axios.get(`${API_URL}/comments/`, {
-    params: { article: articleId },
-  });
+  const response = await axios.get(`${API_URL}/articles/${articleId}/comments/`);
   return response.data;
 }
 
-export async function createComment(commentData: {
-  article: string;
-  content: string;
-  parent?: string;
-}): Promise<Comment> {
-  const response = await axios.post(`${API_URL}/comments/`, commentData);
+export async function createComment(
+  articleId: string,
+  commentData: {
+    content: string;
+    parent?: string;
+  }
+): Promise<Comment> {
+  const response = await axios.post(`${API_URL}/articles/${articleId}/comments/`, commentData);
   return response.data;
 }
 

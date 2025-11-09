@@ -1,8 +1,8 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import { AdminSidebar } from '../../components/AdminSidebar'; // Will create this next
+import { AdminSidebar } from '../../components/AdminSidebar';
 
-export function AdminDashboard() {
+export function AdminLayout() {
   return (
     <div className="flex">
       <AdminSidebar />

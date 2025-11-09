@@ -48,13 +48,11 @@ export function CommentSection({ articleId }: CommentSectionProps) {
   }, [fetchComments]);
 
   const handleCommentSubmit = async (newComment: {
-    articleId: string;
     parentId?: string;
     content: string;
   }) => {
     try {
-      await createComment({
-        article: newComment.articleId,
+      await createComment(articleId, {
         content: newComment.content,
         parent: newComment.parentId,
       });
