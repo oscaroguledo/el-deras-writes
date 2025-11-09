@@ -32,13 +32,6 @@ export function Footer() {
               art of mindful living.
             </p>
             <div className="flex flex-wrap gap-4">
-              {contactInfo?.twitter_link && (
-                <a href={contactInfo.twitter_link} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-900" aria-label="Twitter">
-                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
-                  </svg>
-                </a>
-              )}
               {contactInfo?.instagram_link && (
                 <a href={contactInfo.instagram_link} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-900" aria-label="Instagram">
                   <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
@@ -53,37 +46,21 @@ export function Footer() {
                   </svg>
                 </a>
               )}
-              {contactInfo?.youtube_link && (
-                <a href={contactInfo.youtube_link} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-900" aria-label="YouTube">
+              {contactInfo?.tiktok_link && (
+                <a href={contactInfo.tiktok_link} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-900" aria-label="TikTok">
                   <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path fillRule="evenodd" d="M19.812 5.418c.861.23 1.538.907 1.768 1.768C21.998 8.746 22 12 22 12s0 3.255-.418 4.814a2.504 2.504 0 0 1-1.768 1.768c-1.56.419-7.814.419-7.814.419s-6.255 0-7.814-.419a2.505 2.505 0 0 1-1.768-1.768C2 15.255 2 12 2 12s0-3.255.417-4.814a2.507 2.507 0 011.768-1.768C5.744 5 11.998 5 11.998 5s6.255 0 7.814.418ZM15.194 12 10 15V9l5.194 3Z" clipRule="evenodd" />
+                    <path d="M12.003 2.003a5.002 5.002 0 0 0 4.997 4.997v3.503a5.502 5.502 0 1 1-5.497-5.497V2.003zM18.003 8.503a7.502 7.502 0 1 0-7.497 7.497v-3.503a4.002 4.002 0 1 1 4.002-4.002v3.503a7.502 7.502 0 0 0 3.495-3.495z" />
                   </svg>
                 </a>
               )}
-              {contactInfo?.linkedin_link && (
-                <a href={contactInfo.linkedin_link} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-900" aria-label="LinkedIn">
+              {contactInfo?.whatsapp_link && (
+                <a href={contactInfo.whatsapp_link} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-900" aria-label="WhatsApp">
                   <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path fillRule="evenodd" d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z" clipRule="evenodd" />
+                    <path d="M20.52 3.48A11.815 11.815 0 0 0 12.003.002C6.477.002 2 4.478 2 10.004c0 1.767.464 3.487 1.343 5.003L.002 22l6.13-3.21a11.903 11.903 0 0 0 5.87 1.51c5.526 0 10.003-4.476 10.003-10.002 0-2.67-1.04-5.18-2.883-7.32zm-8.517 16.28a9.36 9.36 0 0 1-4.773-1.297l-.342-.204-3.64 1.907 1.938-3.552-.223-.355a9.26 9.26 0 0 1-1.41-4.743c0-5.102 4.153-9.255 9.256-9.255 2.468 0 4.787.96 6.527 2.703a9.19 9.19 0 0 1 2.703 6.527c0 5.103-4.153 9.256-9.256 9.256zM17.49 14.382c-.297-.149-1.758-.867-2.03-.967-.272-.1-.47-.149-.669.15-.198.297-.767.967-.94 1.164-.173.198-.347.223-.644.074-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.149-.173.198-.297.298-.495.1-.198.05-.372-.025-.52-.075-.149-.669-1.612-.916-2.206-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
                   </svg>
                 </a>
               )}
-              {contactInfo?.pinterest_link && (
-                <a href={contactInfo.pinterest_link} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-900" aria-label="Pinterest">
-                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.39 18.592.026 11.985.026L12.017 0z" />
-                </svg>
-              </a>
-              <a href="https://medium.com/@el_deras_writes" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-900" aria-label="Medium">
-                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z" />
-                </svg>
-              </a>
-              <a href="https://github.com/el_deras_writes" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-900" aria-label="GitHub">
-                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
-                  </svg>
-                </a>
-              )}
+              
             </div>
           </div>
           <div>
@@ -91,31 +68,13 @@ export function Footer() {
               Categories
             </h3>
             <ul className="space-y-2">
-              <li>
-                <Link to="/?category=Design" className="text-sm text-gray-600 hover:text-gray-900">
-                  Design
-                </Link>
-              </li>
-              <li>
-                <Link to="/?category=Photography" className="text-sm text-gray-600 hover:text-gray-900">
-                  Photography
-                </Link>
-              </li>
-              <li>
-                <Link to="/?category=Architecture" className="text-sm text-gray-600 hover:text-gray-900">
-                  Architecture
-                </Link>
-              </li>
-              <li>
-                <Link to="/?category=Fashion" className="text-sm text-gray-600 hover:text-gray-900">
-                  Fashion
-                </Link>
-              </li>
-              <li>
-                <Link to="/?category=Technology" className="text-sm text-gray-600 hover:text-gray-900">
-                  Technology
-                </Link>
-              </li>
+              {topCategories.map(category => (
+                <li key={category.id}>
+                  <Link to={`/?category=${encodeURIComponent(category.name)}`} className="text-sm text-gray-600 hover:text-gray-900">
+                    {category.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
           <div>
@@ -163,5 +122,5 @@ export function Footer() {
           </p>
         </div>
       </div>
-    </footer>;
+    </footer>);
 }
