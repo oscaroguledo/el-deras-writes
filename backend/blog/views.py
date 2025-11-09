@@ -96,7 +96,16 @@ class ContactInfoView(APIView):
     def get(self, request):
         contact_info = ContactInfo.objects.first()
         if not contact_info:
-            return Response({"detail": "Contact info not found"}, status=status.HTTP_404_NOT_FOUND)
+            # Create a default ContactInfo object if none exists
+            contact_info = ContactInfo.objects.create(
+                address="123 Main St, Anytown, USA",
+                phone="+1234567890",
+                email="info@example.com",
+                whatsapp_link="https://wa.me/1234567890",
+                tiktok_link="https://tiktok.com/@example",
+                instagram_link="https://instagram.com/example",
+                facebook_link="https://facebook.com/example"
+            )
         serializer = ContactInfoSerializer(contact_info)
         return Response(serializer.data)
 
