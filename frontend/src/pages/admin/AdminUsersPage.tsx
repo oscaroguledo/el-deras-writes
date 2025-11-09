@@ -1,18 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { PlusIcon, EditIcon, TrashIcon } from 'lucide-react';
-import { CustomUser } from '../types/CustomUser';
-import { getUsers, deleteUser } from '../utils/api';
-import { UserFormModal } from './UserFormModal';
+import { CustomUser } from '../../types/CustomUser'; // Adjusted import path
+import { getUsers, deleteUser } from '../../utils/api'; // Adjusted import path
+import { UserFormModal } from '../../components/UserFormModal'; // Adjusted import path
 
-interface UserManagementProps {
-  users: CustomUser[];
-  fetchUsers: () => void;
-}
-
-export function UserManagement({ users, fetchUsers }: UserManagementProps) {
+export function AdminUsersPage() { // Renamed from UserManagement
+  const [users, setUsers] = useState<CustomUser[]>([]); // Added users state
   const [showUserModal, setShowUserModal] = useState(false);
   const [currentUser, setCurrentUser] = useState<CustomUser | null>(null);
+
+  const fetchUsers = async () => { // Moved fetchUsers here
+    try {
+      const usersData = await getUsers();
+      setUsers(usersData);
+    } catch (error) {
+      toast.error('Failed to fetch users');
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   const handleCreateUser = () => {
     setCurrentUser(null);
@@ -24,7 +34,7 @@ export function UserManagement({ users, fetchUsers }: UserManagementProps) {
     setShowUserModal(true);
   };
 
-  const handleDeleteUser = async (userId: number) => {
+  const handleDeleteUser = async (userId: string) => {
     if (window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
       try {
         await deleteUser(userId);
@@ -45,7 +55,7 @@ export function UserManagement({ users, fetchUsers }: UserManagementProps) {
   return (
     <div className="mb-8">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-serif font-medium text-gray-900">Users</h2>
+        <h1 className="text-3xl font-serif font-medium text-gray-900">Manage Users</h1> {/* Changed to h1 */}
         <button onClick={handleCreateUser} className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
           <PlusIcon className="h-4 w-4 mr-1" /> Add User
         </button>

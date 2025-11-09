@@ -79,12 +79,12 @@ export async function createUser(userData: any): Promise<CustomUser> {
   return response.data;
 }
 
-export async function updateUser(id: number, userData: any): Promise<CustomUser> {
+export async function updateUser(id: string, userData: any): Promise<CustomUser> {
   const response = await axios.patch(`${API_URL}/users/${id}/`, userData);
   return response.data;
 }
 
-export async function deleteUser(id: number): Promise<void> {
+export async function deleteUser(id: string): Promise<void> {
   await axios.delete(`${API_URL}/users/${id}/`);
 }
 
@@ -93,12 +93,12 @@ export async function createCategory(categoryData: { name: string }): Promise<Ca
   return response.data;
 }
 
-export async function updateCategory(id: number, categoryData: { name: string }): Promise<Category> {
+export async function updateCategory(id: string, categoryData: { name: string }): Promise<Category> {
   const response = await axios.patch(`${API_URL}/categories/${id}/`, categoryData);
   return response.data;
 }
 
-export async function deleteCategory(id: number): Promise<void> {
+export async function deleteCategory(id: string): Promise<void> {
   await axios.delete(`${API_URL}/categories/${id}/`);
 }
 
@@ -107,12 +107,12 @@ export async function createTag(tagData: { name: string }): Promise<Tag> {
   return response.data;
 }
 
-export async function updateTag(id: number, tagData: { name: string }): Promise<Tag> {
+export async function updateTag(id: string, tagData: { name: string }): Promise<Tag> {
   const response = await axios.patch(`${API_URL}/tags/${id}/`, tagData);
   return response.data;
 }
 
-export async function deleteTag(id: number): Promise<void> {
+export async function deleteTag(id: string): Promise<void> {
   await axios.delete(`${API_URL}/tags/${id}/`);
 }
 

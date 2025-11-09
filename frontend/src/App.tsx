@@ -6,7 +6,12 @@ import { Footer } from './components/Footer';
 import { Home } from './pages/Home';
 import { ArticleDetail } from './pages/ArticleDetail';
 import { AdminLogin } from './pages/AdminLogin';
-import { AdminDashboard } from './pages/AdminDashboard';
+import { AdminDashboardOverview } from './pages/admin/AdminDashboardOverview'; // New import
+import { AdminUsersPage } from './pages/admin/AdminUsersPage'; // New import
+import { AdminArticlesPage } from './pages/admin/AdminArticlesPage'; // New import
+import { AdminCategoriesTagsPage } from './pages/admin/AdminCategoriesTagsPage'; // New import
+import { AdminCommentsPage } from './pages/admin/AdminCommentsPage'; // New import
+import { AdminContactInfoPage } from './pages/admin/AdminContactInfoPage'; // New import
 import { CreateArticle } from './pages/CreateArticle';
 import { EditArticle } from './pages/EditArticle';
 import { About } from './pages/About';
@@ -35,7 +40,13 @@ export function App() {
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/admin" element={<AdminLogin />} />
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            {/* Admin Routes */}
+            <Route path="/admin/dashboard" element={<AdminDashboardOverview />} />
+            <Route path="/admin/users" element={<AdminUsersPage />} />
+            <Route path="/admin/articles" element={<AdminArticlesPage />} />
+            <Route path="/admin/categories-tags" element={<AdminCategoriesTagsPage />} />
+            <Route path="/admin/comments" element={<AdminCommentsPage />} />
+            <Route path="/admin/contact-info" element={<AdminContactInfoPage />} />
             <Route path="/admin/create" element={<CreateArticle />} />
             <Route path="/admin/edit/:id" element={<EditArticle />} />
           </Routes>

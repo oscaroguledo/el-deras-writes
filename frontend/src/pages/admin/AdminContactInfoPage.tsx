@@ -1,19 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { getContactInfo, updateContactInfo } from '../utils/api';
-
-interface ContactInfoManagementProps {
-  fetchContactInfo: () => void; // Callback to refresh contact info in parent
-}
+import { getContactInfo, updateContactInfo } from '../../utils/api'; // Adjusted import path
 
 interface ContactDetails {
   address: string;
   phone: string;
   email: string;
+  whatsapp_link: string; // Added
+  tiktok_link: string;   // Added
+  instagram_link: string; // Added
+  facebook_link: string;  // Added
 }
 
-export function ContactInfoManagement({ fetchContactInfo }: ContactInfoManagementProps) {
-  const [contactInfo, setContactInfo] = useState<ContactDetails>({ address: '', phone: '', email: '' });
+export function AdminContactInfoPage() { // Renamed from ContactInfoManagement
+  const [contactInfo, setContactInfo] = useState<ContactDetails>({
+    address: '',
+    phone: '',
+    email: '',
+    whatsapp_link: '', // Added
+    tiktok_link: '',   // Added
+    instagram_link: '', // Added
+    facebook_link: '',  // Added
+  });
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -39,7 +47,6 @@ export function ContactInfoManagement({ fetchContactInfo }: ContactInfoManagemen
       await updateContactInfo(contactInfo);
       toast.success('Contact information updated successfully!');
       setIsEditing(false);
-      fetchContactInfo(); // Refresh parent component's data
     } catch (error) {
       console.error('Failed to update contact info:', error);
       toast.error('Failed to update contact information.');
@@ -55,7 +62,7 @@ export function ContactInfoManagement({ fetchContactInfo }: ContactInfoManagemen
   return (
     <div className="mb-8">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-serif font-medium text-gray-900">Contact Information</h2>
+        <h1 className="text-3xl font-serif font-medium text-gray-900">Manage Contact Information</h1> {/* Changed to h1 */}
         {!isEditing && (
           <button onClick={() => setIsEditing(true)} className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
             Edit
@@ -95,6 +102,47 @@ export function ContactInfoManagement({ fetchContactInfo }: ContactInfoManagemen
                 className="w-full px-4 py-2 border border-gray-300 rounded-md"
               />
             </div>
+            {/* Social Media Links */}
+            <div>
+              <label htmlFor="whatsapp_link" className="block text-sm font-medium text-gray-700 mb-1">WhatsApp Link</label>
+              <input
+                type="url"
+                id="whatsapp_link"
+                value={contactInfo.whatsapp_link}
+                onChange={(e) => setContactInfo({ ...contactInfo, whatsapp_link: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md"
+              />
+            </div>
+            <div>
+              <label htmlFor="tiktok_link" className="block text-sm font-medium text-gray-700 mb-1">TikTok Link</label>
+              <input
+                type="url"
+                id="tiktok_link"
+                value={contactInfo.tiktok_link}
+                onChange={(e) => setContactInfo({ ...contactInfo, tiktok_link: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md"
+              />
+            </div>
+            <div>
+              <label htmlFor="instagram_link" className="block text-sm font-medium text-gray-700 mb-1">Instagram Link</label>
+              <input
+                type="url"
+                id="instagram_link"
+                value={contactInfo.instagram_link}
+                onChange={(e) => setContactInfo({ ...contactInfo, instagram_link: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md"
+              />
+            </div>
+            <div>
+              <label htmlFor="facebook_link" className="block text-sm font-medium text-gray-700 mb-1">Facebook Link</label>
+              <input
+                type="url"
+                id="facebook_link"
+                value={contactInfo.facebook_link}
+                onChange={(e) => setContactInfo({ ...contactInfo, facebook_link: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md"
+              />
+            </div>
             <div className="flex justify-end space-x-2">
               <button type="button" onClick={() => setIsEditing(false)} className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
                 Cancel
@@ -109,6 +157,10 @@ export function ContactInfoManagement({ fetchContactInfo }: ContactInfoManagemen
             <p className="text-gray-700"><strong>Address:</strong> {contactInfo.address || 'N/A'}</p>
             <p className="text-gray-700"><strong>Phone:</strong> {contactInfo.phone || 'N/A'}</p>
             <p className="text-gray-700"><strong>Email:</strong> {contactInfo.email || 'N/A'}</p>
+            <p className="text-gray-700"><strong>WhatsApp:</strong> <a href={contactInfo.whatsapp_link} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">{contactInfo.whatsapp_link || 'N/A'}</a></p>
+            <p className="text-gray-700"><strong>TikTok:</strong> <a href={contactInfo.tiktok_link} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">{contactInfo.tiktok_link || 'N/A'}</a></p>
+            <p className="text-gray-700"><strong>Instagram:</strong> <a href={contactInfo.instagram_link} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">{contactInfo.instagram_link || 'N/A'}</a></p>
+            <p className="text-gray-700"><strong>Facebook:</strong> <a href={contactInfo.facebook_link} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">{contactInfo.facebook_link || 'N/A'}</a></p>
           </div>
         )}
       </div>

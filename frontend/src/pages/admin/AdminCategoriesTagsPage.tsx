@@ -1,22 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { PlusIcon, EditIcon, TrashIcon } from 'lucide-react';
-import { Category } from '../types/Category';
-import { Tag } from '../types/Tag';
-import { getCategories, createCategory, updateCategory, deleteCategory, getTags, createTag, updateTag, deleteTag } from '../utils/api';
+import { Category } from '../../types/Category'; // Adjusted import path
+import { Tag } from '../../types/Tag'; // Adjusted import path
+import { getCategories, createCategory, updateCategory, deleteCategory, getTags, createTag, updateTag, deleteTag } from '../../utils/api'; // Adjusted import path
 
-interface CategoryTagManagementProps {
-  categories: Category[];
-  tags: Tag[];
-  fetchCategories: () => void;
-  fetchTags: () => void;
-}
-
-export function CategoryTagManagement({ categories, tags, fetchCategories, fetchTags }: CategoryTagManagementProps) {
+export function AdminCategoriesTagsPage() { // Renamed from CategoryTagManagement
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [tags, setTags] = useState<Tag[]>([]);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [newTagName, setNewTagName] = useState('');
   const [editingTag, setEditingTag] = useState<Tag | null>(null);
+
+  const fetchCategories = async () => {
+    try {
+      const categoriesData = await getCategories();
+      setCategories(categoriesData);
+    } catch (error) {
+      toast.error('Failed to fetch categories.');
+      console.error(error);
+    }
+  };
+
+  const fetchTags = async () => {
+    try {
+      const tagsData = await getTags();
+      setTags(tagsData);
+    } catch (error) {
+      toast.error('Failed to fetch tags.');
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+    fetchTags();
+  }, []);
 
   const handleCreateCategory = async (e: React.FormEvent) => {
     e.preventDefault();
