@@ -19,5 +19,4 @@ from django.urls import path, include
 
 urlpatterns = [
     path('api/', include('blog.urls')),
-    path('api/settings/', include('settings_api.urls')),
 ]

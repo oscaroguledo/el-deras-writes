@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react'; // Import useEffect
+import { SpeedInsights } from "@vercel/speed-insights/react"
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
@@ -13,8 +14,15 @@ import { Contact } from './pages/Contact';
 import { Terms } from './pages/Terms';
 import { Privacy } from './pages/Privacy';
 import { ToastContainer } from 'react-toastify';
+import { incrementVisitorCount } from './utils/api'; // Import incrementVisitorCount
+
+
 import 'react-toastify/dist/ReactToastify.css';
 export function App() {
+  useEffect(() => {
+    incrementVisitorCount().catch(error => console.error("Failed to increment visitor count:", error));
+  }, []); // Run once on mount
+
   return <BrowserRouter>
       <div className="min-h-screen bg-white flex flex-col">
         <Header />

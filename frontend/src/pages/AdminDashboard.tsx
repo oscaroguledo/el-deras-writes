@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getArticles, deleteArticle, getComments, getCategories, getTags, getUsers } from '../utils/api';
+import { getArticles, deleteArticle, getComments, getCategories, getTags, getUsers, getAdminDashboardData } from '../utils/api'; // Added getAdminDashboardData
 import { checkAuthStatus, logout } from '../utils/auth';
 import { toast } from 'react-toastify';
 import { Article } from '../types/Article';
@@ -8,7 +8,7 @@ import { Comment } from '../types/Comment';
 import { Category } from '../types/Category';
 import { Tag } from '../types/Tag';
 import { CustomUser } from '../types/CustomUser';
-import { PlusIcon, EditIcon, TrashIcon, LogOutIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+import { PlusIcon, EditIcon, TrashIcon, LogOutIcon, ChevronLeftIcon, ChevronRightIcon, UsersIcon } from 'lucide-react';
 import { UserManagement } from '../components/UserManagement';
 import { CategoryTagManagement } from '../components/CategoryTagManagement';
 import { ContactInfoManagement } from '../components/ContactInfoManagement';
@@ -19,11 +19,14 @@ export function AdminDashboard() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
   const [users, setUsers] = useState<CustomUser[]>([]);
+  const [dashboardData, setDashboardData] = useState<any>(null); // Added dashboardData state
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const [articlesPerPage] = useState(10); // This should match the backend's page_size
+  const [currentPage, setCurrentPage] = useState(1); // Added currentPage state
+  const [totalPages, setTotalPages] = useState(1); // Added totalPages state
 
   const fetchData = async () => {
     try {
@@ -33,12 +36,13 @@ export function AdminDashboard() {
         return;
       }
 
-      const [articlesResponse, commentsData, categoriesData, tagsData, usersData] = await Promise.all([
+      const [articlesResponse, commentsData, categoriesData, tagsData, usersData, adminDashboardData] = await Promise.all([ // Added adminDashboardData
         getArticles({ page: currentPage, page_size: articlesPerPage }),
         getComments(),
         getCategories(),
         getTags(),
         getUsers(),
+        getAdminDashboardData(), // Call the new API function
       ]);
 
       setArticles(articlesResponse.results);
@@ -47,6 +51,7 @@ export function AdminDashboard() {
       setCategories(categoriesData);
       setTags(tagsData);
       setUsers(usersData);
+      setDashboardData(adminDashboardData); // Set dashboardData
     } catch (error) {
       console.error(error);
       toast.error('Failed to fetch data');
@@ -115,6 +120,24 @@ export function AdminDashboard() {
             <LogOutIcon className="h-4 w-4 mr-1" /> Logout
           </button>
         </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+        {/* Total Visitors Card */}
+        <div className="bg-white shadow rounded-lg p-6">
+          <div className="flex items-center">
+            <div className="flex-shrink-0 bg-indigo-500 rounded-md p-3">
+              <UsersIcon className="h-6 w-6 text-white" />
+            </div>
+            <div className="ml-4">
+              <dt className="text-sm font-medium text-gray-500">Total Visitors</dt>
+              <dd className="text-3xl font-bold text-gray-900">
+                {dashboardData?.total_visitors !== undefined ? dashboardData.total_visitors : 'Loading...'}
+              </dd>
+            </div>
+          </div>
+        </div>
+        {/* Other cards can go here */}
       </div>
 
       {/* Articles Section */}

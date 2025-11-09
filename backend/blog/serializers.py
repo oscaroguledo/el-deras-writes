@@ -1,6 +1,10 @@
 from rest_framework import serializers
-from .models import Article, Comment, Category, Tag, CustomUser
+from .models import Article, Comment, Category, Tag, CustomUser,ContactInfo, VisitorCount
 
+class ContactInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactInfo
+        fields = '__all__'
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
@@ -31,4 +35,9 @@ class ArticleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Article
+        fields = '__all__'
+
+class VisitorCountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VisitorCount
         fields = '__all__'

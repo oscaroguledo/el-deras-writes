@@ -1,10 +1,11 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, status
+from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.response import Response
-from .models import Article, Comment, Category, Tag, CustomUser
-from .serializers import ArticleSerializer, CommentSerializer, CategorySerializer, TagSerializer, CustomUserSerializer
-from .permissions import IsAdminUser, IsAdminOrReadOnly, IsAuthorOrAdmin
+from .models import Article, Comment, Category, Tag, CustomUser,ContactInfo, VisitorCount
+from .serializers import ArticleSerializer,ContactInfoSerializer, CommentSerializer, CategorySerializer, TagSerializer, CustomUserSerializer, VisitorCountSerializer
+from blog.permissions import IsAdminOrReadOnly, IsAuthorOrAdmin
 
 class CustomPagination(PageNumberPagination):
     page_size = 10  # Number of articles per page
@@ -49,14 +50,24 @@ class AdminDashboardViewSet(viewsets.ViewSet):
 
     def list(self, request):
         # Implement logic to return admin dashboard data
+        total_visitors = VisitorCount.objects.first().count if VisitorCount.objects.exists() else 0
         data = {
             "total_users": CustomUser.objects.count(),
             "total_articles": Article.objects.count(),
             "total_comments": Comment.objects.count(),
             "total_categories": Category.objects.count(),
             "total_tags": Tag.objects.count(),
+            "total_visitors": total_visitors, # Added total_visitors
+            "recently_registered_users": CustomUser.objects.order_by('-date_joined')[:5].values('id', 'username', 'email'),
+            "recent_articles": Article.objects.order_by('-created_at')[:5].values('id', 'title', 'author__username', 'created_at'),
+            "recent_comments": Comment.objects.order_by('-created_at')[:5].values('id', 'article__title', 'author__username', 'created_at'),
+            "recent_categories": Category.objects.order_by('-id')[:5].values('id', 'name'),
+            "recent_tags": Tag.objects.order_by('-id')[:5].values('id', 'name'),
+            "recent_visitors": [],  # Placeholder for recent visitors data
+            "total_visitors_by_date": {}  # Placeholder for visitor statistics
         }
         return Response(data)   
+
 class AdminArticleViewSet(ArticleViewSet):
     permission_classes = [IsAdminUser]
 class AdminCategoryViewSet(CategoryViewSet):
@@ -67,3 +78,37 @@ class AdminUserViewSet(CustomUserViewSet):
     permission_classes = [IsAdminUser]
 class AdminCommentViewSet(CommentViewSet):
     permission_classes = [IsAdminUser]
+
+class ContactInfoView(APIView):
+    def get(self, request):
+        contact_info = ContactInfo.objects.first()
+        if contact_info:
+            serializer = ContactInfoSerializer(contact_info)
+            return Response(serializer.data)
+        return Response({}, status=status.HTTP_200_OK)
+
+    def patch(self, request):
+        # Only admin users can update contact info
+        permission_classes = [IsAdminUser]
+        contact_info = ContactInfo.objects.first()
+        if not contact_info:
+            # If no ContactInfo exists, create one
+            serializer = ContactInfoSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = ContactInfoSerializer(contact_info, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class IncrementVisitorCountView(APIView):
+    def post(self, request):
+        visitor_count, created = VisitorCount.objects.get_or_create(pk=1)
+        visitor_count.count += 1
+        visitor_count.save()
+        serializer = VisitorCountSerializer(visitor_count)
+        return Response(serializer.data, status=status.HTTP_200_OK)

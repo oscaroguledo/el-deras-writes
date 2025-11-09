@@ -74,25 +74,6 @@ export async function getUsers(): Promise<CustomUser[]> {
   return response.data;
 }
 
-export async function getSocialMediaLinks(): Promise<{
-  whatsapp: string;
-  tiktok: string;
-  instagram: string;
-  facebook: string;
-}> {
-  const response = await axios.get(`${API_URL}/settings/social-media/`);
-  return response.data;
-}
-
-export async function getContactInfo(): Promise<{
-  address: string;
-  phone: string;
-  email: string;
-}> {
-  const response = await axios.get(`${API_URL}/settings/contact-info/`);
-  return response.data;
-}
-
 export async function createUser(userData: any): Promise<CustomUser> {
   const response = await axios.post(`${API_URL}/users/`, userData);
   return response.data;
@@ -135,7 +116,17 @@ export async function deleteTag(id: number): Promise<void> {
   await axios.delete(`${API_URL}/tags/${id}/`);
 }
 
-export async function updateContactInfo(contactData: { address: string; phone: string; email: string }): Promise<any> {
-  const response = await axios.patch(`${API_URL}/settings/contact-info/`, contactData);
+export async function getAdminDashboardData(): Promise<any> {
+  const response = await axios.get(`${API_URL}/admin/dashboard/`);
+  return response.data;
+}
+
+export async function updateContactInfo(contactData: any): Promise<any> {
+  const response = await axios.patch(`${API_URL}/contact-info/`, contactData);
+  return response.data;
+}
+
+export async function incrementVisitorCount(): Promise<any> {
+  const response = await axios.post(`${API_URL}/visitor-count/increment/`);
   return response.data;
 }
