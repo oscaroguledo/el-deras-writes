@@ -1,29 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getArticles, deleteArticle } from '../../utils/api';
-import { checkAuthStatus } from '../../utils/auth';
 import { toast } from 'react-toastify';
 import { Article } from '../../types/Article';
 import { PlusIcon, EditIcon, TrashIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth'; // Import useAuth
 
-export function AdminArticlesPage() {
+export default function AdminArticlesPage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth(); // Use isAuthenticated from useAuth
 
   const [articlesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
   const fetchArticles = async () => {
-    try {
-      const isAuthenticated = await checkAuthStatus();
-      if (!isAuthenticated) {
-        navigate('/admin');
-        return;
-      }
-      const articlesResponse = await getArticles({ page: currentPage, page_size: articlesPerPage });
+          try {
+            if (!isAuthenticated) {
+              navigate('/admin');
+              return;
+            }      const articlesResponse = await getArticles({ page: currentPage, page_size: articlesPerPage });
       setArticles(articlesResponse.results);
       setTotalPages(Math.ceil(articlesResponse.count / articlesPerPage));
     } catch (error) {

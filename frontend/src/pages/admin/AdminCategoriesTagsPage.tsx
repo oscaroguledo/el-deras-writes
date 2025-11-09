@@ -5,7 +5,7 @@ import { Category } from '../../types/Category';
 import { Tag } from '../../types/Tag';
 import { getCategories, createCategory, updateCategory, deleteCategory, getTags, createTag, updateTag, deleteTag } from '../../utils/api';
 
-export function AdminCategoriesTagsPage() {
+export default function AdminCategoriesTagsPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
   const [newCategoryName, setNewCategoryName] = useState('');

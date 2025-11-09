@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { UsersIcon } from 'lucide-react';
 import { AdminDashboardData } from '../../utils/api'; // Import the interface
 
-export function AdminDashboardOverview() {
+export default function AdminDashboardOverview() {
   const [dashboardData, setDashboardData] = useState<AdminDashboardData | null>(null); // Use AdminDashboardData
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();

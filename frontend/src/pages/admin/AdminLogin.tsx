@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login, checkAuthStatus } from '@/utils/auth';
 import { toast } from 'react-toastify';
 import { LockIcon, UserIcon } from 'lucide-react';
-export function AdminLogin() {
+import { useAuth } from '../../hooks/useAuth'; // Import useAuth
+
+export default function AdminLogin() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { login, checkAuthStatus } = useAuth(); // Use login and checkAuthStatus from useAuth
   useEffect(() => {
     const verifyAuth = async () => {
       try {

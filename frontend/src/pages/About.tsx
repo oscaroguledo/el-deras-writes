@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-export function About() {
+export default function About() {
   return <div className="py-12">
       <div className="max-w-3xl mx-auto">
         <h1 className="text-3xl md:text-4xl font-serif font-medium text-gray-900 mb-6">

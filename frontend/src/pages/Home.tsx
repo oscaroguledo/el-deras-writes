@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { HeroPost } from '../components/HeroPost';
 import { BlogPostList } from '../components/BlogPostList';
-import { getArticles } from '../utils/api';
+import { getArticles, getTopFiveCategories } from '../utils/api';
 import { Article } from '../types/Article';
 import { CategoryList } from '../components/CategoryList';
+import { Category } from '@/types/Category';
 
-export function Home() {
+export default function Home() {
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get('search');
   const categoryFilter = searchParams.get('category');

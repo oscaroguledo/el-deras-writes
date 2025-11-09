@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { LogOutIcon, SettingsIcon } from 'lucide-react';
-import { useAuth } from '../utils/auth';
+import { useAuth } from '../../hooks/useAuth';
 
 export function AdminHeader() {
   const navigate = useNavigate();

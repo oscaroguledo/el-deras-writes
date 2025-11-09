@@ -5,7 +5,7 @@ import { CustomUser } from '../../types/CustomUser';
 import { getUsers, deleteUser } from '../../utils/api';
 import { UserFormModal } from '../../components/UserFormModal';
 
-export function AdminUsersPage() {
+export default function AdminUsersPage() {
   const [users, setUsers] = useState<CustomUser[]>([]);
   const [showUserModal, setShowUserModal] = useState(false);
   const [currentUser, setCurrentUser] = useState<CustomUser | null>(null);

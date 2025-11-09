@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArticleForm } from '../components/ArticleForm';
 import { getArticleById, updateArticle } from '../utils/api';
-import { checkAuthStatus } from '../utils/auth';
 import { toast } from 'react-toastify';
 import { Article } from '../types/Article';
-export function EditArticle() {
+import { useAuth } from '../../hooks/useAuth'; // Import useAuth
+
+export default function EditArticle() {
   const {
     id
   } = useParams<{
@@ -15,10 +16,10 @@ export function EditArticle() {
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth(); // Use isAuthenticated from useAuth
   useEffect(() => {
     const verifyAuthAndFetchArticle = async () => {
       try {
-        const isAuthenticated = await checkAuthStatus();
         if (!isAuthenticated) {
           navigate('/admin');
           return;

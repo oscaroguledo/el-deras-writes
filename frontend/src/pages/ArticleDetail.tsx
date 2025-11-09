@@ -6,7 +6,7 @@ import { CommentSection } from '../components/CommentSection';
 import { CalendarIcon, ClockIcon, TagIcon, ChevronLeftIcon } from 'lucide-react';
 import { MetaData } from '../components/MetaData';
 
-export function ArticleDetail() {
+export default function ArticleDetail() {
   const {
     id
   } = useParams<{

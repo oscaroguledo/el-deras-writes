@@ -25,39 +25,79 @@ const Terms = lazy(() => import('./pages/Terms'));
 const Privacy = lazy(() => import('./pages/Privacy'));
 
 import 'react-toastify/dist/ReactToastify.css';
+
+import { AuthProvider } from './hooks/useAuth'; // Import AuthProvider
+
 export function App() {
+
   useEffect(() => {
+
     incrementVisitorCount().catch(error => console.error("Failed to increment visitor count:", error));
+
   }, []); // Run once on mount
 
+
+
   return (
+
+    <AuthProvider> {/* Wrap the entire application with AuthProvider */}
+
       <div className="min-h-screen bg-white flex flex-col">
+
         <Suspense fallback={<div>Loading...</div>}>
+
           <Routes>
+
             <Route path="/" element={<MainLayout />}>
+
               <Route index element={<Home />} />
+
               <Route path="article/:id" element={<ArticleDetail />} />
+
               <Route path="about" element={<About />} />
+
               <Route path="contact" element={<Contact />} />
+
               <Route path="terms" element={<Terms />} />
+
               <Route path="privacy" element={<Privacy />} />
+
             </Route>
+
             <Route path="/admin/login" element={<AdminLogin />} />
+
             <Route path="/admin" element={<AdminLayout />}>
+
               <Route index element={<Navigate to="/admin/dashboard" replace />} />
+
               <Route path="dashboard" element={<AdminDashboardOverview />} />
+
               <Route path="users" element={<AdminUsersPage />} />
+
               <Route path="articles" element={<AdminArticlesPage />} />
+
               <Route path="articles/create" element={<CreateArticle />} />
+
               <Route path="articles/edit/:id" element={<EditArticle />} />
+
               <Route path="categories-tags" element={<AdminCategoriesTagsPage />} />
+
               <Route path="comments" element={<AdminCommentsPage />} />
+
               <Route path="contact-info" element={<AdminContactInfoPage />} />
+
             </Route>
+
           </Routes>
-                  </Suspense>
-                
-                <ToastContainer position="bottom-right" />
-              </div>
-          );
-        }
+
+        </Suspense>
+
+        <ToastContainer position="bottom-right" />
+
+      </div>
+
+    </AuthProvider>
+
+  );
+
+}

@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import { getContactInfo, updateContactInfo } from '../../utils/api';
 import { ContactInfo } from '../../types/ContactInfo'; // Import the ContactInfo interface
 
-export function AdminContactInfoPage() {
+export default function AdminContactInfoPage() {
   const [contactInfo, setContactInfo] = useState<ContactInfo>({ // Use imported ContactInfo
     address: '',
     phone: '',

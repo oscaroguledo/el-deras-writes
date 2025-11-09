@@ -2,15 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArticleForm } from '../components/ArticleForm';
 import { createArticle } from '../utils/api';
-import { checkAuthStatus } from '../utils/auth';
 import { toast } from 'react-toastify';
-export function CreateArticle() {
+import { useAuth } from '../hooks/useAuth'; // Import useAuth
+
+export default function CreateArticle() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth(); // Use isAuthenticated from useAuth
   useEffect(() => {
     const verifyAuth = async () => {
       try {
-        const isAuthenticated = await checkAuthStatus();
         if (!isAuthenticated) {
           navigate('/admin');
         }

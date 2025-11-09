@@ -9,7 +9,7 @@ interface ContactDetails {
   email?: string;
 }
 
-export function Contact() {
+export default function Contact() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [subject, setSubject] = useState('');

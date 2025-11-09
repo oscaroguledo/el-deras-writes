@@ -1,23 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getComments } from '../../utils/api';
-import { checkAuthStatus } from '../../utils/auth';
 import { toast } from 'react-toastify';
 import { Comment } from '../../types/Comment';
+import { useAuth } from '../../hooks/useAuth'; // Import useAuth
 
-export function AdminCommentsPage() {
+export default function AdminCommentsPage() {
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth(); // Use isAuthenticated from useAuth
 
   const fetchComments = async () => {
-    try {
-      const isAuthenticated = await checkAuthStatus();
-      if (!isAuthenticated) {
-        navigate('/admin');
-        return;
-      }
-      const commentsData = await getComments();
+          try {
+            if (!isAuthenticated) {
+              navigate('/admin');
+              return;
+            }      const commentsData = await getComments();
       setComments(commentsData);
     } catch (error) {
       console.error(error);

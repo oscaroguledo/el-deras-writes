@@ -1,5 +1,5 @@
 import React from 'react';
-export function Privacy() {
+export default function Privacy() {
   return <div className="py-12">
       <div className="max-w-3xl mx-auto">
         <h1 className="text-3xl md:text-4xl font-serif font-medium text-gray-900 mb-6">
