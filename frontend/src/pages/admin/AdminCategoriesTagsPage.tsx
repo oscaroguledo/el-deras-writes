@@ -77,7 +77,7 @@ export default function AdminCategoriesTagsPage() {
     }
   };
 
-  const handleDeleteCategory = async (categoryId: number) => {
+  const handleDeleteCategory = async (categoryId: string) => {
     if (window.confirm('Are you sure you want to delete this category? This action cannot be undone.')) {
       try {
         await deleteCategory(categoryId);
@@ -124,7 +124,7 @@ export default function AdminCategoriesTagsPage() {
     }
   };
 
-  const handleDeleteTag = async (tagId: number) => {
+  const handleDeleteTag = async (tagId: string) => {
     if (window.confirm('Are you sure you want to delete this tag? This action cannot be undone.')) {
       try {
         await deleteTag(tagId);

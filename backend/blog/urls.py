@@ -36,5 +36,5 @@ urlpatterns = [
     path('', include(articles_router.urls)),
     path('contact-info/', ContactInfoView.as_view(), name='contact-info'),
     path('visitor-count/increment/', IncrementVisitorCountView.as_view(), name='increment-visitor-count'),
-    path('admin/dashboard/', AdminDashboardView.as_view(), name='admin-dashboard'),
+    path('admin/', AdminDashboardView.as_view(), name='admin-dashboard'),
 ]

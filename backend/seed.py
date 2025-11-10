@@ -264,7 +264,17 @@ def seed_data():
 
     for article_data in mockArticles:
         author_name = article_data['author']
-        author, _ = CustomUser.objects.get_or_create(username=author_name, defaults={'first_name': author_name.split(' ')[0], 'last_name': author_name.split(' ')[-1] if len(author_name.split(' ')) > 1 else ''})
+        # Generate a unique email for each author for seeding purposes
+        email = f"{author_name.lower().replace(' ', '.')}.{uuid.uuid4().hex[:6]}@example.com"
+        author, _ = CustomUser.objects.get_or_create(
+            username=author_name,
+            email=email, # Provide a unique email
+            defaults={
+                'first_name': author_name.split(' ')[0],
+                'last_name': author_name.split(' ')[-1] if len(author_name.split(' ')) > 1 else '',
+                'user_type': 'normal' # Default user type
+            }
+        )
 
         category_name = article_data['category']
         category, _ = Category.objects.get_or_create(name=category_name)
