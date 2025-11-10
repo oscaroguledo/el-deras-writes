@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../hooks/useAuth.ts';
 import { updateUser } from '../../utils/api';
 import { CustomUser } from '../../types/CustomUser';
 

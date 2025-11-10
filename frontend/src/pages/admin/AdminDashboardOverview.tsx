@@ -4,7 +4,7 @@ import { getAdminDashboardData } from '../../utils/api';
 import { toast } from 'react-toastify';
 import { UsersIcon, FileText, MessageSquare, Tag, Folder, UserPlus } from 'lucide-react';
 import { AdminDashboardData } from '../../types/Admin';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../hooks/useAuth.ts';
 
 export default function AdminDashboardOverview() {
   const [dashboardData, setDashboardData] = useState<AdminDashboardData | null>(null);

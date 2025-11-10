@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArticleForm } from '../../components/ArticleForm';
 import { createArticle } from '../../utils/api';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../hooks/useAuth.ts';
 
 export default function CreateArticle() {
   const [isSubmitting, setIsSubmitting] = useState(false);
