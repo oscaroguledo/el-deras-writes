@@ -5,24 +5,24 @@ import { LockIcon, UserIcon } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth.ts';
 
 export default function AdminLogin() {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!username || !password) {
-      toast.error('Please enter both username and password');
+    if (!email || !password) {
+      toast.error('Please enter both email and password');
       return;
     }
     try {
       setIsLoading(true);
-      await login(username, password);
+      await login(email, password);
       toast.success('Login successful!');
       navigate('/admin/dashboard');
     } catch (error) {
-      toast.error('Invalid username or password');
+      toast.error('Invalid email or password');
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -41,14 +41,14 @@ export default function AdminLogin() {
         <div className="bg-white shadow-md rounded-lg p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
-                Username
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                Email
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <UserIcon className="h-5 w-5 text-gray-400" />
                 </div>
-                <input id="username" type="text" value={username} onChange={e => setUsername(e.target.value)} className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500" placeholder="Admin username" required />
+                <input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500" placeholder="Admin email" required />
               </div>
             </div>
             <div>
