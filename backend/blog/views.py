@@ -11,7 +11,8 @@ from .serializers import ArticleSerializer, ContactInfoSerializer, CommentSerial
 from blog.permissions import IsAdminOrReadOnly, IsAuthorOrAdmin
 from rest_framework.decorators import action
 from rest_framework import filters # Import filters
-
+from django.utils import timezone
+from datetime import timedelta
 class ArticlePagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = 'page_size'
@@ -65,6 +66,18 @@ class CustomUserViewSet(viewsets.ModelViewSet):
     serializer_class = CustomUserSerializer
     permission_classes = [IsAdminOrReadOnly]
 
+    def perform_create(self, serializer):
+        user_type = serializer.validated_data.get('user_type')
+        is_staff = user_type == 'admin'
+        is_superuser = user_type == 'admin'
+        serializer.save(is_staff=is_staff, is_superuser=is_superuser)
+
+    def perform_update(self, serializer):
+        user_type = serializer.validated_data.get('user_type', serializer.instance.user_type)
+        is_staff = user_type == 'admin'
+        is_superuser = user_type == 'admin'
+        serializer.save(is_staff=is_staff, is_superuser=is_superuser)
+
 class AdminArticleViewSet(viewsets.ModelViewSet):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
@@ -89,6 +102,18 @@ class AdminUserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
     permission_classes = [IsAdminUser]
+
+    def perform_create(self, serializer):
+        user_type = serializer.validated_data.get('user_type')
+        is_staff = user_type == 'admin'
+        is_superuser = user_type == 'admin'
+        serializer.save(is_staff=is_staff, is_superuser=is_superuser)
+
+    def perform_update(self, serializer):
+        user_type = serializer.validated_data.get('user_type', serializer.instance.user_type)
+        is_staff = user_type == 'admin'
+        is_superuser = user_type == 'admin'
+        serializer.save(is_staff=is_staff, is_superuser=is_superuser)
 
 class ContactInfoView(APIView):
     permission_classes = [AllowAny]
@@ -141,14 +166,54 @@ class AdminDashboardView(APIView):
         recent_comments = Comment.objects.order_by('-created_at')[:5]
         recent_categories = Category.objects.annotate(article_count=models.Count('article')).order_by('-article_count')[:5]
         recent_tags = Tag.objects.annotate(article_count=models.Count('article')).order_by('-article_count')[:5]
+        top_authors = CustomUser.objects.filter(articles__isnull=False).annotate(
+            total_articles=models.Count('articles'),
+            total_comments=models.Count('articles__comments')
+        ).order_by('-total_articles')[:5]
+
+        most_viewed_articles = Article.objects.order_by('-views')[:5]
+        most_liked_articles = Article.objects.order_by('-likes')[:5]
+        today = timezone.now().date()
+        last_7_days = today - timedelta(days=7)
+
+        weekly_visits = VisitorCount.objects.filter(date__gte=last_7_days).aggregate(
+            total=models.Sum('count')
+        )['total'] or 0
+
+        articles_this_week = Article.objects.filter(created_at__gte=last_7_days).count()
+        comments_this_week = Comment.objects.filter(created_at__gte=last_7_days).count()
+        pending_comments = Comment.objects.filter(approved=False).count()
+        flagged_comments = Comment.objects.filter(is_flagged=True).count()
+        inactive_users = CustomUser.objects.filter(last_login__lt=last_7_days).count()
+        avg_views_per_article = Article.objects.aggregate(avg=models.Avg('views'))['avg']
+        avg_comments_per_article = Comment.objects.aggregate(avg=models.Avg('article__comments'))['avg']
+        total_articles = Article.objects.count()
+        total_comments = Comment.objects.count()
+        total_categories = Category.objects.count()
+        total_tags = Tag.objects.count()
 
         data = {
             'total_visitors': total_visitors,
+            'total_articles': total_articles,
+            'total_comments': total_comments,
+            'total_categories': total_categories,
+            'total_tags': total_tags,
             'recently_registered_users': CustomUserSerializer(recently_registered_users, many=True).data,
             'recent_articles': ArticleSerializer(recent_articles, many=True).data,
             'recent_comments': CommentSerializer(recent_comments, many=True).data,
             'recent_categories': CategorySerializer(recent_categories, many=True).data,
             'recent_tags': TagSerializer(recent_tags, many=True).data,
+            'top_authors': CustomUserSerializer(top_authors, many=True).data,
+            'most_viewed_articles': ArticleSerializer(most_viewed_articles, many=True).data,
+            'most_liked_articles': ArticleSerializer(most_liked_articles, many=True).data,
+            'weekly_visits': weekly_visits,
+            'articles_this_week': articles_this_week,
+            'comments_this_week': comments_this_week,
+            'pending_comments': pending_comments,
+            'flagged_comments': flagged_comments,
+            'inactive_users': inactive_users,
+            'avg_views_per_article': avg_views_per_article,
+            'avg_comments_per_article': avg_comments_per_article,
         }
         return Response(data)
 
