@@ -1,5 +1,9 @@
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import Article, Comment, Category, Tag, CustomUser,ContactInfo, VisitorCount
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    username_field = 'email'
 
 class ContactInfoSerializer(serializers.ModelSerializer):
     class Meta:
