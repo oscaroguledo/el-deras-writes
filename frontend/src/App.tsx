@@ -56,18 +56,14 @@ export const routes = createRoutesFromElements(
   </Route>
 );
 
-export function App() {
+export function App({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     incrementVisitorCount().catch(error => console.error("Failed to increment visitor count:", error));
   }, []);
 
   return (
-    <AuthProvider>
-      <div className="min-h-screen bg-white flex flex-col">
-        <Suspense fallback={<div>Loading...</div>}>
-          <ToastContainer position="bottom-right" />
-        </Suspense>
-      </div>
-    </AuthProvider>
+    <div className="min-h-screen bg-white flex flex-col">
+      {children}
+    </div>
   );
 }
