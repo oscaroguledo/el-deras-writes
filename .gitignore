@@ -147,5 +147,4 @@ backend/media/
 backend/static_root/
 
 # Frontend specific ignores
-frontend/src/components/AdminHeader.tsx
 frontend/src/components/AdminSidebar.tsx
