@@ -28,13 +28,17 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '.netlify.app', '.vercel.app', '.github.io', '.cloudflare.com']
 
-AUTH_USER_MODEL = 'blog.CustomUser'
+AUTHENTICATION_BACKENDS = [
+    'blog.auth_backends.CustomUserBackend',
+]
+
+# AUTH_USER_MODEL = 'blog.CustomUser'
 
 # Application definition
 
 INSTALLED_APPS = [
     'django.contrib.auth',
-    'django.contrib.contenttypes',
+    'django.contrib.contenttypes', # Keep contenttypes for PermissionsMixin
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
@@ -50,7 +54,6 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
