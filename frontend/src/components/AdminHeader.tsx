@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.ts';
-import { Menu, User, LogOut } from 'lucide-react';
+import { Menu, X, User, LogOut } from 'lucide-react';
+import logo from '/logo.webp'; // Import the logo
 
 interface AdminHeaderProps {
   onMenuClick: () => void;
@@ -28,11 +29,15 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
           >
             <Menu size={24} />
           </button>
-          <Link to="/admin/dashboard" className="text-xl font-bold font-serif">
-            Admin Panel
+          <Link to="/" className="flex items-center">
+            <img src={logo} alt="Logo" className="h-8 w-auto mr-2" />
+            <span className="text-xl font-bold font-serif">Admin Panel</span>
           </Link>
         </div>
-        <div className="relative">
+        <div className="relative flex items-center space-x-4">
+          <Link to="/" className="text-white hover:text-gray-300 hidden md:block">
+            View Site
+          </Link>
           <button
             className="flex items-center space-x-2"
             onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
