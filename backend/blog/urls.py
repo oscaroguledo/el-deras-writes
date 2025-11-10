@@ -13,7 +13,6 @@ from .views import (
     AdminTagViewSet,
     AdminUserViewSet,
     ContactInfoView,
-    LoginView,
     IncrementVisitorCountView,
     AdminDashboardView,
 )
@@ -35,8 +34,7 @@ articles_router.register(r'comments', CommentViewSet, basename='article-comments
 urlpatterns = [
     path('', include(router.urls)),
     path('', include(articles_router.urls)),
-    path('auth/login/', LoginView.as_view(), name='login'),
     path('contact-info/', ContactInfoView.as_view(), name='contact-info'),
     path('visitor-count/increment/', IncrementVisitorCountView.as_view(), name='increment-visitor-count'),
     path('admin/dashboard/', AdminDashboardView.as_view(), name='admin-dashboard'),
-    ]
+]

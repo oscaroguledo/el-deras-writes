@@ -9,16 +9,7 @@ export default function AdminLogin() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { login, checkAuthStatus } = useAuth(); // Use login and checkAuthStatus from useAuth
-useEffect(() => {
-    const check = async () => {
-      const isAuthenticated = await checkAuthStatus();
-      if (isAuthenticated) {
-        navigate('/admin/dashboard');
-      }
-    };
-    check();
-  }, [checkAuthStatus, navigate]);
+  const { login } = useAuth();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!username || !password) {

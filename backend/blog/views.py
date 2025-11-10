@@ -121,18 +121,6 @@ class ContactInfoView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class LoginView(APIView):
-    permission_classes = [AllowAny]
-
-    def post(self, request):
-        username = request.data.get('username')
-        password = request.data.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user:
-            login(request, user)
-            return Response({"message": "Login successful", "user": CustomUserSerializer(user).data})
-        return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-
 class IncrementVisitorCountView(APIView):
     permission_classes = [AllowAny]
 
