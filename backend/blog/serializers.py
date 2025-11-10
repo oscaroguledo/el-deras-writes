@@ -14,7 +14,15 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)
-        user = CustomUser.objects.create_user(**validated_data)
+        user_type = validated_data.get('user_type', 'normal')
+        is_staff = user_type == 'admin'
+        is_superuser = user_type == 'admin'
+
+        user = CustomUser.objects.create(
+            is_staff=is_staff,
+            is_superuser=is_superuser,
+            **validated_data
+        )
         if password:
             user.set_password(password)
             user.save()

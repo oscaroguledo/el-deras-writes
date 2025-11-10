@@ -13,7 +13,15 @@ def seed_data():
 
     # Create a superuser if it doesn't exist
     if not CustomUser.objects.filter(username='admin').exists():
-        admin_user = CustomUser.objects.create_superuser('admin', 'admin@example.com', 'adminpassword')
+        admin_user = CustomUser.objects.create(
+            username='admin',
+            email='admin@example.com',
+            user_type='admin',
+            is_staff=True,
+            is_superuser=True,
+        )
+        admin_user.set_password('adminpassword')
+        admin_user.save()
         print("Superuser 'admin' created.")
     else:
         print("Superuser 'admin' already exists.")
