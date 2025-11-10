@@ -1,42 +1,31 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { getArticles, deleteArticle } from '../../utils/api';
-import { toast } from 'react-toastify';
-import { Article } from '../../types/Article';
-import { PlusIcon, EditIcon, TrashIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
-import { useAuth } from '../../hooks/useAuth'; // Import useAuth
+import React, { useEffect, useState, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 
 export default function AdminArticlesPage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
-  const navigate = useNavigate();
-  const { isAuthenticated } = useAuth(); // Use isAuthenticated from useAuth
 
-  const [articlesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const fetchArticles = async () => {
-          try {
-            if (!isAuthenticated) {
-              navigate('/admin');
-              return;
-            }      const articlesResponse = await getArticles({ page: currentPage, page_size: articlesPerPage });
-      setArticles(articlesResponse.results);
-      setTotalPages(Math.ceil(articlesResponse.count / articlesPerPage));
+const fetchArticles = useCallback(async (page: number) => {
+    try {
+      setLoading(true);
+      const data = await getArticles({ page, pageSize: 10 });
+      setArticles(data.results);
+      setTotalPages(Math.ceil(data.count / 10));
     } catch (error) {
-      console.error(error);
-      toast.error('Failed to fetch articles');
-      navigate('/admin');
+      console.error('Failed to fetch articles:', error);
+      toast.error('Failed to fetch articles.');
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  useEffect(() => {
-    fetchArticles();
-  }, [navigate, currentPage]);
+useEffect(() => {
+    fetchArticles(currentPage);
+  }, [fetchArticles, currentPage]);
 
   const handleDeleteArticle = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this article? This action cannot be undone.')) {

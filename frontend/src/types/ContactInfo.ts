@@ -7,4 +7,6 @@ export interface ContactInfo {
   tiktok_link: string | null;
   instagram_link: string | null;
   facebook_link: string | null;
+  linkedin_link: string | null;
+  github_link: string | null;
 }

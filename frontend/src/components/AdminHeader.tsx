@@ -1,32 +1,68 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { LogOutIcon, SettingsIcon } from 'lucide-react';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../hooks/useAuth';
+import { Menu, User, LogOut } from 'lucide-react';
 
-export default function AdminHeader() {
+interface AdminHeaderProps {
+  onMenuClick: () => void;
+}
+
+export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
-    navigate('/admin/login');
+    navigate('/admin');
   };
 
   return (
-    <header className="bg-gray-800 text-white p-4 shadow-md">
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
-        <Link to="/admin/dashboard" className="text-xl font-semibold">
-          Admin Dashboard
-        </Link>
-        <nav className="flex items-center space-x-4">
-          <Link to="/admin/settings" className="hover:text-gray-300">
-            <SettingsIcon className="h-5 w-5" />
-          </Link>
-          <button onClick={handleLogout} className="flex items-center space-x-2 hover:text-gray-300">
-            <LogOutIcon className="h-5 w-5" />
-            <span>Logout</span>
+    <header className="bg-gray-800 text-white shadow-md">
+      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+        <div className="flex items-center">
+          <button
+            className="md:hidden mr-4 text-white"
+            onClick={onMenuClick}
+            aria-label="Open sidebar"
+          >
+            <Menu size={24} />
           </button>
-        </nav>
+          <Link to="/admin/dashboard" className="text-xl font-bold font-serif">
+            Admin Panel
+          </Link>
+        </div>
+        <div className="relative">
+          <button
+            className="flex items-center space-x-2"
+            onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+          >
+            <User size={24} />
+            <span className="hidden md:block">{user?.username || 'Admin'}</span>
+          </button>
+          {isUserMenuOpen && (
+            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+              <Link
+                to="/admin/profile"
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                onClick={() => setIsUserMenuOpen(false)}
+              >
+                <User size={16} className="inline-block mr-2" />
+                Profile
+              </Link>
+              <button
+                onClick={() => {
+                  handleLogout();
+                  setIsUserMenuOpen(false);
+                }}
+                className="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >
+                <LogOut size={16} className="inline-block mr-2" />
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );

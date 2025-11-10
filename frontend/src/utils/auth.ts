@@ -1,1 +1,0 @@
-// This file is now empty as authentication logic has been moved to frontend/src/hooks/useAuth.ts

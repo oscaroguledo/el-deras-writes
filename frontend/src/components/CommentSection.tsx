@@ -27,10 +27,16 @@ export function CommentSection({ articleId }: CommentSectionProps) {
 
       fetchedComments.forEach((comment) => {
         if (comment.parent && commentMap.has(comment.parent)) {
-          const parent = commentMap.get(comment.parent)!;
-          parent.replies = [...(parent.replies || []), commentMap.get(comment.id)!];
+          const parent = commentMap.get(comment.parent);
+          const currentComment = commentMap.get(comment.id);
+          if (parent && currentComment) {
+            parent.replies = [...(parent.replies || []), currentComment];
+          }
         } else {
-          topLevelComments.push(commentMap.get(comment.id)!);
+          const currentComment = commentMap.get(comment.id);
+          if (currentComment) {
+            topLevelComments.push(currentComment);
+          }
         }
       });
 

@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { getTopFiveCategories } from '../utils/api';
 import { Category } from '../types/Category';
 
-export function Header() {
+export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [topCategories, setTopCategories] = useState<Category[]>([]);
@@ -63,7 +63,7 @@ export function Header() {
                   to={`/?category=${category.name}`}
                   className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium"
                 >
-                  {category.name}
+                  {category.name.trim()}
                 </Link>
               ))}
             </nav>
@@ -111,11 +111,11 @@ export function Header() {
             {topCategories.slice(0, 2).map(category => (
               <Link
                 key={category.id}
-                to={`/?category=${category.name}`}
+                to={`/?category=${encodeURIComponent(category.name.trim())}`}
                 className="block px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-md"
                 onClick={() => setIsMenuOpen(false)}
               >
-                {category.name}
+                {category.name.trim()}
               </Link>
             ))}
           </nav>

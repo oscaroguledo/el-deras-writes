@@ -1,20 +1,14 @@
 import axios from 'axios';
-import { Article } from '../types/Article';
+import { Article, GetArticlesParams } from '../types/Article';
 import { Comment } from '../types/Comment';
 import { Category } from '../types/Category';
 import { Tag } from '../types/Tag';
 import { CustomUser } from '../types/CustomUser';
 import { ContactInfo } from '../types/ContactInfo'; // New import
 import { VisitorCount } from '../types/VisitorCount'; // New import
-
+import { AdminDashboardData } from '../types/Admin'; // New import
 const API_URL = 'http://localhost:8000/api';
 
-interface GetArticlesParams {
-  search?: string | null;
-  category?: string | null;
-  page?: number;
-  page_size?: number;
-}
 
 interface PaginatedResponse<T> {
   count: number;
@@ -23,22 +17,6 @@ interface PaginatedResponse<T> {
   results: T[];
 }
 
-// New interface for Admin Dashboard Data
-interface AdminDashboardData {
-  total_users: number;
-  total_articles: number;
-  total_comments: number;
-  total_categories: number;
-  total_tags: number;
-  total_visitors: number;
-  recently_registered_users: Array<{ id: string; username: string; email: string; date_joined: string; }>;
-  recent_articles: Array<{ id: string; title: string; author__username: string; created_at: string }>;
-  recent_comments: Array<{ id: string; article__title: string; author__username: string; created_at: string }>;
-  recent_categories: Array<{ id: number; name: string }>;
-  recent_tags: Array<{ id: number; name: string }>;
-  recent_visitors: any[]; // Assuming this is an array of unknown type for now
-  total_visitors_by_date: Record<string, number>; // Assuming this is a dictionary of date to count
-}
 
 export async function getArticles(params: GetArticlesParams): Promise<PaginatedResponse<Article>> {
   const response = await axios.get(`${API_URL}/articles/`, { params });

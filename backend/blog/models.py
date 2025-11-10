@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractUser
 import uuid
 
 class CustomUser(AbstractUser):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     USER_TYPE_CHOICES = (
         ('admin', 'Admin'),
         ('normal', 'Normal'),
@@ -22,12 +23,14 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.username
 class Category(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
         return self.name
 
 class Tag(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
@@ -59,6 +62,7 @@ class Article(models.Model):
         return self.title
 
 class Comment(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='comments')
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')

@@ -143,3 +143,24 @@ class IncrementVisitorCountView(APIView):
         serializer = VisitorCountSerializer(visitor_count)
         return Response(serializer.data)
 
+class AdminDashboardView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        total_visitors = VisitorCount.objects.first().count if VisitorCount.objects.exists() else 0
+        recently_registered_users = CustomUser.objects.order_by('-date_joined')[:5]
+        recent_articles = Article.objects.order_by('-created_at')[:5]
+        recent_comments = Comment.objects.order_by('-created_at')[:5]
+        recent_categories = Category.objects.annotate(article_count=models.Count('article')).order_by('-article_count')[:5]
+        recent_tags = Tag.objects.annotate(article_count=models.Count('article')).order_by('-article_count')[:5]
+
+        data = {
+            'total_visitors': total_visitors,
+            'recently_registered_users': CustomUserSerializer(recently_registered_users, many=True).data,
+            'recent_articles': ArticleSerializer(recent_articles, many=True).data,
+            'recent_comments': CommentSerializer(recent_comments, many=True).data,
+            'recent_categories': CategorySerializer(recent_categories, many=True).data,
+            'recent_tags': TagSerializer(recent_tags, many=True).data,
+        }
+        return Response(data)
+

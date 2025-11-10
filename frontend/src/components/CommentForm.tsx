@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
-import { getUser } from '../utils/auth';
+import { useAuth } from '../hooks/useAuth';
 
 interface CommentFormProps {
   articleId: string;
@@ -14,7 +14,6 @@ interface CommentFormProps {
 }
 
 export function CommentForm({
-  articleId,
   parentId,
   onCommentSubmit,
   isReply = false,
@@ -22,8 +21,8 @@ export function CommentForm({
 }: CommentFormProps) {
   const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const user = getUser();
-  const userLoggedIn = !!user;
+  const { user, isAuthenticated } = useAuth();
+  const userLoggedIn = isAuthenticated;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -13,3 +13,9 @@ export interface Article {
   createdAt: string;
   updatedAt: string;
 }
+export interface GetArticlesParams {
+  search?: string | null;
+  category?: string | null;
+  page?: number;
+  page_size?: number;
+}

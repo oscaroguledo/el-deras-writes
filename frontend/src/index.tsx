@@ -5,11 +5,13 @@ import { AppRouter } from "./AppRouter"; // Import AppRouter
 import { HelmetProvider } from 'react-helmet-async';
 
 const container = document.getElementById("root");
-const root = createRoot(container!);
-root.render(
-  <React.StrictMode>
-    <HelmetProvider>
-      <AppRouter /> {/* Render AppRouter instead of App */}
-    </HelmetProvider>
-  </React.StrictMode>
-);
+if (container) {
+  const root = createRoot(container);
+  root.render(
+    <React.StrictMode>
+      <HelmetProvider>
+        <AppRouter /> {/* Render AppRouter instead of App */}
+      </HelmetProvider>
+    </React.StrictMode>
+  );
+}

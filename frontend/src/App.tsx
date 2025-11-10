@@ -1,6 +1,5 @@
 import React, { useEffect, lazy, Suspense } from 'react';
-import { SpeedInsights } from "@vercel/speed-insights/react"
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Route, Navigate, createRoutesFromElements } from 'react-router-dom';
 import { incrementVisitorCount } from './utils/api';
 
 // Layout components
@@ -17,16 +16,45 @@ const AdminArticlesPage = lazy(() => import('./pages/admin/AdminArticlesPage'));
 const AdminCategoriesTagsPage = lazy(() => import('./pages/admin/AdminCategoriesTagsPage'));
 const AdminCommentsPage = lazy(() => import('./pages/admin/AdminCommentsPage'));
 const AdminContactInfoPage = lazy(() => import('./pages/admin/AdminContactInfoPage'));
-const CreateArticle = lazy(() => import('./pages/CreateArticle'));
-const EditArticle = lazy(() => import('./pages/EditArticle'));
+const AdminProfilePage = lazy(() => import('./pages/admin/AdminProfilePage'));
+const AdminSettingsPage = lazy(() => import('./pages/admin/AdminSettingsPage'));
+const CreateArticle = lazy(() => import('./pages/admin/CreateArticle'));
+const EditArticle = lazy(() => import('./pages/admin/EditArticle'));
 const About = lazy(() => import('./pages/About'));
 const Contact = lazy(() => import('./pages/Contact'));
 const Terms = lazy(() => import('./pages/Terms'));
 const Privacy = lazy(() => import('./pages/Privacy'));
 
 import 'react-toastify/dist/ReactToastify.css';
-import { AuthProvider } from './hooks/useAuth';
+import { AuthProvider } from './hooks/AuthProvider';
 import { ToastContainer } from 'react-toastify';
+
+export const routes = createRoutesFromElements(
+  <Route>
+    <Route path="/" element={<MainLayout />}>
+      <Route index element={<Home />} />
+      <Route path="article/:id" element={<ArticleDetail />} />
+      <Route path="about" element={<About />} />
+      <Route path="contact" element={<Contact />} />
+      <Route path="terms" element={<Terms />} />
+      <Route path="privacy" element={<Privacy />} />
+    </Route>
+    <Route path="/admin/login" element={<AdminLogin />} />
+    <Route path="/admin" element={<AdminLayout />}>
+      <Route index element={<Navigate to="/admin/dashboard" replace />} />
+      <Route path="dashboard" element={<AdminDashboardOverview />} />
+      <Route path="users" element={<AdminUsersPage />} />
+      <Route path="articles" element={<AdminArticlesPage />} />
+      <Route path="articles/create" element={<CreateArticle />} />
+      <Route path="articles/edit/:id" element={<EditArticle />} />
+      <Route path="categories-tags" element={<AdminCategoriesTagsPage />} />
+      <Route path="comments" element={<AdminCommentsPage />} />
+      <Route path="contact-info" element={<AdminContactInfoPage />} />
+      <Route path="profile" element={<AdminProfilePage />} />
+      <Route path="settings" element={<AdminSettingsPage />} />
+    </Route>
+  </Route>
+);
 
 export function App() {
   useEffect(() => {
@@ -37,30 +65,8 @@ export function App() {
     <AuthProvider>
       <div className="min-h-screen bg-white flex flex-col">
         <Suspense fallback={<div>Loading...</div>}>
-          <Routes>
-            <Route path="/" element={<MainLayout />}>
-              <Route index element={<Home />} />
-              <Route path="article/:id" element={<ArticleDetail />} />
-              <Route path="about" element={<About />} />
-              <Route path="contact" element={<Contact />} />
-              <Route path="terms" element={<Terms />} />
-              <Route path="privacy" element={<Privacy />} />
-            </Route>
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<Navigate to="/admin/dashboard" replace />} />
-              <Route path="dashboard" element={<AdminDashboardOverview />} />
-              <Route path="users" element={<AdminUsersPage />} />
-              <Route path="articles" element={<AdminArticlesPage />} />
-              <Route path="articles/create" element={<CreateArticle />} />
-              <Route path="articles/edit/:id" element={<EditArticle />} />
-              <Route path="categories-tags" element={<AdminCategoriesTagsPage />} />
-              <Route path="comments" element={<AdminCommentsPage />} />
-              <Route path="contact-info" element={<AdminContactInfoPage />} />
-            </Route>
-          </Routes>
+          <ToastContainer position="bottom-right" />
         </Suspense>
-        <ToastContainer position="bottom-right" />
       </div>
     </AuthProvider>
   );

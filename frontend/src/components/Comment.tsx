@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Comment as CommentType } from '../types/Comment';
 import { CommentForm } from './CommentForm';
-import { getCurrentUser } from '../utils/commentAuth';
 interface CommentProps {
   comment: CommentType;
   onReply: (comment: {
@@ -17,7 +16,6 @@ export function Comment({
   articleId
 }: CommentProps) {
   const [isReplying, setIsReplying] = useState(false);
-  const currentUser = getCurrentUser();
   const formattedDate = new Date(comment.created_at).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',

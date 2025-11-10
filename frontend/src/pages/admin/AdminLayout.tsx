@@ -1,26 +1,33 @@
-import React, { lazy, Suspense } from 'react';
-import { Outlet } from 'react-router-dom';
-const AdminSidebar = lazy(() => import('../../components/AdminSidebar'));
-const AdminHeader = lazy(() => import('../../components/AdminHeader'));
-const AdminFooter = lazy(() => import('../../components/components/AdminFooter'));
+import React, { Suspense, useState } from 'react';
+import { Outlet, useNavigation } from 'react-router-dom';
+import AdminSidebar from '../../components/AdminSidebar';
+import AdminHeader from '../../components/AdminHeader';
+import AdminFooter from '../../components/AdminFooter';
 
 export default function AdminLayout() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const navigation = useNavigation();
+
+  const isLoading = navigation.state === 'loading';
+
   return (
-    <div className="flex flex-col min-h-screen">
-      <Suspense fallback={<div>Loading Admin Header...</div>}>
-        <AdminHeader />
-      </Suspense>
-      <div className="flex flex-grow">
-        <Suspense fallback={<div>Loading Admin Sidebar...</div>}>
-          <AdminSidebar />
-        </Suspense>
-        <main className="flex-grow p-8">
-          <Outlet />
+    <div className="flex flex-col min-h-screen bg-gray-100">
+      <AdminHeader onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
+      <div className="flex flex-1">
+        <AdminSidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
+        <main className="flex-1 p-4 md:p-8">
+          {isLoading ? (
+            <div className="flex justify-center items-center h-full">
+              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-gray-900"></div>
+            </div>
+          ) : (
+            <Suspense fallback={<div>Loading page...</div>}>
+              <Outlet />
+            </Suspense>
+          )}
         </main>
       </div>
-      <Suspense fallback={<div>Loading Admin Footer...</div>}>
-        <AdminFooter />
-      </Suspense>
+      <AdminFooter />
     </div>
   );
 }

@@ -1,118 +1,78 @@
 import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { LogOutIcon, LayoutDashboardIcon, UsersIcon, FileTextIcon, TagsIcon, MessageSquareIcon, InfoIcon } from 'lucide-react';
-import { toast } from 'react-toastify';
-import { useAuth } from '../../hooks/useAuth'; // Import useAuth
+import { NavLink } from 'react-router-dom';
+import {
+  LayoutDashboard,
+  FileText,
+  Users,
+  MessageSquare,
+  Tag,
+  Settings,
+  Info,
+  X,
+} from 'lucide-react';
 
-export default function AdminSidebar() {
-  const navigate = useNavigate();
-  const { logout } = useAuth(); // Use logout from useAuth
+interface AdminSidebarProps {
+  isSidebarOpen: boolean;
+  setIsSidebarOpen: (isOpen: boolean) => void;
+}
 
-  const handleLogout = async () => {
-    try {
-      await logout();
-      toast.success('Logged out successfully');
-      navigate('/admin');
-    } catch (error) {
-      toast.error('Failed to logout');
-      console.error(error);
-    }
-  };
+const navLinks = [
+  { to: '/admin/dashboard', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
+  { to: '/admin/articles', icon: <FileText size={20} />, label: 'Articles' },
+  { to: '/admin/users', icon: <Users size={20} />, label: 'Users' },
+  { to: '/admin/comments', icon: <MessageSquare size={20} />, label: 'Comments' },
+  { to: '/admin/categories-tags', icon: <Tag size={20} />, label: 'Categories & Tags' },
+  { to: '/admin/contact-info', icon: <Info size={20} />, label: 'Contact Info' },
+  { to: '/admin/settings', icon: <Settings size={20} />, label: 'Settings' },
+];
 
+export default function AdminSidebar({ isSidebarOpen, setIsSidebarOpen }: AdminSidebarProps) {
   return (
-    <div className="w-64 bg-gray-800 text-white flex flex-col min-h-screen p-4">
-      <div className="text-2xl font-bold mb-8">Admin Panel</div>
-      <nav className="flex-grow">
-        <ul>
-          <li className="mb-2">
-            <NavLink
-              to="/admin/dashboard"
-              className={({ isActive }) =>
-                `flex items-center p-2 rounded-md ${
-                  isActive ? 'bg-gray-700' : 'hover:bg-gray-700'
-                }`
-              }
-            >
-              <LayoutDashboardIcon className="h-5 w-5 mr-2" />
-              Dashboard
-            </NavLink>
-          </li>
-          <li className="mb-2">
-            <NavLink
-              to="/admin/users"
-              className={({ isActive }) =>
-                `flex items-center p-2 rounded-md ${
-                  isActive ? 'bg-gray-700' : 'hover:bg-gray-700'
-                }`
-              }
-            >
-              <UsersIcon className="h-5 w-5 mr-2" />
-              Users
-            </NavLink>
-          </li>
-          <li className="mb-2">
-            <NavLink
-              to="/admin/articles"
-              className={({ isActive }) =>
-                `flex items-center p-2 rounded-md ${
-                  isActive ? 'bg-gray-700' : 'hover:bg-gray-700'
-                }`
-              }
-            >
-              <FileTextIcon className="h-5 w-5 mr-2" />
-              Articles
-            </NavLink>
-          </li>
-          <li className="mb-2">
-            <NavLink
-              to="/admin/categories-tags"
-              className={({ isActive }) =>
-                `flex items-center p-2 rounded-md ${
-                  isActive ? 'bg-gray-700' : 'hover:bg-gray-700'
-                }`
-              }
-            >
-              <TagsIcon className="h-5 w-5 mr-2" />
-              Categories & Tags
-            </NavLink>
-          </li>
-          <li className="mb-2">
-            <NavLink
-              to="/admin/comments"
-              className={({ isActive }) =>
-                `flex items-center p-2 rounded-md ${
-                  isActive ? 'bg-gray-700' : 'hover:bg-gray-700'
-                }`
-              }
-            >
-              <MessageSquareIcon className="h-5 w-5 mr-2" />
-              Comments
-            </NavLink>
-          </li>
-          <li className="mb-2">
-            <NavLink
-              to="/admin/contact-info"
-              className={({ isActive }) =>
-                `flex items-center p-2 rounded-md ${
-                  isActive ? 'bg-gray-700' : 'hover:bg-gray-700'
-                }`
-              }
-            >
-              <InfoIcon className="h-5 w-5 mr-2" />
-              Contact Info
-            </NavLink>
-          </li>
-        </ul>
-      </nav>
-      <div className="mt-auto">
-        <button
-          onClick={handleLogout}
-          className="flex items-center p-2 rounded-md w-full text-left hover:bg-gray-700"
-        >
-          <LogOutIcon className="h-5 w-5 mr-2" />
-          Logout
-        </button>
-      </div>
-    </div>
+    <>
+      <aside
+        className={`bg-gray-900 text-white w-64 min-h-screen p-4 fixed md:relative md:translate-x-0 transform ${
+          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        } transition-transform duration-300 ease-in-out z-40`}
+      >
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold font-serif">Menu</h2>
+          <button
+            className="md:hidden text-white"
+            onClick={() => setIsSidebarOpen(false)}
+            aria-label="Close sidebar"
+          >
+            <X size={24} />
+          </button>
+        </div>
+        <nav>
+          <ul>
+            {navLinks.map((link) => (
+              <li key={link.to} className="mb-2">
+                <NavLink
+                  to={link.to}
+                  className={({ isActive }) =>
+                    `flex items-center p-3 rounded-lg transition-colors ${
+                      isActive
+                        ? 'bg-gray-700 text-white'
+                        : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                    }`
+                  }
+                  onClick={() => setIsSidebarOpen(false)}
+                >
+                  {link.icon}
+                  <span className="ml-4">{link.label}</span>
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </aside>
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black opacity-50 z-30 md:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        ></div>
+      )}
+    </>
   );
 }

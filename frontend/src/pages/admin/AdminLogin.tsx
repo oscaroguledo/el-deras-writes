@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { LockIcon, UserIcon } from 'lucide-react';
-import { useAuth } from '../../hooks/useAuth'; // Import useAuth
+import { useAuth } from '../../hooks/useAuth';
 
 export default function AdminLogin() {
   const [username, setUsername] = useState('');
@@ -10,19 +10,15 @@ export default function AdminLogin() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { login, checkAuthStatus } = useAuth(); // Use login and checkAuthStatus from useAuth
-  useEffect(() => {
-    const verifyAuth = async () => {
-      try {
-        const isAuthenticated = await checkAuthStatus();
-        if (isAuthenticated) {
-          navigate('/admin/dashboard');
-        }
-      } catch (error) {
-        // Not authenticated, stay on login page
+useEffect(() => {
+    const check = async () => {
+      const isAuthenticated = await checkAuthStatus();
+      if (isAuthenticated) {
+        navigate('/admin/dashboard');
       }
     };
-    verifyAuth();
-  }, [navigate]);
+    check();
+  }, [checkAuthStatus, navigate]);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!username || !password) {

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { getContactInfo, updateContactInfo } from '../../utils/api';
-import { ContactInfo } from '../../types/ContactInfo'; // Import the ContactInfo interface
+import { ContactInfo } from '../../types/ContactInfo';
+import { MapPin, Phone, Mail, MessageCircle, Instagram, Facebook, Linkedin, Github } from 'lucide-react';
 
 export default function AdminContactInfoPage() {
-  const [contactInfo, setContactInfo] = useState<ContactInfo>({ // Use imported ContactInfo
+  const [contactInfo, setContactInfo] = useState<ContactInfo>({
     address: '',
     phone: '',
     email: '',
@@ -12,6 +13,8 @@ export default function AdminContactInfoPage() {
     tiktok_link: '',
     instagram_link: '',
     facebook_link: '',
+    linkedin_link: '',
+    github_link: '',
   });
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
@@ -44,15 +47,49 @@ export default function AdminContactInfoPage() {
     }
   };
 
+  const renderInfoField = (label: string, value: string | null, icon: React.ReactNode, link?: boolean) => (
+    <div className="flex items-center text-gray-700">
+      <div className="w-8 h-8 flex-shrink-0 flex items-center justify-center">{icon}</div>
+      <div className="ml-4">
+        <strong className="block">{label}:</strong>
+        {link && value ? (
+          <a href={value} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline break-all">
+            {value}
+          </a>
+        ) : (
+          <span className="break-all">{value || 'N/A'}</span>
+        )}
+      </div>
+    </div>
+  );
+
+  const renderInputField = (id: keyof ContactInfo, label: string, type: string, icon: React.ReactNode) => (
+    <div className="relative">
+      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        {icon}
+      </div>
+      <input
+        type={type}
+        id={id}
+        value={contactInfo[id] || ''}
+        onChange={(e) => setContactInfo({ ...contactInfo, [id]: e.target.value })}
+        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+        placeholder={label}
+      />
+    </div>
+  );
+
   if (loading) {
-    return <div className="flex justify-center items-center h-32">
-      <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900"></div>
-    </div>;
+    return (
+      <div className="flex justify-center items-center h-32">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900"></div>
+      </div>
+    );
   }
 
   return (
-    <div className="mb-8">
-      <div className="flex justify-between items-center mb-4">
+    <div className="p-4 md:p-8">
+      <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-serif font-medium text-gray-900">Manage Contact Information</h1>
         {!isEditing && (
           <button onClick={() => setIsEditing(true)} className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
@@ -60,81 +97,19 @@ export default function AdminContactInfoPage() {
           </button>
         )}
       </div>
-      <div className="bg-white shadow overflow-hidden rounded-lg p-6">
+      <div className="bg-white shadow-lg overflow-hidden rounded-xl p-6">
         {isEditing ? (
-          <form onSubmit={handleSave} className="space-y-4">
-            <div>
-              <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">Address</label>
-              <input
-                type="text"
-                id="address"
-                value={contactInfo.address || ''} // Handle null
-                onChange={(e) => setContactInfo({ ...contactInfo, address: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-              <input
-                type="text"
-                id="phone"
-                value={contactInfo.phone || ''} // Handle null
-                onChange={(e) => setContactInfo({ ...contactInfo, phone: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input
-                type="email"
-                id="email"
-                value={contactInfo.email || ''} // Handle null
-                onChange={(e) => setContactInfo({ ...contactInfo, email: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            {/* Social Media Links */}
-            <div>
-              <label htmlFor="whatsapp_link" className="block text-sm font-medium text-gray-700 mb-1">WhatsApp Link</label>
-              <input
-                type="url"
-                id="whatsapp_link"
-                value={contactInfo.whatsapp_link || ''} // Handle null
-                onChange={(e) => setContactInfo({ ...contactInfo, whatsapp_link: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            <div>
-              <label htmlFor="tiktok_link" className="block text-sm font-medium text-gray-700 mb-1">TikTok Link</label>
-              <input
-                type="url"
-                id="tiktok_link"
-                value={contactInfo.tiktok_link || ''} // Handle null
-                onChange={(e) => setContactInfo({ ...contactInfo, tiktok_link: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            <div>
-              <label htmlFor="instagram_link" className="block text-sm font-medium text-gray-700 mb-1">Instagram Link</label>
-              <input
-                type="url"
-                id="instagram_link"
-                value={contactInfo.instagram_link || ''} // Handle null
-                onChange={(e) => setContactInfo({ ...contactInfo, instagram_link: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            <div>
-              <label htmlFor="facebook_link" className="block text-sm font-medium text-gray-700 mb-1">Facebook Link</label>
-              <input
-                type="url"
-                id="facebook_link"
-                value={contactInfo.facebook_link || ''} // Handle null
-                onChange={(e) => setContactInfo({ ...contactInfo, facebook_link: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md"
-              />
-            </div>
-            <div className="flex justify-end space-x-2">
+          <form onSubmit={handleSave} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {renderInputField('address', 'Address', 'text', <MapPin className="text-gray-400" />)}
+            {renderInputField('phone', 'Phone', 'text', <Phone className="text-gray-400" />)}
+            {renderInputField('email', 'Email', 'email', <Mail className="text-gray-400" />)}
+            {renderInputField('whatsapp_link', 'WhatsApp Link', 'url', <MessageCircle className="text-gray-400" />)}
+            {renderInputField('tiktok_link', 'TikTok Link', 'url', <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 h-5 w-5"><path d="M12.52.02C13.83 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.65 4.32 1.71V10c-1.64.04-3.28-.48-4.62-1.49-1.34-1.02-2.3-2.4-2.86-4.01H12.52V.02z"/><path d="M12.52 10.02v3.33c0 2.51-1.33 4.83-3.51 6.2-2.18 1.37-4.88 1.5-7.23.42v-3.33c.94.54 2.04.83 3.19.83 2.28 0 4.18-1.88 4.18-4.18s-1.9-4.18-4.18-4.18S4.34 9.34 4.34 11.62H.02c0-4.41 3.58-7.98 7.98-7.98s7.98 3.57 7.98 7.98z"/></svg>)}
+            {renderInputField('instagram_link', 'Instagram Link', 'url', <Instagram className="text-gray-400" />)}
+            {renderInputField('facebook_link', 'Facebook Link', 'url', <Facebook className="text-gray-400" />)}
+            {renderInputField('linkedin_link', 'LinkedIn Link', 'url', <Linkedin className="text-gray-400" />)}
+            {renderInputField('github_link', 'GitHub Link', 'url', <Github className="text-gray-400" />)}
+            <div className="md:col-span-2 flex justify-end space-x-2">
               <button type="button" onClick={() => setIsEditing(false)} className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
                 Cancel
               </button>
@@ -144,14 +119,16 @@ export default function AdminContactInfoPage() {
             </div>
           </form>
         ) : (
-          <div className="space-y-2">
-            <p className="text-gray-700"><strong>Address:</strong> {contactInfo.address || 'N/A'}</p>
-            <p className="text-gray-700"><strong>Phone:</strong> {contactInfo.phone || 'N/A'}</p>
-            <p className="text-gray-700"><strong>Email:</strong> {contactInfo.email || 'N/A'}</p>
-            <p className="text-gray-700"><strong>WhatsApp:</strong> <a href={contactInfo.whatsapp_link || '#'} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">{contactInfo.whatsapp_link || 'N/A'}</a></p>
-            <p className="text-gray-700"><strong>TikTok:</strong> <a href={contactInfo.tiktok_link || '#'} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">{contactInfo.tiktok_link || 'N/A'}</a></p>
-            <p className="text-gray-700"><strong>Instagram:</strong> <a href={contactInfo.instagram_link || '#'} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">{contactInfo.instagram_link || 'N/A'}</a></p>
-            <p className="text-gray-700"><strong>Facebook:</strong> <a href={contactInfo.facebook_link || '#'} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">{contactInfo.facebook_link || 'N/A'}</a></p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {renderInfoField('Address', contactInfo.address, <MapPin className="text-blue-500" />)}
+            {renderInfoField('Phone', contactInfo.phone, <Phone className="text-green-500" />)}
+            {renderInfoField('Email', contactInfo.email, <Mail className="text-red-500" />)}
+            {renderInfoField('WhatsApp', contactInfo.whatsapp_link, <MessageCircle className="text-green-400" />, true)}
+            {renderInfoField('TikTok', contactInfo.tiktok_link, <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-black h-6 w-6"><path d="M12.52.02C13.83 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.65 4.32 1.71V10c-1.64.04-3.28-.48-4.62-1.49-1.34-1.02-2.3-2.4-2.86-4.01H12.52V.02z"/><path d="M12.52 10.02v3.33c0 2.51-1.33 4.83-3.51 6.2-2.18 1.37-4.88 1.5-7.23.42v-3.33c.94.54 2.04.83 3.19.83 2.28 0 4.18-1.88 4.18-4.18s-1.9-4.18-4.18-4.18S4.34 9.34 4.34 11.62H.02c0-4.41 3.58-7.98 7.98-7.98s7.98 3.57 7.98 7.98z"/></svg>, true)}
+            {renderInfoField('Instagram', contactInfo.instagram_link, <Instagram className="text-pink-500" />, true)}
+            {renderInfoField('Facebook', contactInfo.facebook_link, <Facebook className="text-blue-600" />, true)}
+            {renderInfoField('LinkedIn', contactInfo.linkedin_link, <Linkedin className="text-blue-700" />, true)}
+            {renderInfoField('GitHub', contactInfo.github_link, <Github className="text-gray-800" />, true)}
           </div>
         )}
       </div>

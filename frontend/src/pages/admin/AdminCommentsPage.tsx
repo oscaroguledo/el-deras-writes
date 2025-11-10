@@ -1,35 +1,36 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getComments } from '../../utils/api';
-import { toast } from 'react-toastify';
-import { Comment } from '../../types/Comment';
-import { useAuth } from '../../hooks/useAuth'; // Import useAuth
+import React, { useEffect, useState, useCallback } from 'react';
 
 export default function AdminCommentsPage() {
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
-  const { isAuthenticated } = useAuth(); // Use isAuthenticated from useAuth
 
-  const fetchComments = async () => {
-          try {
-            if (!isAuthenticated) {
-              navigate('/admin');
-              return;
-            }      const commentsData = await getComments();
-      setComments(commentsData);
-    } catch (error) {
-      console.error(error);
-      toast.error('Failed to fetch comments');
-      navigate('/admin');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const fetchComments = useCallback(async () => {
 
-  useEffect(() => {
+      try {
+
+        setLoading(true);
+
+        const data = await getComments();
+
+        setComments(data);
+
+      } catch (error) {
+
+        console.error('Failed to fetch comments:', error);
+
+        toast.error('Failed to fetch comments.');
+
+      } finally {
+
+        setLoading(false);
+
+      }
+
+    }, []);
+
+useEffect(() => {
     fetchComments();
-  }, [navigate]);
+  }, [fetchComments]);
 
   if (loading) {
     return <div className="flex justify-center items-center h-64">

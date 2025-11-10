@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArticleForm } from '../components/ArticleForm';
-import { createArticle } from '../utils/api';
-import { toast } from 'react-toastify';
-import { useAuth } from '../hooks/useAuth'; // Import useAuth
+import { ArticleForm } from '../../components/ArticleForm';
+import { createArticle } from '../../utils/api';
+import { useAuth } from '../../hooks/useAuth';
 
 export default function CreateArticle() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -20,7 +19,7 @@ export default function CreateArticle() {
       }
     };
     verifyAuth();
-  }, [navigate]);
+  }, [isAuthenticated, navigate]);
   const handleSubmit = async (formData: FormData) => {
     try {
       setIsSubmitting(true);

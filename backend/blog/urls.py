@@ -14,7 +14,8 @@ from .views import (
     AdminUserViewSet,
     ContactInfoView,
     LoginView,
-    IncrementVisitorCountView
+    IncrementVisitorCountView,
+    AdminDashboardView,
 )
 
 router = DefaultRouter()
@@ -37,4 +38,5 @@ urlpatterns = [
     path('auth/login/', LoginView.as_view(), name='login'),
     path('contact-info/', ContactInfoView.as_view(), name='contact-info'),
     path('visitor-count/increment/', IncrementVisitorCountView.as_view(), name='increment-visitor-count'),
-]
+    path('admin/dashboard/', AdminDashboardView.as_view(), name='admin-dashboard'),
+    ]

@@ -7,7 +7,7 @@ import { Category } from '../types/Category';
 import { Instagram, Facebook } from 'lucide-react';
 import { FaTiktok, FaWhatsapp } from 'react-icons/fa';
 
-export function Footer() {
+export default function Footer() {
   const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null);
   const [topCategories, setTopCategories] = useState<Category[]>([]);
 
@@ -70,8 +70,8 @@ export function Footer() {
             <ul className="space-y-2">
               {topCategories.map(category => (
                 <li key={category.id}>
-                  <Link to={`/?category=${encodeURIComponent(category.name)}`} className="text-sm text-gray-600 hover:text-gray-900">
-                    {category.name}
+                  <Link to={`/?category=${encodeURIComponent(category.name.trim())}`} className="text-sm text-gray-600 hover:text-gray-900">
+                    {category.name.trim()}
                   </Link>
                 </li>
               ))}
