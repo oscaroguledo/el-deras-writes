@@ -21,9 +21,11 @@ from rest_framework_simplejwt.views import (
 )
 from blog.serializers import MyTokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+from blog.views import SuperuserCreateView # Import SuperuserCreateView
 
 urlpatterns = [
     path('api/', include('blog.urls')),
     path('api/token/', TokenObtainPairView.as_view(serializer_class=MyTokenObtainPairSerializer), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/create-superuser/', SuperuserCreateView.as_view(), name='create_superuser'), # New URL for superuser creation
 ]

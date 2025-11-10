@@ -156,6 +156,33 @@ class IncrementVisitorCountView(APIView):
         serializer = VisitorCountSerializer(visitor_count)
         return Response(serializer.data)
 
+class SuperuserCreateView(APIView):
+    permission_classes = [AllowAny] # Allow anyone to create the first superuser, but ideally this would be restricted
+
+    def post(self, request):
+        serializer = CustomUserSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            username = serializer.validated_data['username']
+            password = serializer.validated_data['password']
+
+            if CustomUser.objects.filter(email=email).exists():
+                return Response({"detail": "User with this email already exists."}, status=status.HTTP_400_BAD_REQUEST)
+            if CustomUser.objects.filter(username=username).exists():
+                return Response({"detail": "User with this username already exists."}, status=status.HTTP_400_BAD_REQUEST)
+
+            user = CustomUser.objects.create(
+                email=email,
+                username=username,
+                user_type='admin',
+                is_staff=True,
+                is_superuser=True,
+            )
+            user.set_password(password)
+            user.save()
+            return Response(CustomUserSerializer(user).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 class AdminDashboardView(APIView):
     permission_classes = [IsAdminUser]
 

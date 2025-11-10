@@ -11,21 +11,6 @@ def seed_data():
     from django.contrib.auth.models import User
     from blog.models import Article, Category, CustomUser, ContactInfo # Import ContactInfo
 
-    # Create a superuser if it doesn't exist
-    if not CustomUser.objects.filter(username='admin').exists():
-        admin_user = CustomUser.objects.create(
-            username='admin',
-            email='admin@example.com',
-            user_type='admin',
-            is_staff=True,
-            is_superuser=True,
-        )
-        admin_user.set_password('adminpassword')
-        admin_user.save()
-        print("Superuser 'admin' created.")
-    else:
-        print("Superuser 'admin' already exists.")
-
     # Seed ContactInfo
     if not ContactInfo.objects.exists():
         ContactInfo.objects.create(
