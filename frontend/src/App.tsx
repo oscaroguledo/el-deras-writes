@@ -9,7 +9,7 @@ const MainLayout = lazy(() => import('./components/MainLayout'));
 const Home = lazy(() => import('./pages/Home'));
 const ArticleDetail = lazy(() => import('./pages/ArticleDetail'));
 const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'));
-const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'));
+import AdminLayout from './pages/admin/AdminLayout';
 const AdminDashboardOverview = lazy(() => import('./pages/admin/AdminDashboardOverview'));
 const AdminUsersPage = lazy(() => import('./pages/admin/AdminUsersPage'));
 const AdminArticlesPage = lazy(() => import('./pages/admin/AdminArticlesPage'));
