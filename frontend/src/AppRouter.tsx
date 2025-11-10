@@ -10,12 +10,12 @@ const router = createBrowserRouter(routes);
 export function AppRouter() {
   return (
     <AuthProvider>
-      <App>
-        <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<div>Loading...</div>}>
+        <App>
           <RouterProvider router={router} />
-        </Suspense>
-        <ToastContainer position="bottom-right" />
-      </App>
+        </App>
+      </Suspense>
+      <ToastContainer position="bottom-right" />
     </AuthProvider>
   );
 }
