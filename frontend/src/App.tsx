@@ -25,9 +25,7 @@ const Contact = lazy(() => import('./pages/Contact'));
 const Terms = lazy(() => import('./pages/Terms'));
 const Privacy = lazy(() => import('./pages/Privacy'));
 
-import 'react-toastify/dist/ReactToastify.css';
-import { AuthProvider } from './hooks/AuthProvider';
-import { ToastContainer } from 'react-toastify';
+import { ProtectedRoute } from './components/ProtectedRoute';
 
 export const routes = createRoutesFromElements(
   <Route>
@@ -40,7 +38,7 @@ export const routes = createRoutesFromElements(
       <Route path="privacy" element={<Privacy />} />
     </Route>
     <Route path="/admin/login" element={<AdminLogin />} />
-    <Route path="/admin" element={<AdminLayout />}>
+    <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
       <Route index element={<Navigate to="/admin/dashboard" replace />} />
       <Route path="dashboard" element={<AdminDashboardOverview />} />
       <Route path="users" element={<AdminUsersPage />} />

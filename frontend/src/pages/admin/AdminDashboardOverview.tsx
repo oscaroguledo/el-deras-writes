@@ -15,25 +15,17 @@ export default function AdminDashboardOverview() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const isAuthenticated = await checkAuthStatus();
-        if (!isAuthenticated) {
-          toast.error('You must be logged in to view this page.');
-          navigate('/admin');
-          return;
-        }
         const data = await getAdminDashboardData();
         setDashboardData(data);
       } catch (error) {
         console.error('Failed to fetch dashboard data:', error);
         toast.error('Failed to fetch dashboard data. Please try again later.');
-        // Optional: navigate away or show a specific error message
-        // navigate('/admin/error'); 
       } finally {
         setLoading(false);
       }
     };
     fetchData();
-  }, [navigate, checkAuthStatus]);
+  }, []);
 
   if (loading) {
     return (
