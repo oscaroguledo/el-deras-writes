@@ -59,6 +59,7 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = '__all__'
+        depth = 1
 
 class ArticleSerializer(serializers.ModelSerializer):
     author = CustomUserSerializer(read_only=True)

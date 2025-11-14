@@ -24,6 +24,14 @@ export interface AdminDashboardData {
   avg_comments_per_article: number;
   total_articles: number;
   total_comments: number;
-  total_categories: number;
-  total_tags: number;
-}
+    total_categories: number;
+    total_tags: number;
+  }
+  
+  export interface SearchResult {
+    id: string;
+    type: string;
+    title: string;
+    url: string;
+  }
+  

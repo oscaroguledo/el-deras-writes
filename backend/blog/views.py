@@ -6,6 +6,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.response import Response
 from django.db import models
+from django.db.models import Q
 from .models import Article, Comment, Category, Tag, CustomUser, ContactInfo, VisitorCount
 from .serializers import ArticleSerializer, ContactInfoSerializer, CommentSerializer, CategorySerializer, TagSerializer, CustomUserSerializer, VisitorCountSerializer
 from blog.permissions import IsAdminOrReadOnly, IsAuthorOrAdmin
@@ -243,4 +244,60 @@ class AdminDashboardView(APIView):
             'avg_comments_per_article': avg_comments_per_article,
         }
         return Response(data)
+
+class AdminSearchView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        query = request.query_params.get('q', '').strip()
+        if not query:
+            return Response([])
+
+        results = []
+
+        # Search Articles
+        article_qs = Article.objects.filter(
+            Q(title__icontains=query) | Q(content__icontains=query)
+        ).distinct()
+        for article in article_qs:
+            results.append({
+                'type': 'Article',
+                'id': article.id,
+                'title': article.title,
+                'url': f'/admin/articles/edit/{article.id}'
+            })
+
+        # Search Users
+        user_qs = CustomUser.objects.filter(
+            Q(username__icontains=query) | Q(email__icontains=query) | Q(first_name__icontains=query) | Q(last_name__icontains=query)
+        ).distinct()
+        for user in user_qs:
+            results.append({
+                'type': 'User',
+                'id': user.id,
+                'title': user.username,
+                'url': f'/admin/users/edit/{user.id}'
+            })
+
+        # Search Categories
+        category_qs = Category.objects.filter(name__icontains=query).distinct()
+        for category in category_qs:
+            results.append({
+                'type': 'Category',
+                'id': category.id,
+                'title': category.name,
+                'url': '/admin/categories-tags'
+            })
+
+        # Search Tags
+        tag_qs = Tag.objects.filter(name__icontains=query).distinct()
+        for tag in tag_qs:
+            results.append({
+                'type': 'Tag',
+                'id': tag.id,
+                'title': tag.name,
+                'url': '/admin/categories-tags'
+            })
+
+        return Response(results)
 

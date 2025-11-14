@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { LockIcon, UserIcon } from 'lucide-react';
+import { LockIcon, UserIcon, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth.ts';
 
 export default function AdminLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -20,7 +21,7 @@ export default function AdminLogin() {
       setIsLoading(true);
       await login(email, password);
       toast.success('Login successful!');
-      navigate('/admin/dashboard');
+      navigate('/admin');
     } catch (error) {
       toast.error('Invalid email or password');
       console.error(error);
@@ -59,7 +60,12 @@ export default function AdminLogin() {
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <LockIcon className="h-5 w-5 text-gray-400" />
                 </div>
-                <input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500" placeholder="Admin password" required />
+                <input id="password" type={showPassword ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} className="pl-10 pr-10 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500" placeholder="Admin password" required />
+                <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-gray-400 hover:text-gray-500">
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
               </div>
             </div>
             <div>

@@ -35,7 +35,7 @@ export default function AdminSidebar({ isSidebarOpen, setIsSidebarOpen }: AdminS
         } transition-transform duration-300 ease-in-out z-40`}
       >
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold font-serif">Menu</h2>
+          
           <button
             className="md:hidden text-white"
             onClick={() => setIsSidebarOpen(false)}

@@ -1,5 +1,5 @@
-import React, { useEffect, lazy, Suspense } from 'react';
-import { Route, Navigate, createRoutesFromElements } from 'react-router-dom';
+import React, { useEffect, lazy } from 'react';
+import { Route, createRoutesFromElements } from 'react-router-dom';
 import { incrementVisitorCount } from './utils/api';
 
 // Layout components
@@ -39,8 +39,7 @@ export const routes = createRoutesFromElements(
     </Route>
     <Route path="/admin/login" element={<AdminLogin />} />
     <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
-      <Route index element={<Navigate to="/admin/dashboard" replace />} />
-      <Route path="dashboard" element={<AdminDashboardOverview />} />
+      <Route index element={<AdminDashboardOverview />} />
       <Route path="users" element={<AdminUsersPage />} />
       <Route path="articles" element={<AdminArticlesPage />} />
       <Route path="articles/create" element={<CreateArticle />} />

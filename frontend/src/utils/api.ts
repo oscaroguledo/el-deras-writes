@@ -6,7 +6,7 @@ import { Tag } from '../types/Tag';
 import { CustomUser } from '../types/CustomUser';
 import { ContactInfo } from '../types/ContactInfo'; // New import
 import { VisitorCount } from '../types/VisitorCount'; // New import
-import { AdminDashboardData } from '../types/Admin'; // New import
+import { AdminDashboardData, SearchResult } from '../types/Admin'; // New import
 const API_URL = 'http://localhost:8000/api';
 
 
@@ -139,7 +139,7 @@ export async function deleteTag(id: string): Promise<void> {
 }
 
 export async function getAdminDashboardData(): Promise<AdminDashboardData> { // Updated type
-  const response = await axios.get(`${API_URL}/admin/dashboard/`);
+  const response = await axios.get(`${API_URL}/admin/`);
   return response.data;
 }
 
@@ -155,5 +155,10 @@ export async function updateContactInfo(contactData: Partial<ContactInfo>): Prom
 
 export async function incrementVisitorCount(): Promise<VisitorCount> { // Updated type
   const response = await axios.post(`${API_URL}/visitor-count/increment/`);
+  return response.data;
+}
+
+export async function adminSearch(query: string): Promise<SearchResult[]> {
+  const response = await axios.get(`${API_URL}/admin/search/`, { params: { q: query } });
   return response.data;
 }

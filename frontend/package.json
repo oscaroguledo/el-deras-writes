@@ -13,6 +13,7 @@
     "@vercel/speed-insights": "^1.2.0",
     "axios": "^1.7.7",
     "jwt-decode": "^4.0.0",
+    "lodash": "^4.17.21",
     "lucide-react": "0.522.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -23,6 +24,7 @@
     "react-toastify": "^10.0.5"
   },
   "devDependencies": {
+    "@types/lodash": "^4.17.20",
     "@types/node": "^20.11.18",
     "@types/react": "^18.3.26",
     "@types/react-dom": "^18.3.7",

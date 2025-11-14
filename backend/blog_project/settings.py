@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -26,13 +27,13 @@ SECRET_KEY = 'django-insecure-4=r#=3)9z+sxmn=)*^p%ujw4!%%s)im7rka!w8mu**r(pwa&8r
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '.netlify.app', '.vercel.app', '.github.io', '.cloudflare.com']
+ALLOWED_HOSTS = ['127.0.0.1', '0.0.0.0', 'localhost', '.netlify.app', '.vercel.app', '.github.io', '.cloudflare.com']
 
 AUTHENTICATION_BACKENDS = [
     'blog.auth_backends.CustomUserBackend',
 ]
 
-# AUTH_USER_MODEL = 'blog.CustomUser'
+AUTH_USER_MODEL = 'blog.CustomUser'
 
 # Application definition
 
@@ -64,7 +65,6 @@ REST_FRAMEWORK = {
     ),
 }
 
-from datetime import timedelta
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
@@ -89,7 +89,7 @@ SIMPLE_JWT = {
 
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'TOKEN_TYPE_CLAIM': 'token_type',
-    'TOKEN_USER_CLASS': 'rest_framework_simplejwt.models.TokenUser',
+    'TOKEN_USER_CLASS': 'blog.models.CustomUser',
 
     'JTI_CLAIM': 'jti',
 
@@ -101,6 +101,7 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5174",
     "http://localhost:5173",
+    "http://192.168.0.221:5173",
     "https://*.netlify.app",
     "https://*.vercel.app",
     "https://*.github.io",

@@ -1,8 +1,9 @@
+import { Article } from './Article';
 import { CustomUser } from './CustomUser';
 
 export interface Comment {
   id: string;
-  article: string;
+  article: Article;
   author: CustomUser;
   content: string;
   ip_address: string | null;

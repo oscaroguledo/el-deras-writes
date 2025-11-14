@@ -115,6 +115,8 @@ class Article(models.Model):
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
     tags = models.ManyToManyField(Tag, blank=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft')
+    views = models.PositiveIntegerField(default=0)
+    likes = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     published_at = models.DateTimeField(null=True, blank=True)
@@ -139,6 +141,7 @@ class Comment(models.Model):
         return f'Comment by {self.author} on {self.article}'
 
 class ContactInfo(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     address = models.CharField(max_length=255, blank=True, null=True)
     phone = models.CharField(max_length=20, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
@@ -161,6 +164,7 @@ class ContactInfo(models.Model):
         return super(ContactInfo, self).save(*args, **kwargs)
 
 class VisitorCount(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     count = models.PositiveIntegerField(default=0)
 
     class Meta:

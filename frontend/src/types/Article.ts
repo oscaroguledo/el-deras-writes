@@ -12,6 +12,8 @@ export interface Article {
   readTime?: string;
   createdAt: string;
   updatedAt: string;
+  views?: number;
+  likes?: number;
 }
 export interface GetArticlesParams {
   search?: string | null;

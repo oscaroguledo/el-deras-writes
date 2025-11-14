@@ -173,7 +173,7 @@ export default function AdminDashboardOverview() {
             {dashboardData.recent_articles.map((article) => (
               <li key={article.id} className="text-sm text-gray-700 flex justify-between items-center">
                 <span>{article.title} by {article.author.username}</span>
-                <span className="text-gray-500 text-xs">{new Date(article.created_at).toLocaleDateString()}</span>
+                <span className="text-gray-500 text-xs">{new Date(article.createdAt).toLocaleDateString()}</span>
               </li>
             ))}
           </ul>
