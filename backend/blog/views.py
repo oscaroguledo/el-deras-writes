@@ -99,7 +99,7 @@ class AdminArticleViewSet(viewsets.ModelViewSet):
     serializer_class = ArticleSerializer
     permission_classes = [IsAdminUser]
     filter_backends = [filters.SearchFilter]
-    search_fields = ['title', 'content', 'author__username', 'category__name']
+    search_fields = ['title', 'author__username', 'category__name']
 
 class AdminCommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all().order_by('-created_at') # Order by recently created
