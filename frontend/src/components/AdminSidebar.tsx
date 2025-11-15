@@ -9,6 +9,7 @@ import {
   Settings,
   Info,
   X,
+  Globe, // Added Globe icon
 } from 'lucide-react';
 
 interface AdminSidebarProps {
@@ -23,6 +24,7 @@ const navLinks = [
   { to: '/admin/comments', icon: <MessageSquare size={20} />, label: 'Comments' },
   { to: '/admin/categories-tags', icon: <Tag size={20} />, label: 'Categories & Tags' },
   { to: '/admin/contact-info', icon: <Info size={20} />, label: 'Contact Info' },
+  { to: '/', icon: <Globe size={20} />, label: 'View Site' }, // Added View Site link
 ];
 
 export default function AdminSidebar({ isSidebarOpen, setIsSidebarOpen }: AdminSidebarProps) {

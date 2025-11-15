@@ -26,7 +26,7 @@ export default function AdminCategoriesTagsPage() {
   const fetchCategories = useCallback(async (search: string = '') => {
     try {
       const categoriesData = await getCategories({ search });
-      console.log('Fetched categories:', categoriesData);
+      // console.log('Fetched categories:', categoriesData);
       setCategories(categoriesData);
     } catch (error) {
       toast.error('Failed to fetch categories.');
