@@ -134,6 +134,8 @@ class Comment(models.Model):
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
     content = models.TextField()
     ip_address = models.GenericIPAddressField(blank=True, null=True)
+    approved = models.BooleanField(default=False)
+    is_flagged = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -179,3 +181,11 @@ class VisitorCount(models.Model):
         if not self.pk and VisitorCount.objects.exists():
             raise ValidationError('There can be only one VisitorCount instance.')
         return super(VisitorCount, self).save(*args, **kwargs)
+
+class Visit(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    date = models.DateField(auto_now_add=True)
+    count = models.PositiveIntegerField(default=1) # Count for the day
+
+    def __str__(self):
+        return f"Visit on {self.date}: {self.count}"

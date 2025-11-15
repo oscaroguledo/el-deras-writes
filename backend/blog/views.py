@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.response import Response
 from django.db import models
 from django.db.models import Q
-from .models import Article, Comment, Category, Tag, CustomUser, ContactInfo, VisitorCount
+from .models import Article, Comment, Category, Tag, CustomUser, ContactInfo, VisitorCount, Visit
 from .serializers import ArticleSerializer, ContactInfoSerializer, CommentSerializer, CategorySerializer, TagSerializer, CustomUserSerializer, VisitorCountSerializer
 from blog.permissions import IsAdminOrReadOnly, IsAuthorOrAdmin
 from rest_framework.decorators import action
@@ -151,10 +151,19 @@ class IncrementVisitorCountView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        visitor_count, created = VisitorCount.objects.get_or_create(pk=1)
-        visitor_count.count += 1
-        visitor_count.save()
-        serializer = VisitorCountSerializer(visitor_count)
+        today = timezone.now().date()
+        visit, created = Visit.objects.get_or_create(date=today)
+        if not created:
+            visit.count += 1
+            visit.save()
+        # Update total visitor count (optional, if still needed)
+        total_visitor_count, _ = VisitorCount.objects.get_or_create(pk=1)
+        total_visitor_count.count += 1
+        total_visitor_count.save()
+
+        # Serialize the total visitor count, or the daily visit count, depending on what the frontend expects
+        # For now, let's return the total visitor count as before
+        serializer = VisitorCountSerializer(total_visitor_count)
         return Response(serializer.data)
 
 class SuperuserCreateView(APIView):
@@ -204,7 +213,7 @@ class AdminDashboardView(APIView):
         today = timezone.now().date()
         last_7_days = today - timedelta(days=7)
 
-        weekly_visits = VisitorCount.objects.filter(date__gte=last_7_days).aggregate(
+        weekly_visits = Visit.objects.filter(date__gte=last_7_days).aggregate(
             total=models.Sum('count')
         )['total'] or 0
 
@@ -212,7 +221,7 @@ class AdminDashboardView(APIView):
         comments_this_week = Comment.objects.filter(created_at__gte=last_7_days).count()
         pending_comments = Comment.objects.filter(approved=False).count()
         flagged_comments = Comment.objects.filter(is_flagged=True).count()
-        inactive_users = CustomUser.objects.filter(last_login__lt=last_7_days).count()
+        inactive_users = CustomUser.objects.filter(last_active__lt=last_7_days).count()
         avg_views_per_article = Article.objects.aggregate(avg=models.Avg('views'))['avg']
         avg_comments_per_article = Comment.objects.aggregate(avg=models.Avg('article__comments'))['avg']
         total_articles = Article.objects.count()
