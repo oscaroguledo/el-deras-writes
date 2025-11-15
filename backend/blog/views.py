@@ -115,6 +115,13 @@ class AdminCategoryViewSet(viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter]
     search_fields = ['name']
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        search_param = self.request.query_params.get('search')
+        if search_param:
+            print(f"AdminCategoryViewSet received search query: {search_param}")
+        return queryset
+
 class AdminTagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all().order_by('-created_at') # Order by recently created
     serializer_class = TagSerializer
