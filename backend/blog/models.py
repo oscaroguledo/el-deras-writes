@@ -27,7 +27,15 @@ class CustomUserManager(BaseUserManager):
             raise ValueError('Superuser must have is_superuser=True.')
 
         return self.create_user(email, username, password, **extra_fields)
-
+TITLE_CHOICES = (
+    ('Mr.', 'Mr.'),
+    ('Mrs.', 'Mrs.'),
+    ('Ms.', 'Ms.'),
+    ('Dr.', 'Dr.'),
+    ('Prof.', 'Prof.'),
+    ('Sir', 'Sir'),
+    ('Madam', 'Madam'),
+)
 class CustomUser(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     username = models.CharField(max_length=150, unique=True)
@@ -36,15 +44,7 @@ class CustomUser(models.Model):
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=150, blank=True)
     
-    TITLE_CHOICES = (
-        ('Mr.', 'Mr.'),
-        ('Mrs.', 'Mrs.'),
-        ('Ms.', 'Ms.'),
-        ('Dr.', 'Dr.'),
-        ('Prof.', 'Prof.'),
-        ('Sir', 'Sir'),
-        ('Madam', 'Madam'),
-    )
+    
     title = models.CharField(max_length=10, choices=TITLE_CHOICES, blank=True, null=True)
     bio = models.TextField(max_length=500, blank=True, null=True)
     
