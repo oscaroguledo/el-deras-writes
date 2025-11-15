@@ -2,19 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { getContactInfo, updateContactInfo } from '../../utils/api';
 import { ContactInfo } from '../../types/ContactInfo';
-import { MapPin, Phone, Mail, MessageCircle, Instagram, Facebook, Linkedin, Github } from 'lucide-react';
+import { MapPin, Phone, Mail, Plus, X } from 'lucide-react';
 
 export default function AdminContactInfoPage() {
   const [contactInfo, setContactInfo] = useState<ContactInfo>({
     address: '',
     phone: '',
     email: '',
-    whatsapp_link: '',
-    tiktok_link: '',
-    instagram_link: '',
-    facebook_link: '',
-    linkedin_link: '',
-    github_link: '',
+    social_media_links: {},
   });
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
@@ -24,7 +19,12 @@ export default function AdminContactInfoPage() {
       try {
         setLoading(true);
         const info = await getContactInfo();
-        setContactInfo(info);
+        setContactInfo({
+          address: info.address || '',
+          phone: info.phone || '',
+          email: info.email || '',
+          social_media_links: info.social_media_links || {},
+        });
       } catch (error) {
         console.error('Failed to fetch contact info:', error);
         toast.error('Failed to load contact information.');
@@ -38,46 +38,81 @@ export default function AdminContactInfoPage() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await updateContactInfo(contactInfo);
+      // Filter out empty social media links before saving
+      const filteredSocialMediaLinks = Object.fromEntries(
+        Object.entries(contactInfo.social_media_links).filter(([platform, url]) => platform.trim() !== '' && url.trim() !== '')
+      );
+
+      await updateContactInfo({ ...contactInfo, social_media_links: filteredSocialMediaLinks });
       toast.success('Contact information updated successfully!');
       setIsEditing(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to update contact info:', error);
-      toast.error('Failed to update contact information.');
+      let errorMessage = 'Failed to update contact information.';
+      if (error.response && error.response.data) {
+        if (typeof error.response.data === 'string') {
+          errorMessage = error.response.data;
+        } else if (error.response.data.detail) {
+          errorMessage = error.response.data.detail;
+        } else {
+          errorMessage = Object.values(error.response.data).flat().join(', ') || errorMessage;
+        }
+      }
+      toast.error(errorMessage);
     }
   };
 
-  const renderInfoField = (label: string, value: string | null, icon: React.ReactNode, link?: boolean) => (
-    <div className="flex items-center text-gray-700">
-      <div className="w-8 h-8 flex-shrink-0 flex items-center justify-center">{icon}</div>
-      <div className="ml-4">
-        <strong className="block">{label}:</strong>
-        {link && value ? (
-          <a href={value} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline break-all">
-            {value}
-          </a>
-        ) : (
-          <span className="break-all">{value || 'N/A'}</span>
-        )}
-      </div>
-    </div>
-  );
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { id, value } = e.target;
+    setContactInfo({ ...contactInfo, [id]: value });
+  };
 
-  const renderInputField = (id: keyof ContactInfo, label: string, type: string, icon: React.ReactNode) => (
-    <div className="relative">
-      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-        {icon}
+  const handleSocialMediaChange = (index: number, field: 'platform' | 'url', value: string) => {
+    const updatedLinks = Object.entries(contactInfo.social_media_links).map(([platform, url], i) => {
+      if (i === index) {
+        return field === 'platform' ? [value, url] : [platform, value];
+      }
+      return [platform, url];
+    });
+    setContactInfo({ ...contactInfo, social_media_links: Object.fromEntries(updatedLinks) });
+  };
+
+  const handleAddSocialMedia = () => {
+    const newKey = `social_${Date.now()}`; // Unique key for new entry
+    setContactInfo({
+      ...contactInfo,
+      social_media_links: {
+        ...contactInfo.social_media_links,
+        [newKey]: '', // Add an empty link
+      },
+    });
+  };
+
+  const handleRemoveSocialMedia = (platformToRemove: string) => {
+    const updatedLinks = { ...contactInfo.social_media_links };
+    delete updatedLinks[platformToRemove];
+    setContactInfo({ ...contactInfo, social_media_links: updatedLinks });
+  };
+
+  const renderInfoField = (label: string, value: string | null, icon?: React.ReactNode, link?: boolean) => {
+    if (!value) return null; // Don't render if value is empty/null
+
+    return (
+      <div className="flex items-start text-gray-700">
+        <div className="w-8 h-8 flex-shrink-0 flex items-center justify-center">{icon}</div>
+        <div className="ml-4 flex-grow">
+          <strong className="block">{label}:</strong>
+          {link && value ? (
+            <a href={value} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline break-all">
+              {value}
+            </a>
+          ) : (
+            <span className="break-all">{value}</span>
+          )}
+        </div>
       </div>
-      <input
-        type={type}
-        id={id}
-        value={contactInfo[id] || ''}
-        onChange={(e) => setContactInfo({ ...contactInfo, [id]: e.target.value })}
-        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-        placeholder={label}
-      />
-    </div>
-  );
+    );
+  };
 
   if (loading) {
     return (
@@ -99,17 +134,104 @@ export default function AdminContactInfoPage() {
       </div>
       <div className="bg-white shadow-lg overflow-hidden rounded-xl p-6">
         {isEditing ? (
-          <form onSubmit={handleSave} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {renderInputField('address', 'Address', 'text', <MapPin className="text-gray-400" />)}
-            {renderInputField('phone', 'Phone', 'text', <Phone className="text-gray-400" />)}
-            {renderInputField('email', 'Email', 'email', <Mail className="text-gray-400" />)}
-            {renderInputField('whatsapp_link', 'WhatsApp Link', 'url', <MessageCircle className="text-gray-400" />)}
-            {renderInputField('tiktok_link', 'TikTok Link', 'url', <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 h-5 w-5"><path d="M12.52.02C13.83 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.65 4.32 1.71V10c-1.64.04-3.28-.48-4.62-1.49-1.34-1.02-2.3-2.4-2.86-4.01H12.52V.02z"/><path d="M12.52 10.02v3.33c0 2.51-1.33 4.83-3.51 6.2-2.18 1.37-4.88 1.5-7.23.42v-3.33c.94.54 2.04.83 3.19.83 2.28 0 4.18-1.88 4.18-4.18s-1.9-4.18-4.18-4.18S4.34 9.34 4.34 11.62H.02c0-4.41 3.58-7.98 7.98-7.98s7.98 3.57 7.98 7.98z"/></svg>)}
-            {renderInputField('instagram_link', 'Instagram Link', 'url', <Instagram className="text-gray-400" />)}
-            {renderInputField('facebook_link', 'Facebook Link', 'url', <Facebook className="text-gray-400" />)}
-            {renderInputField('linkedin_link', 'LinkedIn Link', 'url', <Linkedin className="text-gray-400" />)}
-            {renderInputField('github_link', 'GitHub Link', 'url', <Github className="text-gray-400" />)}
-            <div className="md:col-span-2 flex justify-end space-x-2">
+          <form onSubmit={handleSave} className="grid grid-cols-1 gap-6">
+            <div>
+              <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+                Address
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <MapPin className="text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  id="address"
+                  value={contactInfo.address}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="Address"
+                />
+              </div>
+            </div>
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                Phone
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Phone className="text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  id="phone"
+                  value={contactInfo.phone}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="Phone"
+                />
+              </div>
+            </div>
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                Email
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Mail className="text-gray-400" />
+                </div>
+                <input
+                  type="email"
+                  id="email"
+                  value={contactInfo.email}
+                  onChange={handleChange}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="Email"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium text-gray-900">Social Media Links</h3>
+              {Object.entries(contactInfo.social_media_links).map(([platform, url], index) => (
+                <div key={platform} className="grid grid-cols-1 sm:grid-cols-5 gap-2 items-center">
+                  <div className="col-span-2">
+                    <label htmlFor={`platform-${index}`} className="sr-only">Platform</label>
+                    <input
+                      type="text"
+                      id={`platform-${index}`}
+                      value={platform}
+                      onChange={(e) => handleSocialMediaChange(index, 'platform', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                      placeholder="Platform Name (e.g., Twitter)"
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <label htmlFor={`url-${index}`} className="sr-only">URL</label>
+                    <input
+                      type="url"
+                      id={`url-${index}`}
+                      value={url}
+                      onChange={(e) => handleSocialMediaChange(index, 'url', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+                      placeholder="URL"
+                    />
+                  </div>
+                  <button type="button" onClick={() => handleRemoveSocialMedia(platform)} className="col-span-1 p-2 text-red-600 hover:text-red-800 flex justify-center items-center">
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={handleAddSocialMedia}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+              >
+                <Plus className="h-4 w-4 mr-1" /> Add Social Media
+              </button>
+            </div>
+
+
+            <div className="md:col-span-1 flex justify-end space-x-2"> {/* Adjusted col-span */}
               <button type="button" onClick={() => setIsEditing(false)} className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
                 Cancel
               </button>
@@ -123,12 +245,30 @@ export default function AdminContactInfoPage() {
             {renderInfoField('Address', contactInfo.address, <MapPin className="text-blue-500" />)}
             {renderInfoField('Phone', contactInfo.phone, <Phone className="text-green-500" />)}
             {renderInfoField('Email', contactInfo.email, <Mail className="text-red-500" />)}
-            {renderInfoField('WhatsApp', contactInfo.whatsapp_link, <MessageCircle className="text-green-400" />, true)}
-            {renderInfoField('TikTok', contactInfo.tiktok_link, <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-black h-6 w-6"><path d="M12.52.02C13.83 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.65 4.32 1.71V10c-1.64.04-3.28-.48-4.62-1.49-1.34-1.02-2.3-2.4-2.86-4.01H12.52V.02z"/><path d="M12.52 10.02v3.33c0 2.51-1.33 4.83-3.51 6.2-2.18 1.37-4.88 1.5-7.23.42v-3.33c.94.54 2.04.83 3.19.83 2.28 0 4.18-1.88 4.18-4.18s-1.9-4.18-4.18-4.18S4.34 9.34 4.34 11.62H.02c0-4.41 3.58-7.98 7.98-7.98s7.98 3.57 7.98 7.98z"/></svg>, true)}
-            {renderInfoField('Instagram', contactInfo.instagram_link, <Instagram className="text-pink-500" />, true)}
-            {renderInfoField('Facebook', contactInfo.facebook_link, <Facebook className="text-blue-600" />, true)}
-            {renderInfoField('LinkedIn', contactInfo.linkedin_link, <Linkedin className="text-blue-700" />, true)}
-            {renderInfoField('GitHub', contactInfo.github_link, <Github className="text-gray-800" />, true)}
+
+            {Object.entries(contactInfo.social_media_links).map(([platform, url]) => (
+              <div key={platform} className="flex items-start text-gray-700">
+                <div className="w-8 h-8 flex-shrink-0 flex items-center justify-center">
+                    {/* You might want to map platform names to specific icons here */}
+                    {platform.toLowerCase() === 'whatsapp' && <img src="/path/to/whatsapp-icon.png" alt="WhatsApp" className="h-5 w-5" />}
+                    {platform.toLowerCase() === 'tiktok' && <img src="/path/to/tiktok-icon.png" alt="TikTok" className="h-5 w-5" />}
+                    {platform.toLowerCase() === 'instagram' && <img src="/path/to/instagram-icon.png" alt="Instagram" className="h-5 w-5" />}
+                    {platform.toLowerCase() === 'facebook' && <img src="/path/to/facebook-icon.png" alt="Facebook" className="h-5 w-5" />}
+                    {platform.toLowerCase() === 'linkedin' && <img src="/path/to/linkedin-icon.png" alt="LinkedIn" className="h-5 w-5" />}
+                    {platform.toLowerCase() === 'github' && <img src="/path/to/github-icon.png" alt="GitHub" className="h-5 w-5" />}
+                    {/* Default icon if no specific one is found */}
+                    {![
+                      'whatsapp', 'tiktok', 'instagram', 'facebook', 'linkedin', 'github'
+                    ].includes(platform.toLowerCase()) && <span className="text-gray-500 capitalize">{platform[0]}</span>}
+                </div>
+                <div className="ml-4 flex-grow">
+                  <strong className="block">{platform}:</strong>
+                  <a href={url} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline break-all">
+                    {url}
+                  </a>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

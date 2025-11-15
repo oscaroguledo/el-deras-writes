@@ -17,7 +17,7 @@ interface AdminSidebarProps {
 }
 
 const navLinks = [
-  { to: '/admin/dashboard', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
+  { to: '/admin', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
   { to: '/admin/articles', icon: <FileText size={20} />, label: 'Articles' },
   { to: '/admin/users', icon: <Users size={20} />, label: 'Users' },
   { to: '/admin/comments', icon: <MessageSquare size={20} />, label: 'Comments' },
@@ -50,6 +50,7 @@ export default function AdminSidebar({ isSidebarOpen, setIsSidebarOpen }: AdminS
               <li key={link.to} className="mb-2">
                 <NavLink
                   to={link.to}
+                  end={link.to === '/admin'}
                   className={({ isActive }) =>
                     `flex items-center p-3 rounded-lg transition-colors ${
                       isActive

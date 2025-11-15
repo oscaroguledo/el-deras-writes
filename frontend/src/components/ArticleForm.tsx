@@ -1,33 +1,37 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { ImageIcon, XIcon } from 'lucide-react';
+import { XIcon } from 'lucide-react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { Article } from '../types/Article';
+import { CustomUser } from '../types/CustomUser';
+
 interface ArticleFormProps {
   initialData?: Article;
-  onSubmit: (formData: FormData) => Promise<void>;
+  onSubmit: (formData: Partial<Article>) => Promise<void>;
   isSubmitting: boolean;
+  loggedInUser?: CustomUser;
 }
+
 export function ArticleForm({
   initialData,
   onSubmit,
-  isSubmitting
+  isSubmitting,
+  loggedInUser,
 }: ArticleFormProps) {
   const [title, setTitle] = useState(initialData?.title || '');
   const [content, setContent] = useState(initialData?.content || '');
   const [excerpt, setExcerpt] = useState(initialData?.excerpt || '');
-  const [category, setCategory] = useState(initialData?.category || '');
-  const [author, setAuthor] = useState(initialData?.author || '');
+  const [category, setCategory] = useState(initialData?.category?.name || '');
+  const authorId = initialData?.author?.id || loggedInUser?.id || '';
   const [readTime, setReadTime] = useState(initialData?.readTime || '5 min read');
   const [mainImage, setMainImage] = useState<File | null>(null);
   const [mainImagePreview, setMainImagePreview] = useState(initialData?.image || '');
-  const [authorImage, setAuthorImage] = useState<File | null>(null);
-  const [authorImagePreview, setAuthorImagePreview] = useState(initialData?.authorImage || '');
+
   const mainImageInputRef = useRef<HTMLInputElement>(null);
-  const authorImageInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+
   const handleMainImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -39,17 +43,7 @@ export function ArticleForm({
       reader.readAsDataURL(file);
     }
   };
-  const handleAuthorImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setAuthorImage(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setAuthorImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+
   const removeMainImage = () => {
     setMainImage(null);
     setMainImagePreview('');
@@ -57,16 +51,10 @@ export function ArticleForm({
       mainImageInputRef.current.value = '';
     }
   };
-  const removeAuthorImage = () => {
-    setAuthorImage(null);
-    setAuthorImagePreview('');
-    if (authorImageInputRef.current) {
-      authorImageInputRef.current.value = '';
-    }
-  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title || !content || !excerpt || !category || !author) {
+    if (!title || !content || !excerpt || !category || !authorId) {
       toast.error('Please fill in all required fields');
       return;
     }
@@ -75,86 +63,114 @@ export function ArticleForm({
       return;
     }
     try {
-      const formData = new FormData();
-      formData.append('title', title);
-      formData.append('content', content);
-      formData.append('excerpt', excerpt);
-      formData.append('category', category);
-      formData.append('author', author);
-      formData.append('readTime', readTime);
-      if (mainImage) {
-        formData.append('image', mainImage);
-      } else if (mainImagePreview && initialData) {
-        formData.append('imageUrl', initialData.image || '');
-      }
-      if (authorImage) {
-        formData.append('authorImage', authorImage);
-      } else if (authorImagePreview && initialData) {
-        formData.append('authorImageUrl', initialData.authorImage || '');
-      }
-      await onSubmit(formData);
-    } catch (error) {
+      const articleData: Partial<Article> = {
+        title,
+        content,
+        excerpt,
+        category_name: category, // Send category as category_name
+        readTime,
+        image: mainImagePreview,
+      };
+      await onSubmit(articleData);
+    } catch (error: any) {
       console.error('Error submitting form:', error);
-      toast.error('Failed to save article');
+      let errorMessage = 'Failed to save article';
+      if (error.response && error.response.data) {
+        if (typeof error.response.data === 'string') {
+          errorMessage = error.response.data;
+        } else if (error.response.data.detail) {
+          errorMessage = error.response.data.detail;
+        } else if (error.response.data.name) { // Specific for category/tag name uniqueness
+          errorMessage = `Category: ${error.response.data.name.join(', ')}`;
+        } else {
+          // Attempt to parse other common error structures
+          errorMessage = Object.values(error.response.data).flat().join(', ') || errorMessage;
+        }
+      }
+      toast.error(errorMessage);
     }
   };
+
   const categories = ['Technology', 'Design', 'Photography', 'Architecture', 'Fashion', 'Lifestyle', 'Culinary Arts', 'Travel', 'Business', 'Health'];
-  return <form onSubmit={handleSubmit} className="space-y-8">
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-8">
       <div>
         <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
           Title *
         </label>
-        <input id="title" type="text" value={title} onChange={e => setTitle(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500" placeholder="Article title" required />
+        <input
+          id="title"
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
+          placeholder="Article title"
+          required
+        />
       </div>
       <div>
         <label htmlFor="excerpt" className="block text-sm font-medium text-gray-700 mb-1">
           Excerpt/Summary *
         </label>
-        <textarea id="excerpt" value={excerpt} onChange={e => setExcerpt(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500" placeholder="Brief summary of the article" rows={3} required />
+        <textarea
+          id="excerpt"
+          value={excerpt}
+          onChange={(e) => setExcerpt(e.target.value)}
+          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
+          placeholder="Brief summary of the article"
+          rows={3}
+          required
+        />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
             Category *
           </label>
-          <select id="category" value={category} onChange={e => setCategory(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500" required>
+          <select
+            id="category"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
+            required
+          >
             <option value="">Select a category</option>
-            {categories.map(cat => <option key={cat} value={cat}>
+            {categories.map((cat) => (
+              <option key={cat} value={cat}>
                 {cat}
-              </option>)}
+              </option>
+            ))}
           </select>
         </div>
         <div>
           <label htmlFor="readTime" className="block text-sm font-medium text-gray-700 mb-1">
             Read Time
           </label>
-          <input id="readTime" type="text" value={readTime} onChange={e => setReadTime(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500" placeholder="e.g. 5 min read" />
+          <input
+            id="readTime"
+            type="text"
+            value={readTime}
+            onChange={(e) => setReadTime(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
+            placeholder="e.g. 5 min read"
+          />
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label htmlFor="author" className="block text-sm font-medium text-gray-700 mb-1">
-            Author *
+            Author * {loggedInUser ? `(Logged in as: ${loggedInUser.first_name} ${loggedInUser.last_name})` : ''}
           </label>
-          <input id="author" type="text" value={author} onChange={e => setAuthor(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500" placeholder="Author name" required />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Author Image
-          </label>
-          <div className="flex items-center">
-            {authorImagePreview ? <div className="relative mr-4">
-                <img src={authorImagePreview} alt="Author" className="h-16 w-16 rounded-full object-cover" />
-                <button type="button" onClick={removeAuthorImage} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1">
-                  <XIcon className="h-3 w-3" />
-                </button>
-              </div> : null}
-            <label className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none">
-              <ImageIcon className="h-4 w-4 mr-2" />
-              {authorImagePreview ? 'Change Image' : 'Upload Image'}
-              <input type="file" ref={authorImageInputRef} onChange={handleAuthorImageChange} accept="image/*" className="hidden" />
-            </label>
-          </div>
+          <input
+            id="author"
+            type="text"
+            value={initialData?.author?.id || loggedInUser?.id || ''}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
+            placeholder="Author Id"
+            readOnly
+            required
+          />
         </div>
       </div>
       <div>
@@ -162,24 +178,52 @@ export function ArticleForm({
           Main Image *
         </label>
         <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-          {mainImagePreview ? <div className="relative w-full">
-              <img src={mainImagePreview} alt="Article thumbnail" className="mx-auto max-h-64 object-contain" />
-              <button type="button" onClick={removeMainImage} className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1">
+          {mainImagePreview ? (
+            <div className="relative w-full">
+              <img
+                src={mainImagePreview}
+                alt="Article thumbnail"
+                className="mx-auto max-h-64 object-contain"
+              />
+              <button
+                type="button"
+                onClick={removeMainImage}
+                className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+              >
                 <XIcon className="h-4 w-4" />
               </button>
-            </div> : <div className="space-y-1 text-center">
-              <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </div>
+          ) : (
+            <div className="space-y-1 text-center">
+              <svg
+                className="mx-auto h-12 w-12 text-gray-400"
+                stroke="currentColor"
+                fill="none"
+                viewBox="0 0 48 48"
+              >
+                <path
+                  d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
               </svg>
               <div className="flex text-sm text-gray-600 justify-center">
                 <label className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500">
                   <span>Upload a file</span>
-                  <input type="file" ref={mainImageInputRef} onChange={handleMainImageChange} accept="image/*" className="sr-only" />
+                  <input
+                    type="file"
+                    ref={mainImageInputRef}
+                    onChange={handleMainImageChange}
+                    accept="image/*"
+                    className="sr-only"
+                  />
                 </label>
                 <p className="pl-1">or drag and drop</p>
               </div>
               <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
-            </div>}
+            </div>
+          )}
         </div>
       </div>
       <div>
@@ -187,26 +231,40 @@ export function ArticleForm({
           Content *
         </label>
         <div className="border border-gray-300 rounded-md">
-          <ReactQuill theme="snow" value={content} onChange={setContent} className="h-64 mb-12" modules={{
-          toolbar: [[{
-            header: [1, 2, 3, 4, 5, 6, false]
-          }], ['bold', 'italic', 'underline', 'strike', 'sub', 'sup'], [{
-            list: 'ordered'
-          }, {
-            list: 'bullet'
-          }], ['link', 'image'], [{
-            align: []
-          }], ['clean']]
-        }} />
+          <ReactQuill
+            theme="snow"
+            value={content}
+            onChange={setContent}
+            className="h-64 mb-12"
+            modules={{
+              toolbar: [
+                [{ header: [1, 2, 3, 4, 5, 6, false] }],
+                ['bold', 'italic', 'underline', 'strike', 'sub', 'sup'],
+                [{ list: 'ordered' }, { list: 'bullet' }],
+                ['link', 'image'],
+                [{ align: [] }],
+                ['clean'],
+              ],
+            }}
+          />
         </div>
       </div>
       <div className="flex justify-end space-x-4 pt-4">
-        <button type="button" onClick={() => navigate('/admin/dashboard')} className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+        <button
+          type="button"
+          onClick={() => navigate('/admin/dashboard')}
+          className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-500"
+        >
           Cancel
         </button>
-        <button type="submit" disabled={isSubmitting} className="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed">
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
           {isSubmitting ? 'Saving...' : initialData ? 'Update Article' : 'Create Article'}
         </button>
       </div>
-    </form>;
+    </form>
+  );
 }

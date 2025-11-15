@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { MailIcon, PhoneIcon, MapPinIcon, SendIcon } from 'lucide-react';
+import { MailIcon, PhoneIcon, MapPinIcon, SendIcon, Instagram, Facebook, Twitter, Youtube, Globe } from 'lucide-react';
+import { FaTiktok, FaWhatsapp, FaLinkedinIn, FaGithub } from 'react-icons/fa';
 import { getContactInfo } from '@/utils/api';
-
-interface ContactDetails {
-  address?: string;
-  phone?: string;
-  email?: string;
-}
+import { ContactInfo } from '../types/ContactInfo'; // Import ContactInfo type
 
 export default function Contact() {
   const [name, setName] = useState('');
@@ -15,7 +11,7 @@ export default function Contact() {
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [contactInfo, setContactInfo] = useState<ContactDetails | null>(null);
+  const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null); // Use ContactInfo type
 
   useEffect(() => {
     async function fetchContactInfo() {
@@ -52,7 +48,32 @@ export default function Contact() {
       setIsSubmitting(false);
     }
   };
-  return <div className="py-12">
+
+  const getSocialMediaIcon = (platform: string) => {
+    switch (platform.toLowerCase()) {
+      case 'instagram':
+        return <Instagram className="h-6 w-6" />;
+      case 'facebook':
+        return <Facebook className="h-6 w-6" />;
+      case 'tiktok':
+        return <FaTiktok className="h-6 w-6" />;
+      case 'whatsapp':
+        return <FaWhatsapp className="h-6 w-6" />;
+      case 'linkedin':
+        return <FaLinkedinIn className="h-6 w-6" />;
+      case 'github':
+        return <FaGithub className="h-6 w-6" />;
+      case 'twitter':
+        return <Twitter className="h-6 w-6" />;
+      case 'youtube':
+        return <Youtube className="h-6 w-6" />;
+      default:
+        return <Globe className="h-6 w-6" />; // Generic icon for others
+    }
+  };
+
+  return (
+    <div className="py-12">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl md:text-4xl font-serif font-medium text-gray-900 mb-6">
           Contact Us
@@ -96,6 +117,32 @@ export default function Contact() {
             </p>
           </div>
         </div>
+
+        {contactInfo?.social_media_links && Object.keys(contactInfo.social_media_links).length > 0 && (
+          <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-100 mb-12">
+            <h2 className="text-2xl font-serif font-medium text-gray-900 mb-6">
+              Connect With Us
+            </h2>
+            <div className="flex flex-wrap gap-6">
+              {Object.entries(contactInfo.social_media_links).map(([platform, url]) => (
+                <a
+                  key={platform}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center text-gray-600 hover:text-gray-900"
+                  aria-label={platform}
+                >
+                  <div className="bg-gray-100 p-3 rounded-full mr-3">
+                    {getSocialMediaIcon(platform)}
+                  </div>
+                  <span className="text-lg font-medium capitalize">{platform}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-100">
           <h2 className="text-2xl font-serif font-medium text-gray-900 mb-6">
             Send Us a Message
@@ -137,5 +184,6 @@ export default function Contact() {
           </form>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 }

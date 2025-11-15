@@ -8,14 +8,24 @@ from rest_framework.response import Response
 from django.db import models
 from django.db.models import Q
 from .models import Article, Comment, Category, Tag, CustomUser, ContactInfo, VisitorCount, Visit
-from .serializers import ArticleSerializer, ContactInfoSerializer, CommentSerializer, CategorySerializer, TagSerializer, CustomUserSerializer, VisitorCountSerializer
+from .serializers import ArticleSerializer, ContactInfoSerializer, CommentSerializer, CategorySerializer, TagSerializer, CustomUserSerializer, VisitorCountSerializer, MyTokenObtainPairSerializer
 from blog.permissions import IsAdminOrReadOnly, IsAuthorOrAdmin
 from rest_framework.decorators import action
 from rest_framework import filters # Import filters
 from django.utils import timezone
 from datetime import timedelta
 import uuid
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
+
 class ArticlePagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+class UserPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = 'page_size'
     max_page_size = 100
@@ -34,6 +44,9 @@ class ArticleViewSet(viewsets.ModelViewSet):
         if category:
             queryset = queryset.filter(category__name=category)
         return queryset
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
@@ -64,9 +77,10 @@ class TagViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminOrReadOnly]
 
 class CustomUserViewSet(viewsets.ModelViewSet):
-    queryset = CustomUser.objects.all()
+    queryset = CustomUser.objects.all().order_by('-date_joined') # Order by recently created
     serializer_class = CustomUserSerializer
     permission_classes = [IsAdminOrReadOnly]
+    pagination_class = UserPagination # Apply pagination
 
     def perform_create(self, serializer):
         user_type = serializer.validated_data.get('user_type')
@@ -81,29 +95,30 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         serializer.save(is_staff=is_staff, is_superuser=is_superuser)
 
 class AdminArticleViewSet(viewsets.ModelViewSet):
-    queryset = Article.objects.all()
+    queryset = Article.objects.all().order_by('-created_at') # Order by recently created
     serializer_class = ArticleSerializer
     permission_classes = [IsAdminUser]
 
 class AdminCommentViewSet(viewsets.ModelViewSet):
-    queryset = Comment.objects.all()
+    queryset = Comment.objects.all().order_by('-created_at') # Order by recently created
     serializer_class = CommentSerializer
     permission_classes = [IsAdminUser]
 
 class AdminCategoryViewSet(viewsets.ModelViewSet):
-    queryset = Category.objects.all()
+    queryset = Category.objects.all().order_by('-id') # Categories don't have created_at, order by id
     serializer_class = CategorySerializer
     permission_classes = [IsAdminUser]
 
 class AdminTagViewSet(viewsets.ModelViewSet):
-    queryset = Tag.objects.all()
+    queryset = Tag.objects.all().order_by('-created_at') # Order by recently created
     serializer_class = TagSerializer
     permission_classes = [IsAdminUser]
 
 class AdminUserViewSet(viewsets.ModelViewSet):
-    queryset = CustomUser.objects.all()
+    queryset = CustomUser.objects.all().order_by('-date_joined') # Order by recently created
     serializer_class = CustomUserSerializer
     permission_classes = [IsAdminUser]
+    pagination_class = UserPagination # Apply pagination
 
     def perform_create(self, serializer):
         user_type = serializer.validated_data.get('user_type')
@@ -128,10 +143,12 @@ class ContactInfoView(APIView):
                 address="123 Main St, Anytown, USA",
                 phone="+1234567890",
                 email="info@example.com",
-                whatsapp_link="https://wa.me/1234567890",
-                tiktok_link="https://tiktok.com/@example",
-                instagram_link="https://instagram.com/example",
-                facebook_link="https://facebook.com/example"
+                social_media_links={ # Initialize with an empty dictionary
+                    "whatsapp": "https://wa.me/1234567890",
+                    "tiktok": "https://tiktok.com/@example",
+                    "instagram": "https://instagram.com/example",
+                    "facebook": "https://facebook.com/example"
+                }
             )
         serializer = ContactInfoSerializer(contact_info)
         return Response(serializer.data)

@@ -20,22 +20,34 @@ interface PaginatedResponse<T> {
 
 export async function getArticles(params: GetArticlesParams): Promise<PaginatedResponse<Article>> {
   const response = await axios.get(`${API_URL}/articles/`, { params });
-  console.log(response.data);
-  return response.data;
+  const articles = response.data.results.map((article: any) => ({
+    ...article,
+    _id: article.id,
+    createdAt: article.created_at,
+  }));
+  return {
+    ...response.data,
+    results: articles,
+  };
 }
 
 export async function getArticleById(id: string): Promise<Article> {
   const response = await axios.get(`${API_URL}/articles/${id}/`);
+  const article = response.data;
+  return {
+    ...article,
+    _id: article.id,
+    createdAt: article.created_at,
+  };
+}
+
+export async function createArticle(articleData: Partial<Article>): Promise<Article> {
+  const response = await axios.post(`${API_URL}/articles/`, articleData);
   return response.data;
 }
 
-export async function createArticle(formData: FormData): Promise<Article> {
-  const response = await axios.post(`${API_URL}/articles/`, formData);
-  return response.data;
-}
-
-export async function updateArticle(id: string, formData: FormData): Promise<Article> {
-  const response = await axios.put(`${API_URL}/articles/${id}/`, formData);
+export async function updateArticle(id: string, articleData: Partial<Article>): Promise<Article> {
+  const response = await axios.put(`${API_URL}/articles/${id}/`, articleData);
   return response.data;
 }
 
@@ -55,8 +67,8 @@ export async function submitFeedback(feedback: {
 
 // ... (existing code)
 
-export async function getComments(): Promise<Comment[]> {
-  const response = await axios.get(`${API_URL}/comments/`);
+export async function getComments(params: { page?: number; pageSize?: number; search?: string } = {}): Promise<PaginatedResponse<Comment>> {
+  const response = await axios.get(`${API_URL}/admin/comments/`, { params: { page: params.page, page_size: params.pageSize, search: params.search } });
   return response.data;
 }
 
@@ -76,8 +88,8 @@ export async function createComment(
   return response.data;
 }
 
-export async function getCategories(): Promise<Category[]> {
-  const response = await axios.get(`${API_URL}/categories/`);
+export async function getCategories(params: { search?: string } = {}): Promise<Category[]> {
+  const response = await axios.get(`${API_URL}/categories/`, { params });
   return response.data;
 }
 
@@ -86,13 +98,18 @@ export async function getTopFiveCategories(): Promise<Category[]> {
   return response.data;
 }
 
-export async function getTags(): Promise<Tag[]> {
-  const response = await axios.get(`${API_URL}/tags/`);
+export async function getTags(params: { search?: string } = {}): Promise<Tag[]> {
+  const response = await axios.get(`${API_URL}/tags/`, { params });
   return response.data;
 }
 
-export async function getUsers(): Promise<CustomUser[]> {
-  const response = await axios.get(`${API_URL}/users/`);
+export interface GetUsersParams {
+  page?: number;
+  page_size?: number;
+}
+
+export async function getUsers(params: GetUsersParams = {}): Promise<PaginatedResponse<CustomUser>> {
+  const response = await axios.get(`${API_URL}/users/`, { params });
   return response.data;
 }
 

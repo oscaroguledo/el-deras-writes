@@ -4,8 +4,8 @@ import { FeedbackForm } from './FeedbackForm';
 import { getContactInfo, getTopFiveCategories } from '../utils/api';
 import { ContactInfo } from '../types/ContactInfo';
 import { Category } from '../types/Category';
-import { Instagram, Facebook } from 'lucide-react';
-import { FaTiktok, FaWhatsapp } from 'react-icons/fa';
+import { Instagram, Facebook, Twitter, Youtube, Globe } from 'lucide-react'; // Added more Lucide icons
+import { FaTiktok, FaWhatsapp, FaLinkedinIn, FaGithub } from 'react-icons/fa'; // Added more react-icons
 
 export default function Footer() {
   const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null);
@@ -27,6 +27,29 @@ export default function Footer() {
     fetchData();
   }, []);
 
+  const getSocialMediaIcon = (platform: string) => {
+    switch (platform.toLowerCase()) {
+      case 'instagram':
+        return <Instagram className="h-5 w-5" />;
+      case 'facebook':
+        return <Facebook className="h-5 w-5" />;
+      case 'tiktok':
+        return <FaTiktok className="h-5 w-5" />;
+      case 'whatsapp':
+        return <FaWhatsapp className="h-5 w-5" />;
+      case 'linkedin':
+        return <FaLinkedinIn className="h-5 w-5" />;
+      case 'github':
+        return <FaGithub className="h-5 w-5" />;
+      case 'twitter':
+        return <Twitter className="h-5 w-5" />;
+      case 'youtube':
+        return <Youtube className="h-5 w-5" />;
+      default:
+        return <Globe className="h-5 w-5" />; // Generic icon for others
+    }
+  };
+
   return (
     <footer className="bg-gray-50 border-t border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -40,27 +63,19 @@ export default function Footer() {
               art of mindful living.
             </p>
             <div className="flex flex-wrap gap-4">
-              {contactInfo?.instagram_link && (
-                <a href={contactInfo.instagram_link} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-900" aria-label="Instagram">
-                  <Instagram className="h-5 w-5" />
-                </a>
-              )}
-              {contactInfo?.facebook_link && (
-                <a href={contactInfo.facebook_link} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-900" aria-label="Facebook">
-                  <Facebook className="h-5 w-5" />
-                </a>
-              )}
-              {contactInfo?.tiktok_link && (
-                <a href={contactInfo.tiktok_link} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-900" aria-label="TikTok">
-                  <FaTiktok className="h-5 w-5" />
-                </a>
-              )}
-              {contactInfo?.whatsapp_link && (
-                <a href={contactInfo.whatsapp_link} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-900" aria-label="WhatsApp">
-                  <FaWhatsapp className="h-5 w-5" />
-                </a>
-              )}
-              
+              {contactInfo?.social_media_links &&
+                Object.entries(contactInfo.social_media_links).map(([platform, url]) => (
+                  <a
+                    key={platform}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-500 hover:text-gray-900"
+                    aria-label={platform}
+                  >
+                    {getSocialMediaIcon(platform)}
+                  </a>
+                ))}
             </div>
           </div>
           <div>

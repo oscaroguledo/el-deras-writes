@@ -187,12 +187,14 @@ export default function AdminDashboardOverview() {
             Recent Articles
           </h3>
           <ul className="space-y-3">
-            {dashboardData.recent_articles.map((article) => (
-              <li key={article.id} className="text-sm text-gray-700 flex justify-between items-center">
-                <span className="truncate">{article.title} by {article.author.username}</span>
-                <span className="text-gray-500 text-xs">{formatDate(article.createdAt)}</span>
-              </li>
-            ))}
+            {dashboardData.recent_articles.map((article) => {
+              return (
+                <li key={article.id} className="text-sm text-gray-700 flex justify-between items-center">
+                  <span className="truncate">{article.title} by {article.author.username}</span>
+                  <span className="text-gray-500 text-xs">{formatDate(article.created_at)}</span>
+                </li>
+              );
+            })}
           </ul>
         </div>
         <div className="bg-white shadow-lg rounded-xl p-6">

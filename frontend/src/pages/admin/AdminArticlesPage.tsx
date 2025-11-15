@@ -1,5 +1,10 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { getArticles, deleteArticle } from '../../utils/api';
+import { Article } from '../../types/Article';
+import { toast } from 'react-toastify';
+import { Plus, Edit, Trash, ChevronLeft, ChevronRight, Search } from 'lucide-react';
+import { debounce } from 'lodash';
 
 export default function AdminArticlesPage() {
   const [articles, setArticles] = useState<Article[]>([]);
@@ -8,11 +13,12 @@ export default function AdminArticlesPage() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [searchQuery, setSearchQuery] = useState(''); // New state for search query
 
-const fetchArticles = useCallback(async (page: number) => {
+  const fetchArticles = useCallback(async (page: number, search: string = '') => { // Accept search parameter
     try {
       setLoading(true);
-      const data = await getArticles({ page, pageSize: 10 });
+      const data = await getArticles({ page, pageSize: 10, search }); // Pass search to API
       setArticles(data.results);
       setTotalPages(Math.ceil(data.count / 10));
     } catch (error) {
@@ -23,17 +29,27 @@ const fetchArticles = useCallback(async (page: number) => {
     }
   }, []);
 
-useEffect(() => {
-    fetchArticles(currentPage);
-  }, [fetchArticles, currentPage]);
+  // Debounce search input
+  const debouncedFetchArticles = useRef(
+    debounce((page: number, search: string) => fetchArticles(page, search), 500)
+  ).current;
+
+  useEffect(() => {
+    debouncedFetchArticles(currentPage, searchQuery);
+    return () => {
+      debouncedFetchArticles.cancel();
+    };
+  }, [currentPage, searchQuery, debouncedFetchArticles]);
 
   const handleDeleteArticle = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this article? This action cannot be undone.')) {
       try {
         setDeleting(id);
         await deleteArticle(id);
-        setArticles(articles.filter(article => article._id !== id));
+        setArticles(articles.filter(article => article.id !== id)); // Use article.id
         toast.success('Article deleted successfully');
+        // Re-fetch articles to ensure list is up-to-date and pagination correct
+        fetchArticles(currentPage, searchQuery);
       } catch (error) {
         toast.error('Failed to delete article');
         console.error(error);
@@ -61,9 +77,23 @@ useEffect(() => {
     <div>
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-3xl font-serif font-medium text-gray-900">Manage Articles</h1>
-        <Link to="/admin/create" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-          <PlusIcon className="h-4 w-4 mr-1" /> New Article
+        <Link to="/admin/articles/create" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+          <Plus className="h-4 w-4 mr-1" /> New Article
         </Link>
+      </div>
+
+      <div className="mb-4 relative max-w-md">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+        <input
+          type="text"
+          placeholder="Search articles..."
+          className="w-full bg-white rounded-md py-2 pl-10 pr-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+          value={searchQuery}
+          onChange={(e) => {
+            setSearchQuery(e.target.value);
+            setCurrentPage(1); // Reset to first page on new search
+          }}
+        />
       </div>
 
       {/* Desktop Table View */}
@@ -91,7 +121,7 @@ useEffect(() => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {articles.length > 0 ? articles.map(article => (
-                <tr key={article._id}>
+                <tr key={article.id}> {/* Use article.id here */}
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="h-10 w-10 flex-shrink-0">
@@ -106,7 +136,7 @@ useEffect(() => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                      {article.category}
+                      {article.category.name}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -117,11 +147,11 @@ useEffect(() => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
-                      <Link to={`/admin/edit/${article._id}`} className="text-indigo-600 hover:text-indigo-900">
-                        <EditIcon className="h-5 w-5" />
+                      <Link to={`/admin/articles/edit/${article.id}`} className="text-indigo-600 hover:text-indigo-900"> {/* Use article.id here */}
+                        <Edit className="h-5 w-5" />
                       </Link>
-                      <button onClick={() => handleDeleteArticle(article._id)} disabled={deleting === article._id} className="text-red-600 hover:text-red-900 disabled:opacity-50">
-                        <TrashIcon className="h-5 w-5" />
+                      <button onClick={() => handleDeleteArticle(article.id)} disabled={deleting === article.id} className="text-red-600 hover:text-red-900 disabled:opacity-50"> {/* Use article.id here */}
+                        <Trash className="h-5 w-5" />
                       </button>
                     </div>
                   </td>
@@ -129,7 +159,7 @@ useEffect(() => {
               )) : (
                 <tr>
                   <td colSpan={5} className="px-6 py-4 text-center text-sm text-gray-500">
-                    No articles found. Create your first article!
+                    No articles found. Create your first article or adjust search criteria!
                   </td>
                 </tr>
               )}
@@ -139,7 +169,7 @@ useEffect(() => {
         {/* Pagination Controls */}
         <div className="flex justify-between items-center px-6 py-3 bg-gray-50 border-t border-gray-200">
           <button onClick={handlePreviousPage} disabled={currentPage === 1} className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-            <ChevronLeftIcon className="h-5 w-5" />
+            <ChevronLeft className="h-5 w-5" />
             Previous
           </button>
           <span className="text-sm text-gray-700">
@@ -147,7 +177,7 @@ useEffect(() => {
           </span>
           <button onClick={handleNextPage} disabled={currentPage === totalPages} className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
             Next
-            <ChevronRightIcon className="h-5 w-5" />
+            <ChevronRight className="h-5 w-5" />
           </button>
         </div>
       </div>
@@ -155,29 +185,29 @@ useEffect(() => {
       {/* Mobile List View */}
       <div className="md:hidden bg-white shadow overflow-hidden rounded-lg mb-8">
         {articles.length > 0 ? articles.map(article => (
-          <div key={article._id} className="border-b border-gray-200 p-4 last:border-b-0">
+          <div key={article.id} className="border-b border-gray-200 p-4 last:border-b-0"> {/* Use article.id here */}
             <div className="flex justify-between items-center mb-2">
               <div className="text-lg font-medium text-gray-900">{article.title}</div>
               <div className="flex space-x-2">
-                <Link to={`/admin/edit/${article._id}`} className="text-indigo-600 hover:text-indigo-900">
-                  <EditIcon className="h-5 w-5" />
+                <Link to={`/admin/articles/edit/${article.id}`} className="text-indigo-600 hover:text-indigo-900"> {/* Use article.id here */}
+                  <Edit className="h-5 w-5" />
                 </Link>
-                <button onClick={() => handleDeleteArticle(article._id)} disabled={deleting === article._id} className="text-red-600 hover:text-red-900 disabled:opacity-50">
-                  <TrashIcon className="h-5 w-5" />
+                <button onClick={() => handleDeleteArticle(article.id)} disabled={deleting === article.id} className="text-red-600 hover:text-red-900 disabled:opacity-50"> {/* Use article.id here */}
+                  <Trash className="h-5 w-5" />
                 </button>
               </div>
             </div>
-            <div className="text-sm text-gray-500 mb-1">Category: {article.category}</div>
+            <div className="text-sm text-gray-500 mb-1">Category: {article.category.name}</div>
             <div className="text-sm text-gray-500 mb-1">Author: {article.author.username}</div>
             <div className="text-sm text-gray-500">Date: {new Date(article.createdAt).toLocaleDateString()}</div>
           </div>
         )) : (
-          <div className="p-4 text-center text-sm text-gray-500">No articles found. Create your first article!</div>
+          <div className="p-4 text-center text-sm text-gray-500">No articles found. Create your first article or adjust search criteria!</div>
         )}
         {/* Pagination Controls for Mobile */}
         <div className="flex justify-between items-center px-6 py-3 bg-gray-50 border-t border-gray-200">
           <button onClick={handlePreviousPage} disabled={currentPage === 1} className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-            <ChevronLeftIcon className="h-5 w-5" />
+            <ChevronLeft className="h-5 w-5" />
             Previous
           </button>
           <span className="text-sm text-gray-700">
@@ -185,7 +215,7 @@ useEffect(() => {
           </span>
           <button onClick={handleNextPage} disabled={currentPage === totalPages} className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
             Next
-            <ChevronRightIcon className="h-5 w-5" />
+            <ChevronRight className="h-5 w-5" />
           </button>
         </div>
       </div>

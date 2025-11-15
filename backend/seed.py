@@ -17,10 +17,14 @@ def seed_data():
             address="123 Main St, Anytown, USA",
             phone="+1 (555) 123-4567",
             email="info@el-deras-writes.com",
-            whatsapp_link="https://wa.me/15551234567",
-            tiktok_link="https://www.tiktok.com/@el_deras_writes",
-            instagram_link="https://www.instagram.com/el_deras_writes",
-            facebook_link="https://www.facebook.com/el_deras_writes"
+            social_media_links={
+                "whatsapp": "https://wa.me/15551234567",
+                "tiktok": "https://www.tiktok.com/@el_deras_writes",
+                "instagram": "https://www.instagram.com/el_deras_writes",
+                "facebook": "https://www.facebook.com/el_deras_writes",
+                "twitter": "https://twitter.com/el_deras_writes",
+                "youtube": "https://www.youtube.com/channel/el_deras_writes"
+            }
         )
         print("ContactInfo seeded successfully!")
     else:
@@ -257,10 +261,11 @@ def seed_data():
 
     for article_data in mockArticles:
         author_name = article_data['author']
-        # Generate a unique email for each author for seeding purposes
+        unique_id = uuid.uuid4().hex[:8] # Generate a short unique ID
+        unique_username = f"{author_name.lower().replace(' ', '_')}_{unique_id}"
         email = f"{author_name.lower().replace(' ', '.')}.{uuid.uuid4().hex[:6]}@example.com"
         author, _ = CustomUser.objects.get_or_create(
-            username=author_name,
+            username=unique_username, # Use unique username
             email=email, # Provide a unique email
             defaults={
                 'first_name': author_name.split(' ')[0],

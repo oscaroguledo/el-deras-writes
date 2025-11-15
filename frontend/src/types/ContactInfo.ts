@@ -1,12 +1,7 @@
 export interface ContactInfo {
-  id?: number;
+  id?: string; // Changed to string as per UUIDField in backend
   address: string | null;
   phone: string | null;
   email: string | null;
-  whatsapp_link: string | null;
-  tiktok_link: string | null;
-  instagram_link: string | null;
-  facebook_link: string | null;
-  linkedin_link: string | null;
-  github_link: string | null;
+  social_media_links: { [key: string]: string }; // New field for dynamic social media links
 }

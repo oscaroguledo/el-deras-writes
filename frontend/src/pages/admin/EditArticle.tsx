@@ -3,7 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArticleForm } from '../../components/ArticleForm';
 import { getArticleById, updateArticle } from '../../utils/api';
 import { useAuth } from '../../hooks/useAuth.ts';
-
+import { toast } from 'react-toastify';
+import { Article } from '../../types/Article';
 export default function EditArticle() {
   const {
     id
@@ -29,20 +30,20 @@ export default function EditArticle() {
       } catch (error) {
         toast.error('Failed to load article');
         console.error(error);
-        navigate('/admin/dashboard');
+        navigate('/admin');
       } finally {
         setLoading(false);
       }
     };
     verifyAuthAndFetchArticle();
   }, [id, navigate, isAuthenticated]);
-  const handleSubmit = async (formData: FormData) => {
+  const handleSubmit = async (formData: Partial<Article>) => {
     if (!id) return;
     try {
       setIsSubmitting(true);
       await updateArticle(id, formData);
       toast.success('Article updated successfully!');
-      navigate('/admin/dashboard');
+      navigate('/admin/articles'); // Navigate to articles list after update
     } catch (error) {
       toast.error('Failed to update article');
       console.error(error);

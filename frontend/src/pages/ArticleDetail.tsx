@@ -21,6 +21,7 @@ export default function ArticleDetail() {
         setLoading(true);
         setError(null);
         if (id) {
+          console.log("Fetching article with ID:", id); // Add this line for debugging
           const data = await getArticleById(id);
           setArticle(data);
         }

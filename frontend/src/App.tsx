@@ -1,6 +1,8 @@
 import React, { useEffect, lazy } from 'react';
 import { Route, createRoutesFromElements } from 'react-router-dom';
 import { incrementVisitorCount } from './utils/api';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Layout components
 const MainLayout = lazy(() => import('./components/MainLayout'));
@@ -39,7 +41,7 @@ export const routes = createRoutesFromElements(
     </Route>
     <Route path="/admin/login" element={<AdminLogin />} />
     <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
-      <Route index element={<AdminDashboardOverview />} />
+      <Route index element={<AdminDashboardOverview />} />  
       <Route path="users" element={<AdminUsersPage />} />
       <Route path="articles" element={<AdminArticlesPage />} />
       <Route path="articles/create" element={<CreateArticle />} />
@@ -61,6 +63,7 @@ export function App({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       {children}
+      <ToastContainer />
     </div>
   );
 }

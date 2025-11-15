@@ -1,9 +1,11 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { toast } from 'react-toastify';
-import { PlusIcon, EditIcon, TrashIcon } from 'lucide-react';
+import { PlusIcon, EditIcon, TrashIcon, Search } from 'lucide-react';
 import { Category } from '../../types/Category';
 import { Tag } from '../../types/Tag';
 import { getCategories, createCategory, updateCategory, deleteCategory, getTags, createTag, updateTag, deleteTag } from '../../utils/api';
+import { ConfirmationModal } from '../../components/ConfirmationModal'; // Import the new modal
+import { debounce } from 'lodash';
 
 export default function AdminCategoriesTagsPage() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -14,9 +16,15 @@ export default function AdminCategoriesTagsPage() {
   const [newTagName, setNewTagName] = useState('');
   const [editingTag, setEditingTag] = useState<Tag | null>(null);
 
-  const fetchCategories = useCallback(async () => {
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<{ id: string; type: 'category' | 'tag' } | null>(null);
+
+  const [categorySearchQuery, setCategorySearchQuery] = useState('');
+  const [tagSearchQuery, setTagSearchQuery] = useState('');
+
+  const fetchCategories = useCallback(async (search: string = '') => {
     try {
-      const categoriesData = await getCategories();
+      const categoriesData = await getCategories({ search });
       setCategories(categoriesData);
     } catch (error) {
       toast.error('Failed to fetch categories.');
@@ -24,9 +32,9 @@ export default function AdminCategoriesTagsPage() {
     }
   }, []);
 
-  const fetchTags = useCallback(async () => {
+  const fetchTags = useCallback(async (search: string = '') => {
     try {
-      const tagsData = await getTags();
+      const tagsData = await getTags({ search });
       setTags(tagsData);
     } catch (error) {
       toast.error('Failed to fetch tags.');
@@ -34,14 +42,24 @@ export default function AdminCategoriesTagsPage() {
     }
   }, []);
 
+  const debouncedFetchCategories = useRef(
+    debounce((search: string) => fetchCategories(search), 500)
+  ).current;
+
+  const debouncedFetchTags = useRef(
+    debounce((search: string) => fetchTags(search), 500)
+  ).current;
+
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      await Promise.all([fetchCategories(), fetchTags()]);
-      setLoading(false);
+    setLoading(true);
+    debouncedFetchCategories(categorySearchQuery);
+    debouncedFetchTags(tagSearchQuery);
+    setLoading(false); // Set loading to false after both debounced calls are initiated
+    return () => {
+      debouncedFetchCategories.cancel();
+      debouncedFetchTags.cancel();
     };
-    fetchData();
-  }, [fetchCategories, fetchTags]);
+  }, [categorySearchQuery, tagSearchQuery, debouncedFetchCategories, debouncedFetchTags]);
 
   const handleCreateCategory = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,9 +71,13 @@ export default function AdminCategoriesTagsPage() {
       await createCategory({ name: newCategoryName });
       toast.success('Category created successfully!');
       setNewCategoryName('');
-      fetchCategories();
-    } catch (error) {
-      toast.error('Failed to create category.');
+      fetchCategories(categorySearchQuery); // Re-fetch with current search query
+    } catch (error: any) {
+      let errorMessage = 'Failed to create category.';
+      if (error.response && error.response.data && error.response.data.name) {
+        errorMessage = `Category: ${error.response.data.name.join(', ')}`;
+      }
+      toast.error(errorMessage);
       console.error(error);
     }
   };
@@ -70,23 +92,46 @@ export default function AdminCategoriesTagsPage() {
       await updateCategory(editingCategory.id, { name: editingCategory.name });
       toast.success('Category updated successfully!');
       setEditingCategory(null);
-      fetchCategories();
-    } catch (error) {
-      toast.error('Failed to update category.');
+      fetchCategories(categorySearchQuery); // Re-fetch with current search query
+    } catch (error: any) {
+      let errorMessage = 'Failed to update category.';
+      if (error.response && error.response.data && error.response.data.name) {
+        errorMessage = `Category: ${error.response.data.name.join(', ')}`;
+      }
+      toast.error(errorMessage);
       console.error(error);
     }
   };
 
-  const handleDeleteCategory = async (categoryId: string) => {
-    if (window.confirm('Are you sure you want to delete this category? This action cannot be undone.')) {
-      try {
-        await deleteCategory(categoryId);
+  const handleDeleteCategoryClick = (categoryId: string) => {
+    setItemToDelete({ id: categoryId, type: 'category' });
+    setShowConfirmModal(true);
+  };
+
+  const handleDeleteTagClick = (tagId: string) => {
+    setItemToDelete({ id: tagId, type: 'tag' });
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!itemToDelete) return;
+
+    try {
+      if (itemToDelete.type === 'category') {
+        await deleteCategory(itemToDelete.id);
         toast.success('Category deleted successfully!');
-        fetchCategories();
-      } catch (error) {
-        toast.error('Failed to delete category.');
-        console.error(error);
+        fetchCategories(categorySearchQuery); // Re-fetch with current search query
+      } else if (itemToDelete.type === 'tag') {
+        await deleteTag(itemToDelete.id);
+        toast.success('Tag deleted successfully!');
+        fetchTags(tagSearchQuery); // Re-fetch with current search query
       }
+    } catch (error) {
+      toast.error(`Failed to delete ${itemToDelete.type}.`);
+      console.error(error);
+    } finally {
+      setShowConfirmModal(false);
+      setItemToDelete(null);
     }
   };
 
@@ -100,9 +145,13 @@ export default function AdminCategoriesTagsPage() {
       await createTag({ name: newTagName });
       toast.success('Tag created successfully!');
       setNewTagName('');
-      fetchTags();
-    } catch (error) {
-      toast.error('Failed to create tag.');
+      fetchTags(tagSearchQuery); // Re-fetch with current search query
+    } catch (error: any) {
+      let errorMessage = 'Failed to create tag.';
+      if (error.response && error.response.data && error.response.data.name) {
+        errorMessage = `Tag: ${error.response.data.name.join(', ')}`;
+      }
+      toast.error(errorMessage);
       console.error(error);
     }
   };
@@ -117,23 +166,14 @@ export default function AdminCategoriesTagsPage() {
       await updateTag(editingTag.id, { name: editingTag.name });
       toast.success('Tag updated successfully!');
       setEditingTag(null);
-      fetchTags();
-    } catch (error) {
-      toast.error('Failed to update tag.');
-      console.error(error);
-    }
-  };
-
-  const handleDeleteTag = async (tagId: string) => {
-    if (window.confirm('Are you sure you want to delete this tag? This action cannot be undone.')) {
-      try {
-        await deleteTag(tagId);
-        toast.success('Tag deleted successfully!');
-        fetchTags();
-      } catch (error) {
-        toast.error('Failed to delete tag.');
-        console.error(error);
+      fetchTags(tagSearchQuery); // Re-fetch with current search query
+    } catch (error: any) {
+      let errorMessage = 'Failed to update tag.';
+      if (error.response && error.response.data && error.response.data.name) {
+        errorMessage = `Tag: ${error.response.data.name.join(', ')}`;
       }
+      toast.error(errorMessage);
+      console.error(error);
     }
   };
 
@@ -151,6 +191,16 @@ export default function AdminCategoriesTagsPage() {
       <div className="bg-white shadow-lg rounded-xl p-6">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-serif font-medium text-gray-900">Categories</h2>
+        </div>
+        <div className="mb-4 relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+          <input
+            type="text"
+            placeholder="Search categories..."
+            className="w-full bg-white rounded-md py-2 pl-10 pr-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+            value={categorySearchQuery}
+            onChange={(e) => setCategorySearchQuery(e.target.value)}
+          />
         </div>
         <form onSubmit={handleCreateCategory} className="flex mb-4">
           <input
@@ -194,7 +244,7 @@ export default function AdminCategoriesTagsPage() {
                       ) : (
                         <button onClick={() => setEditingCategory(category)} className="text-indigo-600 hover:text-indigo-900"><EditIcon className="h-5 w-5" /></button>
                       )}
-                      <button onClick={() => handleDeleteCategory(category.id)} className="text-red-600 hover:text-red-900"><TrashIcon className="h-5 w-5" /></button>
+                      <button onClick={() => handleDeleteCategoryClick(category.id)} className="text-red-600 hover:text-red-900"><TrashIcon className="h-5 w-5" /></button>
                     </div>
                   </td>
                 </tr>
@@ -208,6 +258,16 @@ export default function AdminCategoriesTagsPage() {
       <div className="bg-white shadow-lg rounded-xl p-6">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-serif font-medium text-gray-900">Tags</h2>
+        </div>
+        <div className="mb-4 relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+          <input
+            type="text"
+            placeholder="Search tags..."
+            className="w-full bg-white rounded-md py-2 pl-10 pr-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+            value={tagSearchQuery}
+            onChange={(e) => setTagSearchQuery(e.target.value)}
+          />
         </div>
         <form onSubmit={handleCreateTag} className="flex mb-4">
           <input
@@ -251,7 +311,7 @@ export default function AdminCategoriesTagsPage() {
                       ) : (
                         <button onClick={() => setEditingTag(tag)} className="text-indigo-600 hover:text-indigo-900"><EditIcon className="h-5 w-5" /></button>
                       )}
-                      <button onClick={() => handleDeleteTag(tag.id)} className="text-red-600 hover:text-red-900"><TrashIcon className="h-5 w-5" /></button>
+                      <button onClick={() => handleDeleteTagClick(tag.id)} className="text-red-600 hover:text-red-900"><TrashIcon className="h-5 w-5" /></button>
                     </div>
                   </td>
                 </tr>
@@ -260,6 +320,14 @@ export default function AdminCategoriesTagsPage() {
           </table>
         </div>
       </div>
+
+      <ConfirmationModal
+        show={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        onConfirm={handleConfirmDelete}
+        title={`Delete ${itemToDelete?.type === 'category' ? 'Category' : 'Tag'}`}
+        message={`Are you sure you want to delete this ${itemToDelete?.type}? This action cannot be undone.`}
+      />
     </div>
   );
 }

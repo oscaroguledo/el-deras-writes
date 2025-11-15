@@ -1,4 +1,6 @@
+from django.utils import timezone
 from django.db import models
+from django.db.models import JSONField # Import JSONField
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import BaseUserManager
 from django.contrib.auth.hashers import make_password, check_password
@@ -96,6 +98,7 @@ class Category(models.Model):
 class Tag(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True) # Added created_at field
 
     def __str__(self):
         return self.name
@@ -109,7 +112,7 @@ class Article(models.Model):
     title = models.CharField(max_length=255)
     excerpt = models.TextField(blank=True, null=True)
     content = models.TextField()
-    image = models.URLField(max_length=200, blank=True, null=True, default='/logo.png')
+    image = models.TextField(blank=True, null=True, default='/logo.png')
     readTime = models.CharField(max_length=50, blank=True, null=True)
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='articles')
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
@@ -147,10 +150,7 @@ class ContactInfo(models.Model):
     address = models.CharField(max_length=255, blank=True, null=True)
     phone = models.CharField(max_length=20, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
-    whatsapp_link = models.URLField(max_length=200, blank=True, null=True)
-    tiktok_link = models.URLField(max_length=200, blank=True, null=True)
-    instagram_link = models.URLField(max_length=200, blank=True, null=True)
-    facebook_link = models.URLField(max_length=200, blank=True, null=True)
+    social_media_links = JSONField(default=dict, blank=True) # New JSONField for social media links
 
     class Meta:
         verbose_name = "Contact Information"
@@ -184,7 +184,7 @@ class VisitorCount(models.Model):
 
 class Visit(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    date = models.DateField(auto_now_add=True)
+    date = models.DateField(default=timezone.now, unique=True)
     count = models.PositiveIntegerField(default=1) # Count for the day
 
     def __str__(self):
