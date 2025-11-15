@@ -9,7 +9,8 @@ django.setup()
 
 def seed_data():
     from django.contrib.auth.models import User
-    from blog.models import Article, Category, CustomUser, ContactInfo # Import ContactInfo
+    from blog.models import Article, Category, CustomUser, ContactInfo, TITLE_CHOICES # Import ContactInfo and TITLE_CHOICES
+    import random
 
     # Seed ContactInfo
     if not ContactInfo.objects.exists():
@@ -270,6 +271,7 @@ def seed_data():
             defaults={
                 'first_name': author_name.split(' ')[0],
                 'last_name': author_name.split(' ')[-1] if len(author_name.split(' ')) > 1 else '',
+                'title': random.choice([choice[0] for choice in TITLE_CHOICES]), # Assign a random title
                 'user_type': 'normal' # Default user type
             }
         )

@@ -143,14 +143,22 @@ export function UserFormModal({ show, onClose, user, onSubmit }: UserFormModalPr
           </div>
           <div className="mb-4">
             <label htmlFor="title" className="block text-gray-700 text-sm font-bold mb-2">Title:</label>
-            <input
-              type="text"
+            <select
               id="title"
               name="title"
               value={formData.title || ''}
               onChange={handleChange}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            />
+            >
+              <option value="">-- Select Title --</option>
+              <option value="Mr.">Mr.</option>
+              <option value="Mrs.">Mrs.</option>
+              <option value="Ms.">Ms.</option>
+              <option value="Dr.">Dr.</option>
+              <option value="Prof.">Prof.</option>
+              <option value="Sir">Sir</option>
+              <option value="Madam">Madam</option>
+            </select>
             {errors.title && <p className="text-red-500 text-xs italic">{errors.title}</p>}
           </div>
           <div className="mb-4">
