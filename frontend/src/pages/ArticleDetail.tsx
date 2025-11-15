@@ -98,7 +98,7 @@ export default function ArticleDetail() {
           <div className="flex flex-wrap items-center text-sm text-gray-600 gap-4 mb-6">
             <div className="flex items-center">
               {article.authorImage ? <img src={article.authorImage} alt={article.author} className="h-8 w-8 rounded-full mr-2" /> : <div className="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center text-xs font-medium text-gray-600 mr-2">
-                  {article.author && article.author.charAt(0).toUpperCase()}
+                  {article.author && article.author.username.charAt(0).toUpperCase()}
                 </div>}
               <span>{article.author}</span>
             </div>
