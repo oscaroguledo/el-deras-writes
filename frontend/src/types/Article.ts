@@ -7,7 +7,7 @@ export interface Article {
   content: string;
   image: string;
   category: Category;
-  author: { id:string; username: string; first_name: string; last_name: string; }; // Updated to reflect CustomUser structure
+  author: { id:string; title:string; username: string; first_name: string; last_name: string; }; // Updated to reflect CustomUser structure
   authorImage?: string;
   readTime?: string;
   createdAt: string; 

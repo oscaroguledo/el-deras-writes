@@ -5,6 +5,7 @@ export interface CustomUser {
   email: string;
   first_name: string;
   last_name: string;
+  title?: string; // New title field
   bio: string;
   total_articles?: number;
   total_comments?: number;

@@ -35,7 +35,7 @@ export function BlogPostCard({
               {post.author && post.author.username.charAt(0).toUpperCase()}
             </div>}
           <div className="ml-3">
-          <p className="text-sm text-gray-500">{post.author.username}</p>
+          <p className="text-sm text-gray-500">{`${post.author.first_name} ${post.author.last_name}`}</p>
             <p className="text-gray-500 text-xs">
               {new Date(post.createdAt).toLocaleDateString('en-US', {
               year: 'numeric',

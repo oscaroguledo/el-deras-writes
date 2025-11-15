@@ -16,6 +16,7 @@ export function UserFormModal({ show, onClose, user, onSubmit }: UserFormModalPr
     email: '',
     first_name: '',
     last_name: '',
+    title: '', // Initialize new title field
     bio: '',
     user_type: 'normal',
     password: '',
@@ -139,6 +140,18 @@ export function UserFormModal({ show, onClose, user, onSubmit }: UserFormModalPr
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
             {errors.last_name && <p className="text-red-500 text-xs italic">{errors.last_name}</p>}
+          </div>
+          <div className="mb-4">
+            <label htmlFor="title" className="block text-gray-700 text-sm font-bold mb-2">Title:</label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              value={formData.title || ''}
+              onChange={handleChange}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            />
+            {errors.title && <p className="text-red-500 text-xs italic">{errors.title}</p>}
           </div>
           <div className="mb-4">
             <label htmlFor="bio" className="block text-gray-700 text-sm font-bold mb-2">Bio:</label>

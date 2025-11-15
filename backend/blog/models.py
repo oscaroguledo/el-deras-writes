@@ -35,6 +35,7 @@ class CustomUser(models.Model):
     password = models.CharField(max_length=128) # Store hashed password
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=150, blank=True)
+    title = models.CharField(max_length=100, blank=True, null=True) # New title field
     bio = models.TextField(max_length=500, blank=True, null=True)
     
     USER_TYPE_CHOICES = (
