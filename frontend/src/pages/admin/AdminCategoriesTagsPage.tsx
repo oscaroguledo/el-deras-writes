@@ -6,6 +6,7 @@ import { Tag } from '../../types/Tag';
 import { getCategories, createCategory, updateCategory, deleteCategory, getTags, createTag, updateTag, deleteTag } from '../../utils/api';
 import { ConfirmationModal } from '../../components/ConfirmationModal'; // Import the new modal
 import { debounce } from 'lodash';
+import SkeletonLoader from '../../components/SkeletonLoader';
 
 export default function AdminCategoriesTagsPage() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -179,8 +180,84 @@ export default function AdminCategoriesTagsPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-4 md:p-8">
+        {/* Categories Management Skeleton */}
+        <div className="bg-white shadow-lg rounded-xl p-6">
+          <SkeletonLoader className="h-8 w-1/2 mb-4" /> {/* Title */}
+          <SkeletonLoader className="h-10 w-full mb-4" /> {/* Search Bar */}
+          <div className="flex mb-4">
+            <SkeletonLoader className="h-10 w-full rounded-l-md" /> {/* New Category Input */}
+            <SkeletonLoader className="h-10 w-10 rounded-r-md" /> {/* Plus Icon Button */}
+          </div>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/2">
+                    <SkeletonLoader className="h-4 w-3/4" />
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/2">
+                    <SkeletonLoader className="h-4 w-3/4" />
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {[...Array(5)].map((_, index) => (
+                  <tr key={index}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <SkeletonLoader className="h-4 w-3/4" />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex space-x-2">
+                        <SkeletonLoader className="h-5 w-5" />
+                        <SkeletonLoader className="h-5 w-5" />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Tags Management Skeleton */}
+        <div className="bg-white shadow-lg rounded-xl p-6">
+          <SkeletonLoader className="h-8 w-1/2 mb-4" /> {/* Title */}
+          <SkeletonLoader className="h-10 w-full mb-4" /> {/* Search Bar */}
+          <div className="flex mb-4">
+            <SkeletonLoader className="h-10 w-full rounded-l-md" /> {/* New Tag Input */}
+            <SkeletonLoader className="h-10 w-10 rounded-r-md" /> {/* Plus Icon Button */}
+          </div>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/2">
+                    <SkeletonLoader className="h-4 w-3/4" />
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/2">
+                    <SkeletonLoader className="h-4 w-3/4" />
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {[...Array(5)].map((_, index) => (
+                  <tr key={index}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <SkeletonLoader className="h-4 w-3/4" />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex space-x-2">
+                        <SkeletonLoader className="h-5 w-5" />
+                        <SkeletonLoader className="h-5 w-5" />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     );
   }

@@ -23,7 +23,6 @@ const navLinks = [
   { to: '/admin/comments', icon: <MessageSquare size={20} />, label: 'Comments' },
   { to: '/admin/categories-tags', icon: <Tag size={20} />, label: 'Categories & Tags' },
   { to: '/admin/contact-info', icon: <Info size={20} />, label: 'Contact Info' },
-  { to: '/admin/settings', icon: <Settings size={20} />, label: 'Settings' },
 ];
 
 export default function AdminSidebar({ isSidebarOpen, setIsSidebarOpen }: AdminSidebarProps) {

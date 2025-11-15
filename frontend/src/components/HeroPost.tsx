@@ -27,7 +27,7 @@ export function HeroPost({
               {post.title}
             </Link>
           </h2>
-          <p className="text-white/80 text-base md:text-lg max-w-3xl mb-4">
+          <p className="text-white/80 text-base md:text-lg max-w-3xl mb-4 text-justify">
             {post.excerpt}
           </p>
           <div className="flex items-center">

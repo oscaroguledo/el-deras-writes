@@ -4,6 +4,7 @@ import { MailIcon, PhoneIcon, MapPinIcon, SendIcon, Instagram, Facebook, Twitter
 import { FaTiktok, FaWhatsapp, FaLinkedinIn, FaGithub } from 'react-icons/fa';
 import { getContactInfo } from '@/utils/api';
 import { ContactInfo } from '../types/ContactInfo'; // Import ContactInfo type
+import SkeletonLoader from '../components/SkeletonLoader';
 
 export default function Contact() {
   const [name, setName] = useState('');
@@ -12,14 +13,18 @@ export default function Contact() {
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null); // Use ContactInfo type
+  const [loadingContactInfo, setLoadingContactInfo] = useState(true); // New loading state
 
   useEffect(() => {
     async function fetchContactInfo() {
       try {
+        setLoadingContactInfo(true);
         const info = await getContactInfo();
         setContactInfo(info);
       } catch (error) {
         console.error('Failed to fetch contact info:', error);
+      } finally {
+        setLoadingContactInfo(false);
       }
     }
     fetchContactInfo();
@@ -78,69 +83,88 @@ export default function Contact() {
         <h1 className="text-3xl md:text-4xl font-serif font-medium text-gray-900 mb-6">
           Contact Us
         </h1>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-            <div className="flex items-center mb-4">
-              <div className="bg-gray-100 p-3 rounded-full mr-4">
-                <MailIcon className="h-6 w-6 text-gray-700" />
-              </div>
-              <h3 className="text-lg font-medium">Email</h3>
-            </div>
-            <p className="text-gray-600">
-              <a href={`mailto:${contactInfo?.email || 'hello@el-deras-writes.com'}`} className="hover:text-gray-900">
-                {contactInfo?.email || 'hello@el-deras-writes.com'}
-              </a>
-            </p>
+        {loadingContactInfo ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            <SkeletonLoader className="h-32 w-full" />
+            <SkeletonLoader className="h-32 w-full" />
+            <SkeletonLoader className="h-32 w-full" />
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-            <div className="flex items-center mb-4">
-              <div className="bg-gray-100 p-3 rounded-full mr-4">
-                <PhoneIcon className="h-6 w-6 text-gray-700" />
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+              <div className="flex items-center mb-4">
+                <div className="bg-gray-100 p-3 rounded-full mr-4">
+                  <MailIcon className="h-6 w-6 text-gray-700" />
+                </div>
+                <h3 className="text-lg font-medium">Email</h3>
               </div>
-              <h3 className="text-lg font-medium">Phone</h3>
-            </div>
-            <p className="text-gray-600">
-              <a href={`tel:${contactInfo?.phone || '+1 (234) 567-890'}`} className="hover:text-gray-900">
-                {contactInfo?.phone || '+1 (234) 567-890'}
-              </a>
-            </p>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
-            <div className="flex items-center mb-4">
-              <div className="bg-gray-100 p-3 rounded-full mr-4">
-                <MapPinIcon className="h-6 w-6 text-gray-700" />
-              </div>
-              <h3 className="text-lg font-medium">Location</h3>
-            </div>
-            <p className="text-gray-600">
-              {contactInfo?.address || '123 Content Street\nBlogville, BL 90210'}
-            </p>
-          </div>
-        </div>
-
-        {contactInfo?.social_media_links && Object.keys(contactInfo.social_media_links).length > 0 && (
-          <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-100 mb-12">
-            <h2 className="text-2xl font-serif font-medium text-gray-900 mb-6">
-              Connect With Us
-            </h2>
-            <div className="flex flex-wrap gap-6">
-              {Object.entries(contactInfo.social_media_links).map(([platform, url]) => (
-                <a
-                  key={platform}
-                  href={url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center text-gray-600 hover:text-gray-900"
-                  aria-label={platform}
-                >
-                  <div className="bg-gray-100 p-3 rounded-full mr-3">
-                    {getSocialMediaIcon(platform)}
-                  </div>
-                  <span className="text-lg font-medium capitalize">{platform}</span>
+              <p className="text-gray-600 text-justify">
+                <a href={`mailto:${contactInfo?.email || 'hello@el-deras-writes.com'}`} className="hover:text-gray-900">
+                  {contactInfo?.email || 'hello@el-deras-writes.com'}
                 </a>
-              ))}
+              </p>
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+              <div className="flex items-center mb-4">
+                <div className="bg-gray-100 p-3 rounded-full mr-4">
+                  <PhoneIcon className="h-6 w-6 text-gray-700" />
+                </div>
+                <h3 className="text-lg font-medium">Phone</h3>
+              </div>
+              <p className="text-gray-600 text-justify">
+                <a href={`tel:${contactInfo?.phone || '+1 (234) 567-890'}`} className="hover:text-gray-900">
+                  {contactInfo?.phone || '+1 (234) 567-890'}
+                </a>
+              </p>
+            </div>
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+              <div className="flex items-center mb-4">
+                <div className="bg-gray-100 p-3 rounded-full mr-4">
+                  <MapPinIcon className="h-6 w-6 text-gray-700" />
+                </div>
+                <h3 className="text-lg font-medium">Location</h3>
+              </div>
+              <p className="text-gray-600 text-justify">
+                {contactInfo?.address || '123 Content Street\nBlogville, BL 90210'}
+              </p>
             </div>
           </div>
+        )}
+
+        {loadingContactInfo ? (
+          <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-100 mb-12">
+            <SkeletonLoader className="h-8 w-1/2 mb-6" />
+            <div className="flex flex-wrap gap-6">
+              <SkeletonLoader className="h-12 w-32" />
+              <SkeletonLoader className="h-12 w-32" />
+              <SkeletonLoader className="h-12 w-32" />
+            </div>
+          </div>
+        ) : (
+          contactInfo?.social_media_links && Object.keys(contactInfo.social_media_links).length > 0 && (
+            <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-100 mb-12">
+              <h2 className="text-2xl font-serif font-medium text-gray-900 mb-6">
+                Connect With Us
+              </h2>
+              <div className="flex flex-wrap gap-6">
+                {Object.entries(contactInfo.social_media_links).map(([platform, url]) => (
+                  <a
+                    key={platform}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center text-gray-600 hover:text-gray-900"
+                    aria-label={platform}
+                  >
+                    <div className="bg-gray-100 p-3 rounded-full mr-3">
+                      {getSocialMediaIcon(platform)}
+                    </div>
+                    <span className="text-lg font-medium capitalize">{platform}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )
         )}
 
         <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-100">

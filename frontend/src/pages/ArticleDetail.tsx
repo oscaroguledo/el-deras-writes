@@ -5,6 +5,7 @@ import { Article } from '../types/Article';
 import { CommentSection } from '../components/CommentSection';
 import { CalendarIcon, ClockIcon, TagIcon, ChevronLeftIcon } from 'lucide-react';
 import { MetaData } from '../components/MetaData';
+import SkeletonLoader from '../components/SkeletonLoader';
 
 export default function ArticleDetail() {
   const {
@@ -35,9 +36,38 @@ export default function ArticleDetail() {
     fetchArticle();
   }, [id]);
   if (loading) {
-    return <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
-      </div>;
+    return (
+      <div className="py-8">
+        <SkeletonLoader className="h-6 w-48 mb-6" /> {/* Back to articles link */}
+        <div className="mb-8">
+          <SkeletonLoader className="h-10 w-3/4 mb-4" /> {/* Title */}
+          <div className="flex flex-wrap items-center text-sm text-gray-600 gap-4 mb-6">
+            <SkeletonLoader className="h-8 w-24" /> {/* Author */}
+            <SkeletonLoader className="h-8 w-32" /> {/* Date */}
+            <SkeletonLoader className="h-8 w-24" /> {/* Read Time */}
+            <SkeletonLoader className="h-8 w-24" /> {/* Category */}
+          </div>
+        </div>
+        <SkeletonLoader className="h-96 w-full mb-8 rounded-lg" /> {/* Article Image */}
+        <div className="prose prose-lg max-w-none">
+          <SkeletonLoader className="h-6 w-full mb-2" />
+          <SkeletonLoader className="h-6 w-full mb-2" />
+          <SkeletonLoader className="h-6 w-5/6 mb-2" />
+          <SkeletonLoader className="h-6 w-full mb-2" />
+          <SkeletonLoader className="h-6 w-4/5" />
+        </div>
+        <div className="mt-12">
+          <SkeletonLoader className="h-8 w-48 mb-6" /> {/* Comments title */}
+          <SkeletonLoader className="h-24 w-full mb-4" /> {/* Comment form */}
+          {[...Array(3)].map((_, index) => (
+            <div key={index} className="mb-4">
+              <SkeletonLoader className="h-6 w-32 mb-2" /> {/* Comment author */}
+              <SkeletonLoader className="h-16 w-full" /> {/* Comment content */}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   }
   if (error || !article) {
     return <div className="flex justify-center items-center h-64">
@@ -97,7 +127,7 @@ export default function ArticleDetail() {
         {article.image && <div className="mb-8 rounded-lg overflow-hidden">
             <img src={article.image} alt={article.title} className="w-full h-auto object-cover" />
           </div>}
-        <div className="prose prose-lg max-w-none" dangerouslySetInnerHTML={{
+        <div className="prose prose-lg max-w-none text-justify" dangerouslySetInnerHTML={{
         __html: article.content
       }} />
         <CommentSection articleId={article.id} />

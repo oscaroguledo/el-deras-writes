@@ -1,10 +1,10 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { getArticles, deleteArticle } from '../../utils/api';
 import { Article } from '../../types/Article';
 import { toast } from 'react-toastify';
 import { Plus, Edit, Trash, ChevronLeft, ChevronRight, Search } from 'lucide-react';
-import { debounce } from 'lodash';
+import SkeletonLoader from '../../components/SkeletonLoader';
 
 export default function AdminArticlesPage() {
   const [articles, setArticles] = useState<Article[]>([]);
@@ -29,17 +29,9 @@ export default function AdminArticlesPage() {
     }
   }, []);
 
-  // Debounce search input
-  const debouncedFetchArticles = useRef(
-    debounce((page: number, search: string) => fetchArticles(page, search), 500)
-  ).current;
-
   useEffect(() => {
-    debouncedFetchArticles(currentPage, searchQuery);
-    return () => {
-      debouncedFetchArticles.cancel();
-    };
-  }, [currentPage, searchQuery, debouncedFetchArticles]);
+    fetchArticles(currentPage); // Only fetch when currentPage changes
+  }, [currentPage, fetchArticles]);
 
   const handleDeleteArticle = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this article? This action cannot be undone.')) {
@@ -67,10 +59,110 @@ export default function AdminArticlesPage() {
     setCurrentPage(prev => Math.min(totalPages, prev + 1));
   };
 
+  const handleSearchClick = () => {
+    setCurrentPage(1); // Reset to first page on new search
+    fetchArticles(1, searchQuery);
+  };
+
   if (loading) {
-    return <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
-      </div>;
+    return (
+      <div>
+        {/* Header Skeleton */}
+        <div className="flex justify-between items-center mb-4">
+          <SkeletonLoader className="h-8 w-64" />
+          <SkeletonLoader className="h-10 w-32" />
+        </div>
+
+        {/* Search Bar Skeleton */}
+        <div className="mb-4 flex items-center space-x-2">
+          <SkeletonLoader className="h-10 w-full" />
+        </div>
+
+        {/* Table Skeleton (Desktop) */}
+        <div className="hidden md:block bg-white shadow overflow-hidden rounded-lg mb-8">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">
+                    <SkeletonLoader className="h-4 w-3/4" />
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">
+                    <SkeletonLoader className="h-4 w-3/4" />
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">
+                    <SkeletonLoader className="h-4 w-3/4" />
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">
+                    <SkeletonLoader className="h-4 w-3/4" />
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">
+                    <SkeletonLoader className="h-4 w-3/4" />
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {[...Array(5)].map((_, index) => (
+                  <tr key={index}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <SkeletonLoader className="h-10 w-10 rounded object-cover mr-4" />
+                        <SkeletonLoader className="h-4 w-3/4" />
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <SkeletonLoader className="h-4 w-1/2" />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <SkeletonLoader className="h-4 w-1/2" />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <SkeletonLoader className="h-4 w-1/2" />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex space-x-2">
+                        <SkeletonLoader className="h-5 w-5" />
+                        <SkeletonLoader className="h-5 w-5" />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {/* Pagination Skeleton */}
+          <div className="flex justify-between items-center px-6 py-3 bg-gray-50 border-t border-gray-200">
+            <SkeletonLoader className="h-8 w-24" />
+            <SkeletonLoader className="h-8 w-24" />
+            <SkeletonLoader className="h-8 w-24" />
+          </div>
+        </div>
+
+        {/* Mobile List Skeleton */}
+        <div className="md:hidden bg-white shadow overflow-hidden rounded-lg mb-8">
+          {[...Array(5)].map((_, index) => (
+            <div key={index} className="border-b border-gray-200 p-4 last:border-b-0">
+              <div className="flex justify-between items-center mb-2">
+                <SkeletonLoader className="h-6 w-3/4" />
+                <div className="flex space-x-2">
+                  <SkeletonLoader className="h-5 w-5" />
+                  <SkeletonLoader className="h-5 w-5" />
+                </div>
+              </div>
+              <SkeletonLoader className="h-4 w-1/2 mb-1" />
+              <SkeletonLoader className="h-4 w-1/2 mb-1" />
+              <SkeletonLoader className="h-4 w-1/2" />
+            </div>
+          ))}
+          {/* Pagination Skeleton for Mobile */}
+          <div className="flex justify-between items-center px-6 py-3 bg-gray-50 border-t border-gray-200">
+            <SkeletonLoader className="h-8 w-24" />
+            <SkeletonLoader className="h-8 w-24" />
+            <SkeletonLoader className="h-8 w-24" />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -82,18 +174,28 @@ export default function AdminArticlesPage() {
         </Link>
       </div>
 
-      <div className="mb-4 relative max-w-md">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-        <input
-          type="text"
-          placeholder="Search articles..."
-          className="w-full bg-white rounded-md py-2 pl-10 pr-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
-          value={searchQuery}
-          onChange={(e) => {
-            setSearchQuery(e.target.value);
-            setCurrentPage(1); // Reset to first page on new search
-          }}
-        />
+      <div className="mb-4 flex items-center space-x-2">
+        <div className="relative flex-grow">
+          <input
+            type="text"
+            placeholder="Search articles..."
+            className="w-full bg-white rounded-md py-2 pl-4 pr-10 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSearchClick();
+              }
+            }}
+          />
+          <button
+            onClick={handleSearchClick}
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            aria-label="Search"
+          >
+            <Search size={20} />
+          </button>
+        </div>
       </div>
 
       {/* Desktop Table View */}

@@ -5,6 +5,7 @@ import { Comment } from './Comment';
 import { MessageCircleIcon } from 'lucide-react';
 import { getCommentsByArticle, createComment } from '../utils/api';
 import { toast } from 'react-toastify';
+import SkeletonLoader from './SkeletonLoader';
 
 interface CommentSectionProps {
   articleId: string;
@@ -78,8 +79,16 @@ export function CommentSection({ articleId }: CommentSectionProps) {
       </h2>
       <CommentForm articleId={articleId} onCommentSubmit={handleCommentSubmit} />
       {loading ? (
-        <div className="flex justify-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900"></div>
+        <div className="mt-8">
+          {/* Comment Form Skeleton */}
+          <SkeletonLoader className="h-24 w-full mb-4" />
+          {/* Individual Comment Skeletons */}
+          {[...Array(3)].map((_, index) => (
+            <div key={index} className="mb-4">
+              <SkeletonLoader className="h-6 w-32 mb-2" /> {/* Author */}
+              <SkeletonLoader className="h-16 w-full" /> {/* Content */}
+            </div>
+          ))}
         </div>
       ) : comments.length > 0 ? (
         <div className="mt-8">

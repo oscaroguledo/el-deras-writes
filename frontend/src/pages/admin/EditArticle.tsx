@@ -5,6 +5,7 @@ import { getArticleById, updateArticle } from '../../utils/api';
 import { useAuth } from '../../hooks/useAuth.ts';
 import { toast } from 'react-toastify';
 import { Article } from '../../types/Article';
+import SkeletonLoader from '../../components/SkeletonLoader';
 export default function EditArticle() {
   const {
     id
@@ -51,9 +52,60 @@ export default function EditArticle() {
     }
   };
   if (loading) {
-    return <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
-      </div>;
+    return (
+      <div className="py-8">
+        {/* Header Skeleton */}
+        <div className="mb-8">
+          <SkeletonLoader className="h-8 w-64 mb-2" />
+          <SkeletonLoader className="h-5 w-96" />
+        </div>
+        <div className="bg-white shadow-md rounded-lg p-6">
+          {/* ArticleForm Skeletons */}
+          <div className="space-y-6">
+            {/* Title */}
+            <div>
+              <SkeletonLoader className="h-4 w-24 mb-1" />
+              <SkeletonLoader className="h-10 w-full" />
+            </div>
+            {/* Excerpt */}
+            <div>
+              <SkeletonLoader className="h-4 w-24 mb-1" />
+              <SkeletonLoader className="h-20 w-full" />
+            </div>
+            {/* Content */}
+            <div>
+              <SkeletonLoader className="h-4 w-24 mb-1" />
+              <SkeletonLoader className="h-40 w-full" />
+            </div>
+            {/* Image */}
+            <div>
+              <SkeletonLoader className="h-4 w-24 mb-1" />
+              <SkeletonLoader className="h-10 w-full" />
+            </div>
+            {/* Category */}
+            <div>
+              <SkeletonLoader className="h-4 w-24 mb-1" />
+              <SkeletonLoader className="h-10 w-full" />
+            </div>
+            {/* Tags */}
+            <div>
+              <SkeletonLoader className="h-4 w-24 mb-1" />
+              <SkeletonLoader className="h-10 w-full" />
+            </div>
+            {/* Status */}
+            <div>
+              <SkeletonLoader className="h-4 w-24 mb-1" />
+              <SkeletonLoader className="h-10 w-full" />
+            </div>
+            {/* Buttons */}
+            <div className="flex justify-end space-x-4">
+              <SkeletonLoader className="h-10 w-24" />
+              <SkeletonLoader className="h-10 w-24" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
   if (!article) {
     return <div className="text-center py-12">

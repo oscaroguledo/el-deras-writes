@@ -19,7 +19,6 @@ const AdminCategoriesTagsPage = lazy(() => import('./pages/admin/AdminCategories
 const AdminCommentsPage = lazy(() => import('./pages/admin/AdminCommentsPage'));
 const AdminContactInfoPage = lazy(() => import('./pages/admin/AdminContactInfoPage'));
 const AdminProfilePage = lazy(() => import('./pages/admin/AdminProfilePage'));
-const AdminSettingsPage = lazy(() => import('./pages/admin/AdminSettingsPage'));
 const CreateArticle = lazy(() => import('./pages/admin/CreateArticle'));
 const EditArticle = lazy(() => import('./pages/admin/EditArticle'));
 const About = lazy(() => import('./pages/About'));
@@ -50,7 +49,6 @@ export const routes = createRoutesFromElements(
       <Route path="comments" element={<AdminCommentsPage />} />
       <Route path="contact-info" element={<AdminContactInfoPage />} />
       <Route path="profile" element={<AdminProfilePage />} />
-      <Route path="settings" element={<AdminSettingsPage />} />
     </Route>
   </Route>
 );

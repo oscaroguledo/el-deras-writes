@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import { UsersIcon, FileText, MessageSquare, Tag, Folder, UserPlus, Eye, Heart, TrendingUp, Clock, AlertTriangle, UserX, BarChart2, List, ThumbsUp } from 'lucide-react';
 import { AdminDashboardData } from '../../types/Admin';
 import { useAuth } from '../../hooks/useAuth.ts';
+import SkeletonLoader from '../../components/SkeletonLoader';
 import { Article } from '../../types/Article.ts';
 import { CustomUser } from '../../types/CustomUser.ts';
 import { Comment } from '../../types/Comment.ts';
@@ -51,8 +52,41 @@ export default function AdminDashboardOverview() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+      <div className="p-4 md:p-8">
+        {/* Title Skeleton */}
+        <SkeletonLoader className="h-8 w-72 mb-6" />
+
+        {/* Overview Cards Skeleton */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+          {[...Array(12)].map((_, index) => (
+            <div key={index} className="shadow-lg rounded-xl p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex flex-col">
+                  <SkeletonLoader className="h-4 w-24 mb-2" />
+                  <SkeletonLoader className="h-6 w-16" />
+                </div>
+                <SkeletonLoader className="h-12 w-12 rounded-full" />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Lists Skeleton */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          {[...Array(6)].map((_, listIndex) => (
+            <div key={listIndex} className="bg-white shadow-lg rounded-xl p-6">
+              <SkeletonLoader className="h-6 w-48 mb-4" /> {/* List Title */}
+              <ul className="space-y-3">
+                {[...Array(5)].map((_, itemIndex) => (
+                  <li key={itemIndex} className="flex justify-between items-center">
+                    <SkeletonLoader className="h-4 w-3/4" />
+                    <SkeletonLoader className="h-4 w-1/4" />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

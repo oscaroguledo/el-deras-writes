@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { CustomUser } from '../types/CustomUser';
 import { toast } from 'react-toastify';
+import { CustomUser } from '../../types/CustomUser';
 import { createUser, updateUser } from '../utils/api';
-import { X, Eye, EyeOff } from 'lucide-react';
 
 interface UserFormModalProps {
   show: boolean;
@@ -12,77 +11,73 @@ interface UserFormModalProps {
 }
 
 export function UserFormModal({ show, onClose, user, onSubmit }: UserFormModalProps) {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Partial<CustomUser>>({
     username: '',
     email: '',
-    password: '',
-    user_type: 'normal',
+    first_name: '',
+    last_name: '',
     bio: '',
-    first_name: '', // Add first_name
-    last_name: '',  // Add last_name
+    user_type: 'normal',
+    password: '',
   });
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // State for password visibility
+  const [errors, setErrors] = useState<any>({});
 
   useEffect(() => {
     if (user) {
       setFormData({
         username: user.username,
         email: user.email,
-        password: '',
-        user_type: user.user_type || 'normal',
-        bio: user.bio || '',
-        first_name: user.first_name || '', // Initialize first_name
-        last_name: user.last_name || '',  // Initialize last_name
+        first_name: user.first_name,
+        last_name: user.last_name,
+        bio: user.bio,
+        user_type: user.user_type,
+        password: '', // Password should not be pre-filled for security
       });
     } else {
       setFormData({
         username: '',
         email: '',
-        password: '',
-        user_type: 'normal',
-        bio: '',
         first_name: '',
         last_name: '',
+        bio: '',
+        user_type: 'normal',
+        password: '',
       });
     }
-  }, [user]);
+    setErrors({});
+  }, [user, show]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setErrors({});
 
     try {
       if (user) {
+        // Update user
         await updateUser(user.id, formData);
         toast.success('User updated successfully!');
       } else {
+        // Create user
         await createUser(formData);
         toast.success('User created successfully!');
       }
       onSubmit();
-    } catch (error: any) {
-      console.error('Error saving user:', error);
-      let errorMessage = 'Failed to save user.';
-      if (error.response && error.response.data) {
-        if (typeof error.response.data === 'string') {
-          errorMessage = error.response.data;
-        } else if (error.response.data.detail) {
-          errorMessage = error.response.data.detail;
-        } else if (error.response.data.username) { // Specific for username uniqueness
-          errorMessage = `Username: ${error.response.data.username.join(', ')}`;
-        } else if (error.response.data.email) { // Specific for email uniqueness
-          errorMessage = `Email: ${error.response.data.email.join(', ')}`;
-        } else {
-          // Attempt to parse other common error structures
-          errorMessage = Object.values(error.response.data).flat().join(', ') || errorMessage;
-        }
+      onClose();
+    } catch (err: any) {
+      if (err.response && err.response.data) {
+        setErrors(err.response.data);
+        toast.error('Please correct the errors in the form.');
+      } else {
+        toast.error('An unexpected error occurred.');
       }
-      toast.error(errorMessage);
+      console.error('User form submission error:', err);
     } finally {
       setLoading(false);
     }
@@ -91,139 +86,117 @@ export function UserFormModal({ show, onClose, user, onSubmit }: UserFormModalPr
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
-        <div className="flex justify-between items-center p-4 border-b">
-          <h3 className="text-xl font-serif font-medium text-gray-900">{user ? 'Edit User' : 'Create User'}</h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
-            <X size={24} />
-          </button>
-        </div>
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700" htmlFor="username">
-              Username
-            </label>
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex justify-center items-center">
+      <div className="bg-white p-8 rounded-lg shadow-xl max-w-md w-full">
+        <h2 className="text-2xl font-bold mb-6 text-gray-800">{user ? 'Edit User' : 'Add New User'}</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label htmlFor="username" className="block text-gray-700 text-sm font-bold mb-2">Username:</label>
             <input
               type="text"
               id="username"
               name="username"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              value={formData.username}
+              value={formData.username || ''}
               onChange={handleChange}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               required
             />
+            {errors.username && <p className="text-red-500 text-xs italic">{errors.username}</p>}
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700" htmlFor="email">
-              Email
-            </label>
+          <div className="mb-4">
+            <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2">Email:</label>
             <input
               type="email"
               id="email"
               name="email"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              value={formData.email}
+              value={formData.email || ''}
               onChange={handleChange}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               required
             />
+            {errors.email && <p className="text-red-500 text-xs italic">{errors.email}</p>}
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700" htmlFor="first_name">
-                First Name
-              </label>
-              <input
-                type="text"
-                id="first_name"
-                name="first_name"
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                value={formData.first_name}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700" htmlFor="last_name">
-                Last Name
-              </label>
-              <input
-                type="text"
-                id="last_name"
-                name="last_name"
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                value={formData.last_name}
-                onChange={handleChange}
-              />
-            </div>
+          <div className="mb-4">
+            <label htmlFor="first_name" className="block text-gray-700 text-sm font-bold mb-2">First Name:</label>
+            <input
+              type="text"
+              id="first_name"
+              name="first_name"
+              value={formData.first_name || ''}
+              onChange={handleChange}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            />
+            {errors.first_name && <p className="text-red-500 text-xs italic">{errors.first_name}</p>}
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700" htmlFor="password">
-              Password
-            </label>
-            <div className="relative">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                id="password"
-                name="password"
-                className="mt-1 block w-full pr-10 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                value={formData.password}
-                onChange={handleChange}
-                {...(!user ? { required: true } : {})}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
-              >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
-            {!user && <p className="text-xs text-gray-500 mt-1">Password is required for new users.</p>}
-            {user && <p className="text-xs text-gray-500 mt-1">Leave blank to keep current password.</p>}
+          <div className="mb-4">
+            <label htmlFor="last_name" className="block text-gray-700 text-sm font-bold mb-2">Last Name:</label>
+            <input
+              type="text"
+              id="last_name"
+              name="last_name"
+              value={formData.last_name || ''}
+              onChange={handleChange}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            />
+            {errors.last_name && <p className="text-red-500 text-xs italic">{errors.last_name}</p>}
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700" htmlFor="user_type">
-              User Type
-            </label>
+          <div className="mb-4">
+            <label htmlFor="bio" className="block text-gray-700 text-sm font-bold mb-2">Bio:</label>
+            <textarea
+              id="bio"
+              name="bio"
+              value={formData.bio || ''}
+              onChange={handleChange}
+              rows={3}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-justify"
+            ></textarea>
+            {errors.bio && <p className="text-red-500 text-xs italic">{errors.bio}</p>}
+          </div>
+          <div className="mb-4">
+            <label htmlFor="user_type" className="block text-gray-700 text-sm font-bold mb-2">User Type:</label>
             <select
               id="user_type"
               name="user_type"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              value={formData.user_type}
+              value={formData.user_type || 'normal'}
               onChange={handleChange}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             >
               <option value="normal">Normal</option>
               <option value="admin">Admin</option>
               <option value="guest">Guest</option>
             </select>
+            {errors.user_type && <p className="text-red-500 text-xs italic">{errors.user_type}</p>}
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700" htmlFor="bio">
-              Bio
+          <div className="mb-6">
+            <label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2">
+              Password: {user ? '(Leave blank to keep current)' : ''}
             </label>
-            <textarea
-              id="bio"
-              name="bio"
-              rows={3}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              value={formData.bio}
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password || ''}
               onChange={handleChange}
-            ></textarea>
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+              {...(!user && { required: true })} // Required only for new users
+            />
+            {errors.password && <p className="text-red-500 text-xs italic">{errors.password}</p>}
           </div>
-          <div className="flex justify-end space-x-3 pt-4">
-            <button
-              type="button"
-              className="px-4 py-2 bg-gray-200 text-gray-800 text-sm font-medium rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-              onClick={onClose}
-            >
-              Cancel
-            </button>
+          <div className="flex items-center justify-between">
             <button
               type="submit"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50"
               disabled={loading}
-              className="px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-md shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50"
             >
-              {loading ? 'Saving...' : 'Save User'}
+              {loading ? 'Saving...' : (user ? 'Update User' : 'Add User')}
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              disabled={loading}
+            >
+              Cancel
             </button>
           </div>
         </form>

@@ -5,7 +5,7 @@ export default function Privacy() {
         <h1 className="text-3xl md:text-4xl font-serif font-medium text-gray-900 mb-6">
           Privacy Policy
         </h1>
-        <div className="prose prose-lg max-w-none">
+        <div className="prose prose-lg max-w-none text-justify">
           <p>
             At El_Dera's writes, we take your privacy seriously. This Privacy
             Policy explains how we collect, use, disclose, and safeguard your

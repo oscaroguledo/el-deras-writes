@@ -5,7 +5,7 @@ export default function Terms() {
         <h1 className="text-3xl md:text-4xl font-serif font-medium text-gray-900 mb-6">
           Terms of Service
         </h1>
-        <div className="prose prose-lg max-w-none">
+        <div className="prose prose-lg max-w-none text-justify">
           <p>
             Welcome to El_Dera's writes. By accessing or using our website, you
             agree to be bound by these Terms of Service. Please read them

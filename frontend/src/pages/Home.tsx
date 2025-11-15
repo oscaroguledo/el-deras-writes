@@ -6,6 +6,7 @@ import { getArticles, getTopFiveCategories } from '../utils/api';
 import { Article } from '../types/Article';
 import { CategoryList } from '../components/CategoryList';
 import { Category } from '@/types/Category';
+import SkeletonLoader from '../components/SkeletonLoader';
 
 export default function Home() {
   const [searchParams] = useSearchParams();
@@ -63,9 +64,30 @@ export default function Home() {
   };
 
   if (loading) {
-    return <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
-      </div>;
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+        {/* Main content area skeleton */}
+        <div className="md:col-span-2">
+          {/* HeroPost skeleton */}
+          <SkeletonLoader className="h-64 w-full mb-8" />
+          {/* BlogPostList skeleton */}
+          {[...Array(articlesPerPage - 1)].map((_, index) => ( // -1 because one is hero
+            <div key={index} className="mb-6">
+              <SkeletonLoader className="h-6 w-3/4 mb-2" />
+              <SkeletonLoader className="h-4 w-full mb-1" />
+              <SkeletonLoader className="h-4 w-5/6" />
+            </div>
+          ))}
+        </div>
+        {/* Sidebar skeleton */}
+        <div className="md:col-span-1">
+          <SkeletonLoader className="h-8 w-1/2 mb-4" /> {/* Category List Title */}
+          {[...Array(5)].map((_, index) => (
+            <SkeletonLoader key={index} className="h-6 w-full mb-2" />
+          ))}
+        </div>
+      </div>
+    );
   }
 
   return (

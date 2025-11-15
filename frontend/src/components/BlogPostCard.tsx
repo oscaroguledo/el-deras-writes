@@ -27,7 +27,7 @@ export function BlogPostCard({
             {post.title}
           </Link>
         </h3>
-        <p className="text-gray-600 text-sm mb-4 line-clamp-2 flex-grow">
+        <p className="text-gray-600 text-sm mb-4 line-clamp-2 flex-grow text-justify">
           {post.excerpt}
         </p>
         <div className="flex items-center mt-auto pt-4 border-t border-gray-100">

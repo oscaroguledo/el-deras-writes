@@ -38,5 +38,4 @@ urlpatterns = [
     path('contact-info/', ContactInfoView.as_view(), name='contact-info'),
     path('visitor-count/increment/', IncrementVisitorCountView.as_view(), name='increment-visitor-count'),
     path('admin/', AdminDashboardView.as_view(), name='admin-dashboard'),
-    path('admin/search/', AdminSearchView.as_view(), name='admin-search'),
 ]

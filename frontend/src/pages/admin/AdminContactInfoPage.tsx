@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { getContactInfo, updateContactInfo } from '../../utils/api';
 import { ContactInfo } from '../../types/ContactInfo';
-import { MapPin, Phone, Mail, Plus, X } from 'lucide-react';
+import SkeletonLoader from '../../components/SkeletonLoader';
+import { MapPin, Phone, Mail, Plus, X, Instagram, Facebook, Twitter, Youtube, Globe } from 'lucide-react';
+import { FaTiktok, FaWhatsapp, FaLinkedinIn, FaGithub } from 'react-icons/fa';
 
 export default function AdminContactInfoPage() {
   const [contactInfo, setContactInfo] = useState<ContactInfo>({
@@ -67,18 +69,21 @@ export default function AdminContactInfoPage() {
     setContactInfo({ ...contactInfo, [id]: value });
   };
 
-  const handleSocialMediaChange = (index: number, field: 'platform' | 'url', value: string) => {
-    const updatedLinks = Object.entries(contactInfo.social_media_links).map(([platform, url], i) => {
-      if (i === index) {
-        return field === 'platform' ? [value, url] : [platform, value];
-      }
-      return [platform, url];
-    });
-    setContactInfo({ ...contactInfo, social_media_links: Object.fromEntries(updatedLinks) });
+  const handleSocialMediaChange = (oldPlatform: string, field: 'platform' | 'url', value: string) => {
+    const updatedLinks = { ...contactInfo.social_media_links };
+    const newPlatform = field === 'platform' ? value : oldPlatform;
+    const newUrl = field === 'url' ? value : updatedLinks[oldPlatform];
+
+    // Remove old entry if platform name changed
+    if (field === 'platform' && oldPlatform !== newPlatform) {
+      delete updatedLinks[oldPlatform];
+    }
+    updatedLinks[newPlatform] = newUrl;
+    setContactInfo({ ...contactInfo, social_media_links: updatedLinks });
   };
 
   const handleAddSocialMedia = () => {
-    const newKey = `social_${Date.now()}`; // Unique key for new entry
+    const newKey = `new_platform_${Date.now()}`; // Unique key for new entry
     setContactInfo({
       ...contactInfo,
       social_media_links: {
@@ -92,6 +97,29 @@ export default function AdminContactInfoPage() {
     const updatedLinks = { ...contactInfo.social_media_links };
     delete updatedLinks[platformToRemove];
     setContactInfo({ ...contactInfo, social_media_links: updatedLinks });
+  };
+
+  const getSocialMediaIcon = (platform: string) => {
+    switch (platform.toLowerCase()) {
+      case 'instagram':
+        return <Instagram className="h-5 w-5" />;
+      case 'facebook':
+        return <Facebook className="h-5 w-5" />;
+      case 'twitter':
+        return <Twitter className="h-5 w-5" />;
+      case 'youtube':
+        return <Youtube className="h-5 w-5" />;
+      case 'tiktok':
+        return <FaTiktok className="h-5 w-5" />;
+      case 'whatsapp':
+        return <FaWhatsapp className="h-5 w-5" />;
+      case 'linkedin':
+        return <FaLinkedinIn className="h-5 w-5" />;
+      case 'github':
+        return <FaGithub className="h-5 w-5" />;
+      default:
+        return <Globe className="h-5 w-5" />; // Generic icon for others
+    }
   };
 
   const renderInfoField = (label: string, value: string | null, icon?: React.ReactNode, link?: boolean) => {
@@ -116,8 +144,32 @@ export default function AdminContactInfoPage() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-32">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900"></div>
+      <div className="p-4 md:p-8">
+        {/* Header Skeleton */}
+        <div className="flex justify-between items-center mb-6">
+          <SkeletonLoader className="h-8 w-64" />
+          <SkeletonLoader className="h-10 w-20" />
+        </div>
+
+        <div className="bg-white shadow-lg overflow-hidden rounded-xl p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Address, Phone, Email Skeletons */}
+            <SkeletonLoader className="h-16 w-full" />
+            <SkeletonLoader className="h-16 w-full" />
+            <SkeletonLoader className="h-16 w-full" />
+
+            {/* Social Media Links Skeletons */}
+            {[...Array(3)].map((_, index) => (
+              <div key={index} className="flex items-start text-gray-700">
+                <SkeletonLoader className="h-8 w-8 rounded-full flex-shrink-0" />
+                <div className="ml-4 flex-grow">
+                  <SkeletonLoader className="h-4 w-24 mb-1" />
+                  <SkeletonLoader className="h-4 w-48" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
@@ -200,7 +252,7 @@ export default function AdminContactInfoPage() {
                       type="text"
                       id={`platform-${index}`}
                       value={platform}
-                      onChange={(e) => handleSocialMediaChange(index, 'platform', e.target.value)}
+                      onChange={(e) => handleSocialMediaChange(platform, 'platform', e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                       placeholder="Platform Name (e.g., Twitter)"
                     />
@@ -211,7 +263,7 @@ export default function AdminContactInfoPage() {
                       type="url"
                       id={`url-${index}`}
                       value={url}
-                      onChange={(e) => handleSocialMediaChange(index, 'url', e.target.value)}
+                      onChange={(e) => handleSocialMediaChange(platform, 'url', e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                       placeholder="URL"
                     />
@@ -249,17 +301,7 @@ export default function AdminContactInfoPage() {
             {Object.entries(contactInfo.social_media_links).map(([platform, url]) => (
               <div key={platform} className="flex items-start text-gray-700">
                 <div className="w-8 h-8 flex-shrink-0 flex items-center justify-center">
-                    {/* You might want to map platform names to specific icons here */}
-                    {platform.toLowerCase() === 'whatsapp' && <img src="/path/to/whatsapp-icon.png" alt="WhatsApp" className="h-5 w-5" />}
-                    {platform.toLowerCase() === 'tiktok' && <img src="/path/to/tiktok-icon.png" alt="TikTok" className="h-5 w-5" />}
-                    {platform.toLowerCase() === 'instagram' && <img src="/path/to/instagram-icon.png" alt="Instagram" className="h-5 w-5" />}
-                    {platform.toLowerCase() === 'facebook' && <img src="/path/to/facebook-icon.png" alt="Facebook" className="h-5 w-5" />}
-                    {platform.toLowerCase() === 'linkedin' && <img src="/path/to/linkedin-icon.png" alt="LinkedIn" className="h-5 w-5" />}
-                    {platform.toLowerCase() === 'github' && <img src="/path/to/github-icon.png" alt="GitHub" className="h-5 w-5" />}
-                    {/* Default icon if no specific one is found */}
-                    {![
-                      'whatsapp', 'tiktok', 'instagram', 'facebook', 'linkedin', 'github'
-                    ].includes(platform.toLowerCase()) && <span className="text-gray-500 capitalize">{platform[0]}</span>}
+                    {getSocialMediaIcon(platform)}
                 </div>
                 <div className="ml-4 flex-grow">
                   <strong className="block">{platform}:</strong>

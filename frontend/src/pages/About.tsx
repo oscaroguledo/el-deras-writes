@@ -6,7 +6,7 @@ export default function About() {
         <h1 className="text-3xl md:text-4xl font-serif font-medium text-gray-900 mb-6">
           About El_Dera's writes
         </h1>
-        <div className="prose prose-lg max-w-none">
+        <div className="prose prose-lg max-w-none text-justify">
           <p>
             Founded in 2020, El_Dera's writes is a platform dedicated to
             exploring the intersection of technology, design, and mindful

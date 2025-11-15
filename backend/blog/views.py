@@ -98,27 +98,37 @@ class AdminArticleViewSet(viewsets.ModelViewSet):
     queryset = Article.objects.all().order_by('-created_at') # Order by recently created
     serializer_class = ArticleSerializer
     permission_classes = [IsAdminUser]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title', 'content', 'author__username', 'category__name']
 
 class AdminCommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all().order_by('-created_at') # Order by recently created
     serializer_class = CommentSerializer
     permission_classes = [IsAdminUser]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['content', 'author__username', 'article__title']
 
 class AdminCategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all().order_by('-id') # Categories don't have created_at, order by id
     serializer_class = CategorySerializer
     permission_classes = [IsAdminUser]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name']
 
 class AdminTagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all().order_by('-created_at') # Order by recently created
     serializer_class = TagSerializer
     permission_classes = [IsAdminUser]
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name']
 
 class AdminUserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all().order_by('-date_joined') # Order by recently created
     serializer_class = CustomUserSerializer
     permission_classes = [IsAdminUser]
     pagination_class = UserPagination # Apply pagination
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['username', 'email', 'first_name', 'last_name']
 
     def perform_create(self, serializer):
         user_type = serializer.validated_data.get('user_type')

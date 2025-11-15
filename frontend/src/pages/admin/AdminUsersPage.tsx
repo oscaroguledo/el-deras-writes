@@ -1,10 +1,10 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { PlusIcon, EditIcon, TrashIcon, ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import { CustomUser } from '../../types/CustomUser';
 import { getUsers, deleteUser } from '../../utils/api';
 import { UserFormModal } from '../../components/UserFormModal';
-import { debounce } from 'lodash';
+import SkeletonLoader from '../../components/SkeletonLoader';
 
 const PAGE_SIZE = 10; // Define page size
 
@@ -33,17 +33,9 @@ export default function AdminUsersPage() {
     }
   }, []);
 
-  // Debounce search input
-  const debouncedFetchUsers = useRef(
-    debounce((page: number, search: string) => fetchUsers(page, search), 500)
-  ).current;
-
   useEffect(() => {
-    debouncedFetchUsers(currentPage, searchQuery);
-    return () => {
-      debouncedFetchUsers.cancel();
-    };
-  }, [currentPage, searchQuery, debouncedFetchUsers]);
+    fetchUsers(currentPage); // Only fetch when currentPage changes
+  }, [currentPage, fetchUsers]);
 
   const handleCreateUser = () => {
     setCurrentUser(null);
@@ -77,10 +69,87 @@ export default function AdminUsersPage() {
     setCurrentPage(page);
   };
 
+  const handleSearchClick = () => {
+    setCurrentPage(1); // Reset to first page on new search
+    fetchUsers(1, searchQuery);
+  };
+
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+      <div className="p-4 md:p-8">
+        {/* Header Skeleton */}
+        <div className="flex justify-between items-center mb-6">
+          <SkeletonLoader className="h-8 w-64" />
+          <SkeletonLoader className="h-10 w-32" />
+        </div>
+
+        {/* Search Bar Skeleton */}
+        <div className="mb-4 flex items-center space-x-2">
+          <SkeletonLoader className="h-10 w-full" />
+        </div>
+
+        {/* Table Skeleton */}
+        <div className="bg-white shadow-lg overflow-hidden rounded-xl">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5">
+                    <SkeletonLoader className="h-4 w-3/4" />
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5">
+                    <SkeletonLoader className="h-4 w-3/4" />
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5 hidden sm:table-cell">
+                    <SkeletonLoader className="h-4 w-3/4" />
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5 hidden lg:table-cell">
+                    <SkeletonLoader className="h-4 w-3/4" />
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5">
+                    <SkeletonLoader className="h-4 w-3/4" />
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {[...Array(5)].map((_, index) => (
+                  <tr key={index}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <SkeletonLoader className="h-10 w-10 rounded-full" />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <SkeletonLoader className="h-4 w-3/4 mb-1" />
+                      <SkeletonLoader className="h-4 w-1/2" />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap hidden sm:table-cell">
+                      <SkeletonLoader className="h-4 w-full" />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap hidden lg:table-cell">
+                      <SkeletonLoader className="h-5 w-20" />
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex space-x-2">
+                        <SkeletonLoader className="h-5 w-5" />
+                        <SkeletonLoader className="h-5 w-5" />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Pagination Skeleton */}
+        <nav className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+          <div className="hidden sm:block">
+            <SkeletonLoader className="h-5 w-48" />
+          </div>
+          <div className="flex-1 flex justify-between sm:justify-end">
+            <SkeletonLoader className="h-10 w-24" />
+            <SkeletonLoader className="h-10 w-24 ml-3" />
+          </div>
+        </nav>
       </div>
     );
   }
@@ -94,18 +163,28 @@ export default function AdminUsersPage() {
         </button>
       </div>
 
-      <div className="mb-4 relative max-w-md">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-        <input
-          type="text"
-          placeholder="Search users..."
-          className="w-full bg-white rounded-md py-2 pl-10 pr-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
-          value={searchQuery}
-          onChange={(e) => {
-            setSearchQuery(e.target.value);
-            setCurrentPage(1); // Reset to first page on new search
-          }}
-        />
+      <div className="mb-4 flex items-center space-x-2">
+        <div className="relative flex-grow">
+          <input
+            type="text"
+            placeholder="Search users..."
+            className="w-full bg-white rounded-md py-2 pl-4 pr-10 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSearchClick();
+              }
+            }}
+          />
+          <button
+            onClick={handleSearchClick}
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            aria-label="Search"
+          >
+            <Search size={20} />
+          </button>
+        </div>
       </div>
 
       <div className="bg-white shadow-lg overflow-hidden rounded-xl">

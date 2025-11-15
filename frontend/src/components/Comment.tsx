@@ -50,7 +50,7 @@ export function Comment({
               <span className="text-xs text-gray-500">{formattedDate}</span>
             </div>
             <div className="prose prose-sm max-w-none">
-              <p className="text-gray-800">{comment.content}</p>
+              <p className="text-gray-800 text-justify">{comment.content}</p>
             </div>
             <div className="mt-2 flex justify-end">
               <button onClick={() => setIsReplying(!isReplying)} className="text-xs font-medium text-gray-700 hover:text-gray-900">

@@ -106,6 +106,7 @@ export async function getTags(params: { search?: string } = {}): Promise<Tag[]> 
 export interface GetUsersParams {
   page?: number;
   page_size?: number;
+  search?: string;
 }
 
 export async function getUsers(params: GetUsersParams = {}): Promise<PaginatedResponse<CustomUser>> {
