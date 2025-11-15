@@ -271,14 +271,18 @@ export default function AdminCategoriesTagsPage() {
         </div>
         <div className="mb-4 relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-          <input
-            type="text"
-            placeholder="Search categories..."
-            className="w-full bg-white rounded-md py-2 pl-10 pr-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
-            value={categorySearchQuery}
-            onChange={(e) => setCategorySearchQuery(e.target.value)}
-          />
-        </div>
+                      <input
+                        type="text"
+                        placeholder="Search categories..."
+                        className="w-full bg-white rounded-md py-2 pl-10 pr-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                        value={categorySearchQuery}
+                        onChange={(e) => setCategorySearchQuery(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            fetchCategories(categorySearchQuery);
+                          }
+                        }}
+                      />        </div>
         <form onSubmit={handleCreateCategory} className="flex mb-4">
           <input
             type="text"
@@ -338,14 +342,18 @@ export default function AdminCategoriesTagsPage() {
         </div>
         <div className="mb-4 relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-          <input
-            type="text"
-            placeholder="Search tags..."
-            className="w-full bg-white rounded-md py-2 pl-10 pr-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
-            value={tagSearchQuery}
-            onChange={(e) => setTagSearchQuery(e.target.value)}
-          />
-        </div>
+                      <input
+                        type="text"
+                        placeholder="Search tags..."
+                        className="w-full bg-white rounded-md py-2 pl-10 pr-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                        value={tagSearchQuery}
+                        onChange={(e) => setTagSearchQuery(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            fetchTags(tagSearchQuery);
+                          }
+                        }}
+                      />        </div>
         <form onSubmit={handleCreateTag} className="flex mb-4">
           <input
             type="text"
