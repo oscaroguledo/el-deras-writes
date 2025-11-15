@@ -11,10 +11,12 @@ class ContactInfoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 class CustomUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=False) # Make password optional for updates
+    total_articles = serializers.IntegerField(read_only=True, required=False)
+    total_comments = serializers.IntegerField(read_only=True, required=False)
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'bio', 'user_type', 'password', 'is_active', 'is_staff', 'is_superuser']
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'bio', 'user_type', 'password', 'is_active', 'is_staff', 'is_superuser', 'total_articles', 'total_comments', 'date_joined']
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)
@@ -69,7 +71,7 @@ class ArticleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Article
-        fields = '__all__'
+        fields = ['id', 'title', 'excerpt', 'content', 'image', 'readTime', 'author', 'category', 'tags', 'status', 'views', 'likes', 'created_at', 'updated_at', 'published_at', 'comments']
 
 class VisitorCountSerializer(serializers.ModelSerializer):
     class Meta:

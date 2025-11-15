@@ -14,6 +14,7 @@ from rest_framework.decorators import action
 from rest_framework import filters # Import filters
 from django.utils import timezone
 from datetime import timedelta
+import uuid
 class ArticlePagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = 'page_size'
@@ -156,8 +157,11 @@ class IncrementVisitorCountView(APIView):
         if not created:
             visit.count += 1
             visit.save()
-        # Update total visitor count (optional, if still needed)
-        total_visitor_count, _ = VisitorCount.objects.get_or_create(pk=1)
+        # Use a fixed UUID for the single VisitorCount instance
+        # This ensures we always get or create the same instance
+        fixed_uuid = uuid.UUID('00000000-0000-0000-0000-000000000001') # Example fixed UUID
+        total_visitor_count, _ = VisitorCount.objects.get_or_create(id=fixed_uuid)
+
         total_visitor_count.count += 1
         total_visitor_count.save()
 

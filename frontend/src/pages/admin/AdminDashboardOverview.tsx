@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAdminDashboardData } from '../../utils/api';
 import { toast } from 'react-toastify';
-import { UsersIcon, FileText, MessageSquare, Tag, Folder, UserPlus, Eye, Heart, TrendingUp, Clock, AlertTriangle, UserX, BarChart2, List } from 'lucide-react';
+import { UsersIcon, FileText, MessageSquare, Tag, Folder, UserPlus, Eye, Heart, TrendingUp, Clock, AlertTriangle, UserX, BarChart2, List, ThumbsUp } from 'lucide-react';
 import { AdminDashboardData } from '../../types/Admin';
 import { useAuth } from '../../hooks/useAuth.ts';
 import { Article } from '../../types/Article.ts';
@@ -10,6 +10,23 @@ import { CustomUser } from '../../types/CustomUser.ts';
 import { Comment } from '../../types/Comment.ts';
 import { Category } from '../../types/Category.ts';
 import { Tag as TagType } from '../../types/Tag.ts';
+
+const formatDate = (dateString: string) => {
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      return 'Invalid Date';
+    }
+    // Use Intl.DateTimeFormat for more consistent formatting
+    return new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    }).format(date);
+  } catch (error) {
+    return 'Invalid Date';
+  }
+};
 
 export default function AdminDashboardOverview() {
   const [dashboardData, setDashboardData] = useState<AdminDashboardData | null>(null);
@@ -138,8 +155,8 @@ export default function AdminDashboardOverview() {
           <div key={index} className={`shadow-lg rounded-xl p-6 text-white ${card.color}`}>
             <div className="flex items-center justify-between">
               <div className="flex flex-col">
-                <span className="text-lg font-semibold">{card.title}</span>
-                <span className="text-4xl font-bold">{card.value ?? 'N/A'}</span>
+                <span className="text-base font-semibold">{card.title}</span>
+                <span className="text-2xl font-bold">{card.value ?? 'N/A'}</span>
               </div>
               <div className="p-4 bg-white bg-opacity-20 rounded-full">
                 {card.icon}
@@ -158,8 +175,8 @@ export default function AdminDashboardOverview() {
           <ul className="space-y-3">
             {dashboardData.recently_registered_users.map((user) => (
               <li key={user.id} className="text-sm text-gray-700 flex justify-between items-center">
-                <span>{user.username} ({user.email})</span>
-                <span className="text-gray-500 text-xs">{new Date(user.date_joined).toLocaleDateString()}</span>
+                <span className="truncate">{user.username} ({user.email})</span>
+                <span className="text-gray-500 text-xs">{formatDate(user.date_joined)}</span>
               </li>
             ))}
           </ul>
@@ -172,8 +189,8 @@ export default function AdminDashboardOverview() {
           <ul className="space-y-3">
             {dashboardData.recent_articles.map((article) => (
               <li key={article.id} className="text-sm text-gray-700 flex justify-between items-center">
-                <span>{article.title} by {article.author.username}</span>
-                <span className="text-gray-500 text-xs">{new Date(article.createdAt).toLocaleDateString()}</span>
+                <span className="truncate">{article.title} by {article.author.username}</span>
+                <span className="text-gray-500 text-xs">{formatDate(article.createdAt)}</span>
               </li>
             ))}
           </ul>
@@ -187,7 +204,7 @@ export default function AdminDashboardOverview() {
             {dashboardData.recent_comments.map((comment) => (
               <li key={comment.id} className="text-sm text-gray-700">
                 <p className="truncate">"{comment.content}"</p>
-                <p className="text-xs text-gray-500">on "{comment.article.title}" by {comment.author?.username || 'Anonymous'}</p>
+                <p className="text-xs text-gray-500 truncate">on "{comment.article.title}" by {comment.author?.username || 'Anonymous'}</p>
               </li>
             ))}
           </ul>
@@ -200,7 +217,7 @@ export default function AdminDashboardOverview() {
           <ul className="space-y-3">
             {dashboardData.top_authors.map((author) => (
               <li key={author.id} className="text-sm text-gray-700 flex justify-between items-center">
-                <span>{author.username}</span>
+                <span className="truncate">{author.username}</span>
                 <span className="text-gray-500 text-xs">{author.total_articles} articles</span>
               </li>
             ))}
@@ -214,8 +231,8 @@ export default function AdminDashboardOverview() {
           <ul className="space-y-3">
             {dashboardData.most_viewed_articles.map((article) => (
               <li key={article.id} className="text-sm text-gray-700 flex justify-between items-center">
-                <span>{article.title}</span>
-                <span className="text-gray-500 text-xs">{article.views} views</span>
+                <span className="truncate">{article.title}</span>
+                <span className="text-gray-500 text-xs flex items-center">{article.views} <Eye className="inline-block h-4 w-4 ml-1" /></span>
               </li>
             ))}
           </ul>
@@ -228,8 +245,8 @@ export default function AdminDashboardOverview() {
           <ul className="space-y-3">
             {dashboardData.most_liked_articles.map((article) => (
               <li key={article.id} className="text-sm text-gray-700 flex justify-between items-center">
-                <span>{article.title}</span>
-                <span className="text-gray-500 text-xs">{article.likes} likes</span>
+                <span className="truncate">{article.title}</span>
+                <span className="text-gray-500 text-xs flex items-center">{article.likes} <ThumbsUp className="inline-block h-4 w-4 ml-1" /></span>
               </li>
             ))}
           </ul>
