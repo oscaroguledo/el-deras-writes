@@ -1,6 +1,4 @@
-feat: Implement predefined title options for CustomUser
+feat: Add Django management command to update user titles
 
-- Modified `CustomUser` model in `backend/blog/models.py` to use `TITLE_CHOICES` for the `title` field.
-- Generated and applied new migration for the `title` field change.
-- Updated `backend/seed.py` to assign random titles from `TITLE_CHOICES` during user seeding.
-- Replaced the `title` input field with a `select` dropdown in `frontend/src/components/UserFormModal.tsx` to use the predefined title options.
+- Created a new Django management command `update_user_titles` in `backend/blog/management/commands/update_user_titles.py`.
+- This command iterates through existing `CustomUser` instances and assigns a random title from `TITLE_CHOICES` if their `title` field is empty.

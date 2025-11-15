@@ -56,7 +56,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
         password = validated_data.pop('password', None)
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
-        if password:
+        if password and password != '': # Only update password if a non-empty string is provided
             instance.set_password(password)
         instance.save()
         return instance
