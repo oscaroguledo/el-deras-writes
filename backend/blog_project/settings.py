@@ -27,7 +27,8 @@ SECRET_KEY = 'django-insecure-4=r#=3)9z+sxmn=)*^p%ujw4!%%s)im7rka!w8mu**r(pwa&8r
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '0.0.0.0', 'localhost', '.netlify.app', '.vercel.app', '.github.io', '.cloudflare.com']
+ALLOWED_HOSTS = ['127.0.0.1', '0.0.0.0', 'localhost', '.netlify.app', '.vercel.app', '.github.io', '.cloudflare.com',"el-deras-writes.onrender.com",
+    ".onrender.com",]
 
 AUTHENTICATION_BACKENDS = [
     'blog.auth_backends.CustomUserBackend',
