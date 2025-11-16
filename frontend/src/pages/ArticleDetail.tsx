@@ -85,7 +85,7 @@ export default function ArticleDetail() {
         title={article.title}
         description={article.excerpt || article.title}
         image={article.image || undefined}
-        url={`${window.location.origin}/article/${article.id}`}
+        url={`${window.location.origin}/article/${article._id}`}
       />
       <article className="py-8">
         <Link to="/" className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-6">
@@ -97,7 +97,7 @@ export default function ArticleDetail() {
           </h1>
           <div className="flex flex-wrap items-center text-sm text-gray-600 gap-4 mb-6">
             <div className="flex items-center">
-              {article.authorImage ? <img src={article.authorImage} alt={article.author} className="h-8 w-8 rounded-full mr-2" /> : <div className="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center text-xs font-medium text-gray-600 mr-2">
+              {article.authorImage ? <img src={article.authorImage} alt={article.author.username} className="h-8 w-8 rounded-full mr-2" /> : <div className="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center text-xs font-medium text-gray-600 mr-2">
                   {article.author && article.author.username.charAt(0).toUpperCase()}
                 </div>}
               <span>{article.author.username}</span>
@@ -118,8 +118,8 @@ export default function ArticleDetail() {
             </div>
             {article.category && <div className="flex items-center">
                 <TagIcon className="h-4 w-4 mr-1" />
-                <Link to={`/?category=${encodeURIComponent(article.category)}`} className="hover:underline">
-                  {article.category}
+                <Link to={`/?category=${encodeURIComponent(article.category.name)}`} className="hover:underline">
+                  {article.category.name}
                 </Link>
               </div>}
           </div>
@@ -130,7 +130,7 @@ export default function ArticleDetail() {
         <div className="prose prose-lg max-w-none text-justify" dangerouslySetInnerHTML={{
         __html: article.content
       }} />
-        <CommentSection articleId={article.id} />
+        <CommentSection articleId={article._id} />
       </article>
     </>
   );
