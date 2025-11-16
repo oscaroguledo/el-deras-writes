@@ -100,7 +100,7 @@ export default function ArticleDetail() {
               {article.authorImage ? <img src={article.authorImage} alt={article.author} className="h-8 w-8 rounded-full mr-2" /> : <div className="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center text-xs font-medium text-gray-600 mr-2">
                   {article.author && article.author.username.charAt(0).toUpperCase()}
                 </div>}
-              <span>{article.author}</span>
+              <span>{article.author.username}</span>
             </div>
             <div className="flex items-center">
               <CalendarIcon className="h-4 w-4 mr-1" />

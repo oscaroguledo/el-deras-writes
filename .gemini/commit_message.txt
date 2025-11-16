@@ -1,3 +1,3 @@
-fix: Allow blank password field during user updates
+fix: Initialize title field in UserFormModal for existing users
 
-Modified `CustomUserSerializer` in `backend/blog/serializers.py` to explicitly set `allow_blank=True` for the `password` field. This resolves the issue where a blank password field during user updates would trigger a "This field may not be blank" validation error, even when `required=False` was set. The `update` method already handles not updating the password if it's blank.
+Modified `frontend/src/components/UserFormModal.tsx` to correctly initialize the `title` field in the form data when editing an existing user. Previously, the `title` field was not being populated from the `user` object, leading to it being reset to an empty string if not explicitly changed by the user.
