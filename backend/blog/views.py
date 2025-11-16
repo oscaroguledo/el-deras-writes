@@ -261,7 +261,10 @@ class AdminDashboardView(APIView):
         flagged_comments = Comment.objects.filter(is_flagged=True).count()
         inactive_users = CustomUser.objects.filter(last_active__lt=last_7_days).count()
         avg_views_per_article = Article.objects.aggregate(avg=models.Avg('views'))['avg']
-        avg_comments_per_article = Comment.objects.aggregate(avg=models.Avg('article__comments'))['avg']
+        # Correctly calculate average comments per article
+        avg_comments_per_article = Article.objects.annotate(
+            comment_count=models.Count('comments')
+        ).aggregate(avg=models.Avg('comment_count'))['avg']
         total_articles = Article.objects.count()
         total_comments = Comment.objects.count()
         total_categories = Category.objects.count()
