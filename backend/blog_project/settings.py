@@ -107,6 +107,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://*.github.io",
     "https://*.cloudflare.com",
     "https://el-deras-writes.onrender.com",
+    'el-deras-writes.onrender.com',
     "https://*.onrender.com",
 ]
 
