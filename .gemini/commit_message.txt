@@ -1,3 +1,3 @@
-fix: Correct calculation of average comments per article
+feat: Add console log for comments API response in AdminCommentsPage
 
-Modified `AdminDashboardView` in `backend/blog/views.py` to correctly calculate `avg_comments_per_article`. Previously, it was attempting to aggregate on `Comment.objects.aggregate(avg=models.Avg('article__comments'))`, which led to an `AttributeError` due to incorrect aggregation on a reverse relationship. The fix involves annotating `Article` objects with their comment count and then averaging those counts.
+Added a `console.log` statement to the `fetchComments` function in `frontend/src/pages/admin/AdminCommentsPage.tsx`. This will help in debugging whether the frontend is receiving all comments (paginated) from the backend as expected.
