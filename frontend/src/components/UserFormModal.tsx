@@ -74,7 +74,12 @@ export function UserFormModal({ show, onClose, user, onSubmit }: UserFormModalPr
     } catch (err: any) {
       if (err.response && err.response.data) {
         setErrors(err.response.data);
-        toast.error('Please correct the errors in the form.');
+        
+        Object.entries(err.response.data).forEach(([field, errors]: any) => {
+          errors.forEach((errMsg: string) => {
+            toast.error(`${field}: ${errMsg}`);
+          });
+        });
       } else {
         toast.error('An unexpected error occurred.');
       }

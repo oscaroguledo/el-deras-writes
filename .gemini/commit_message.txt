@@ -1,4 +1,3 @@
-feat: Add Django management command to update user titles
+fix: Restore update_user_titles.py management command
 
-- Created a new Django management command `update_user_titles` in `backend/blog/management/commands/update_user_titles.py`.
-- This command iterates through existing `CustomUser` instances and assigns a random title from `TITLE_CHOICES` if their `title` field is empty.
+The `update_user_titles.py` management command was accidentally deleted in a previous commit. This commit restores the file.

@@ -24,7 +24,7 @@ class ContactInfoSerializer(serializers.ModelSerializer):
         model = ContactInfo
         fields = '__all__'
 class CustomUserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, required=False) # Make password optional for updates
+    password = serializers.CharField(write_only=True, required=False, allow_blank=True) # Make password optional for updates and allow blank
     total_articles = serializers.IntegerField(read_only=True, required=False)
     total_comments = serializers.IntegerField(read_only=True, required=False)
 
