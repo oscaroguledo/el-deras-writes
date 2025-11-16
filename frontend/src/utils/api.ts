@@ -4,9 +4,10 @@ import { Comment } from '../types/Comment';
 import { Category } from '../types/Category';
 import { Tag } from '../types/Tag';
 import { CustomUser } from '../types/CustomUser';
-import { ContactInfo } from '../types/ContactInfo'; // New import
-import { VisitorCount } from '../types/VisitorCount'; // New import
-import { AdminDashboardData, SearchResult } from '../types/Admin'; // New import
+import { ContactInfo } from '../types/ContactInfo';
+import { VisitorCount } from '../types/VisitorCount';
+import { AdminDashboardData, SearchResult } from '../types/Admin';
+import { Feedback } from '../types/Feedback'; // Import Feedback type
 const API_URL = 'http://localhost:8000/api';
 
 
@@ -63,12 +64,26 @@ export async function submitFeedback(feedback: {
   await axios.post(`${API_URL}/feedback/`, feedback);
 }
 
+export async function getFeedback(params: { page?: number; pageSize?: number; search?: string } = {}): Promise<PaginatedResponse<Feedback>> {
+  const response = await axios.get(`${API_URL}/admin/feedback/`, { params: { page: params.page, page_size: params.pageSize, search: params.search } });
+  return response.data;
+}
 
-
-// ... (existing code)
+export async function deleteFeedback(id: string): Promise<void> {
+  await axios.delete(`${API_URL}/admin/feedback/${id}/`);
+}
 
 export async function approveComment(id: string): Promise<Comment> {
   const response = await axios.post(`${API_URL}/admin/comments/${id}/approve_comment/`);
+  return response.data;
+}
+
+export async function deleteComment(id: string): Promise<void> {
+  await axios.delete(`${API_URL}/admin/comments/${id}/delete_comment/`);
+}
+
+export async function flagComment(id: string): Promise<Comment> {
+  const response = await axios.post(`${API_URL}/admin/comments/${id}/flag_comment/`);
   return response.data;
 }
 

@@ -24,6 +24,7 @@ const navLinks = [
   { to: '/admin/comments', icon: <MessageSquare size={20} />, label: 'Comments' },
   { to: '/admin/categories-tags', icon: <Tag size={20} />, label: 'Categories & Tags' },
   { to: '/admin/contact-info', icon: <Info size={20} />, label: 'Contact Info' },
+  { to: '/admin/feedback', icon: <Settings size={20} />, label: 'Feedback' }, // Added Feedback link
   { to: '/', icon: <Globe size={20} />, label: 'View Site' }, // Added View Site link
 ];
 

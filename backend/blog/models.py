@@ -200,3 +200,18 @@ class Visit(models.Model):
 
     def __str__(self):
         return f"Visit on {self.date}: {self.count}"
+
+class Feedback(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=255)
+    email = models.EmailField()
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "Feedback"
+        verbose_name_plural = "Feedback"
+
+    def __str__(self):
+        return f"Feedback from {self.name} ({self.email})"

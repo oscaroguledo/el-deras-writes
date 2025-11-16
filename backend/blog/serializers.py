@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from .models import Article, Comment, Category, Tag, CustomUser,ContactInfo, VisitorCount
+from .models import Article, Comment, Category, Tag, CustomUser,ContactInfo, VisitorCount, Feedback # Import Feedback model
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -143,4 +143,9 @@ class ArticleSerializer(serializers.ModelSerializer):
 class VisitorCountSerializer(serializers.ModelSerializer):
     class Meta:
         model = VisitorCount
+        fields = '__all__'
+
+class FeedbackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Feedback
         fields = '__all__'

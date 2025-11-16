@@ -7,8 +7,8 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.response import Response
 from django.db import models
 from django.db.models import Q
-from .models import Article, Comment, Category, Tag, CustomUser, ContactInfo, VisitorCount, Visit
-from .serializers import ArticleSerializer, ContactInfoSerializer, CommentSerializer, CategorySerializer, TagSerializer, CustomUserSerializer, VisitorCountSerializer, MyTokenObtainPairSerializer
+from .models import Article, Comment, Category, Tag, CustomUser, ContactInfo, VisitorCount, Visit, Feedback # Import Feedback model
+from .serializers import ArticleSerializer, ContactInfoSerializer, CommentSerializer, CategorySerializer, TagSerializer, CustomUserSerializer, VisitorCountSerializer, MyTokenObtainPairSerializer, FeedbackSerializer # Import FeedbackSerializer
 from blog.permissions import IsAdminOrReadOnly, IsAuthorOrAdmin
 from rest_framework.decorators import action
 from rest_framework import filters # Import filters
@@ -26,6 +26,11 @@ class ArticlePagination(PageNumberPagination):
     max_page_size = 100
 
 class UserPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+class FeedbackPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = 'page_size'
     max_page_size = 100
@@ -94,6 +99,16 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         is_superuser = user_type == 'admin'
         serializer.save(is_staff=is_staff, is_superuser=is_superuser)
 
+class FeedbackViewSet(viewsets.ModelViewSet):
+    queryset = Feedback.objects.all()
+    serializer_class = FeedbackSerializer
+    permission_classes = [AllowAny] # Allow anyone to create feedback
+
+    def get_permissions(self):
+        if self.action == 'list':
+            self.permission_classes = [IsAdminUser] # Only admin can list feedback
+        return super().get_permissions()
+
 class AdminArticleViewSet(viewsets.ModelViewSet):
     queryset = Article.objects.all().order_by('-created_at') # Order by recently created
     serializer_class = ArticleSerializer
@@ -114,6 +129,19 @@ class AdminCommentViewSet(viewsets.ModelViewSet):
         comment.approved = True
         comment.save()
         return Response({'status': 'comment approved'}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['delete'])
+    def delete_comment(self, request, pk=None):
+        comment = self.get_object()
+        comment.delete()
+        return Response({'status': 'comment deleted'}, status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=True, methods=['post'])
+    def flag_comment(self, request, pk=None):
+        comment = self.get_object()
+        comment.is_flagged = True
+        comment.save()
+        return Response({'status': 'comment flagged'}, status=status.HTTP_200_OK)
 
 class AdminCategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all().order_by('-id') # Categories don't have created_at, order by id
@@ -155,6 +183,14 @@ class AdminUserViewSet(viewsets.ModelViewSet):
         is_staff = user_type == 'admin'
         is_superuser = user_type == 'admin'
         serializer.save(is_staff=is_staff, is_superuser=is_superuser)
+
+class AdminFeedbackViewSet(viewsets.ModelViewSet):
+    queryset = Feedback.objects.all().order_by('-created_at')
+    serializer_class = FeedbackSerializer
+    permission_classes = [IsAdminUser]
+    pagination_class = FeedbackPagination
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name', 'email', 'message']
 
 class ContactInfoView(APIView):
     permission_classes = [AllowAny]
