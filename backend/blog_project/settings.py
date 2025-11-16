@@ -106,6 +106,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://*.vercel.app",
     "https://*.github.io",
     "https://*.cloudflare.com",
+    "https://el-deras-writes.onrender.com",
+    "https://*.onrender.com",
 ]
 
 ROOT_URLCONF = 'blog_project.urls'
