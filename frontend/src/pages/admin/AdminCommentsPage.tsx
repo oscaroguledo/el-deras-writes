@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { Edit, Trash, CheckCircle, Flag, ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import { Comment } from '../../types/Comment';
-import { getComments } from '../../utils/api';
+import { getComments, approveComment } from '../../utils/api';
 import SkeletonLoader from '../../components/SkeletonLoader';
+import { useCallback, useEffect, useState } from 'react';
 
 const PAGE_SIZE = 10;
 
@@ -20,7 +20,7 @@ export default function AdminCommentsPage() {
       setLoading(true);
       const response = await getComments({ page, pageSize: PAGE_SIZE, search });
       console.log('Fetched comments response:', response); // Add this line for debugging
-      setComments(response.results || []);
+      setComments(response.results); // Access results property
       setTotalCommentsCount(response.count || 0); // Set total count
       setTotalPages(Math.ceil((response.count || 0) / PAGE_SIZE));
     } catch (error) {
@@ -41,8 +41,14 @@ export default function AdminCommentsPage() {
   };
 
   const handleApproveComment = async (id: string) => {
-    // Implement approve comment logic
-    toast.info('Approve comment functionality not yet implemented.');
+    try {
+      await approveComment(id);
+      toast.success('Comment approved successfully!');
+      fetchComments(currentPage, searchQuery); // Refresh the list
+    } catch (error) {
+      toast.error('Failed to approve comment.');
+      console.error('Error approving comment:', error);
+    }
   };
 
   const handleFlagComment = async (id: string) => {
@@ -64,6 +70,7 @@ export default function AdminCommentsPage() {
   const handleNextPage = () => {
     setCurrentPage(prev => Math.min(totalPages, prev + 1));
   };
+
 
   if (loading) {
     return (

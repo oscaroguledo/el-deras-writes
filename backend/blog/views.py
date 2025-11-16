@@ -108,6 +108,13 @@ class AdminCommentViewSet(viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter]
     search_fields = ['content', 'author__username', 'article__title']
 
+    @action(detail=True, methods=['post'])
+    def approve_comment(self, request, pk=None):
+        comment = self.get_object()
+        comment.approved = True
+        comment.save()
+        return Response({'status': 'comment approved'}, status=status.HTTP_200_OK)
+
 class AdminCategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all().order_by('-id') # Categories don't have created_at, order by id
     serializer_class = CategorySerializer

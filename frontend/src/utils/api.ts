@@ -67,6 +67,11 @@ export async function submitFeedback(feedback: {
 
 // ... (existing code)
 
+export async function approveComment(id: string): Promise<Comment> {
+  const response = await axios.post(`${API_URL}/admin/comments/${id}/approve_comment/`);
+  return response.data;
+}
+
 export async function getComments(params: { page?: number; pageSize?: number; search?: string } = {}): Promise<PaginatedResponse<Comment>> {
   const response = await axios.get(`${API_URL}/admin/comments/`, { params: { page: params.page, page_size: params.pageSize, search: params.search } });
   return response.data;
