@@ -70,7 +70,7 @@ El_Dera's Writes is a full-stack blog application built with Django (Python) for
     source venv/bin/activate
     python manage.py runserver
     ```
-    The backend will run on `http://localhost:8000`.
+    The backend will run on `https://el-deras-writes.onrender.com`.
 
 2.  **Start the Frontend Development Server:**
     ```bash

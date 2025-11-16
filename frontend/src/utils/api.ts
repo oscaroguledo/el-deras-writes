@@ -8,7 +8,7 @@ import { ContactInfo } from '../types/ContactInfo';
 import { VisitorCount } from '../types/VisitorCount';
 import { AdminDashboardData, SearchResult } from '../types/Admin';
 import { Feedback } from '../types/Feedback'; // Import Feedback type
-const API_URL = 'http://localhost:8000/api';
+const API_URL = 'https://el-deras-writes.onrender.com/api';
 
 
 interface PaginatedResponse<T> {
