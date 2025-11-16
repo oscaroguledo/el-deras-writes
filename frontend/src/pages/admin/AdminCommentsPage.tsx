@@ -19,6 +19,7 @@ export default function AdminCommentsPage() {
     try {
       setLoading(true);
       const response = await getComments({ page, pageSize: PAGE_SIZE, search });
+      console.log('Fetched comments response:', response); // Add this line for debugging
       setComments(response.results || []);
       setTotalCommentsCount(response.count || 0); // Set total count
       setTotalPages(Math.ceil((response.count || 0) / PAGE_SIZE));

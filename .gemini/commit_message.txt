@@ -1,3 +1,3 @@
-fix: Correctly render category name in ArticleDetail
+fix: Correct calculation of average comments per article
 
-Modified `frontend/src/pages/ArticleDetail.tsx` to correctly render `article.category.name` and use it in the `Link` component's `to` prop. This resolves the "Objects are not valid as a React child" error when displaying category information.
+Modified `AdminDashboardView` in `backend/blog/views.py` to correctly calculate `avg_comments_per_article`. Previously, it was attempting to aggregate on `Comment.objects.aggregate(avg=models.Avg('article__comments'))`, which led to an `AttributeError` due to incorrect aggregation on a reverse relationship. The fix involves annotating `Article` objects with their comment count and then averaging those counts.
