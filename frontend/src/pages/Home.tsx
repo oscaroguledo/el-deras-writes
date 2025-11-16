@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { HeroPost } from '../components/HeroPost';
 import { BlogPostList } from '../components/BlogPostList';
-import { getArticles, getTopFiveCategories } from '../utils/api';
+import { getArticles } from '../utils/api'; // Removed getTopFiveCategories
 import { Article } from '../types/Article';
 import { CategoryList } from '../components/CategoryList';
-import { Category } from '@/types/Category';
 import SkeletonLoader from '../components/SkeletonLoader';
+import { useCategories } from '../hooks/CategoryProvider'; // Import useCategories hook
 
 export default function Home() {
   const [searchParams] = useSearchParams();
@@ -16,25 +16,24 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [articles, setArticles] = useState<Article[]>([]);
   const [featuredArticle, setFeaturedArticle] = useState<Article | null>(null);
-  const [topCategories, setTopCategories] = useState<Category[]>([]); // Add state for top categories
+  // Removed topCategories state
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const articlesPerPage = 10; // This should match the backend's page_size
 
+  const { categories, loading: categoriesLoading, error: categoriesError } = useCategories(); // Use the hook
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [articlesResponse, categoriesResponse] = await Promise.all([
-          getArticles({
-            search: searchQuery,
-            category: categoryFilter,
-            page: currentPage,
-            page_size: articlesPerPage,
-          }),
-          getTopFiveCategories(), // Fetch top categories in parallel
-        ]);
+        const articlesResponse = await getArticles({ // Removed categoriesResponse from Promise.all
+          search: searchQuery,
+          category: categoryFilter,
+          page: currentPage,
+          page_size: articlesPerPage,
+        });
 
         // Set the first article as featured if available
         if (articlesResponse.results.length > 0) {
@@ -45,7 +44,7 @@ export default function Home() {
           setArticles([]);
         }
         setTotalPages(Math.ceil(articlesResponse.count / articlesPerPage));
-        setTopCategories(categoriesResponse); // Set top categories
+        // Removed setTopCategories
       } catch (error) {
         console.error('Failed to fetch data:', error);
       } finally {
@@ -63,7 +62,7 @@ export default function Home() {
     setCurrentPage(prev => Math.min(totalPages, prev + 1));
   };
 
-  if (loading) {
+  if (loading || categoriesLoading) { // Include categoriesLoading in overall loading state
     return (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
         {/* Main content area skeleton */}
@@ -88,6 +87,10 @@ export default function Home() {
         </div>
       </div>
     );
+  }
+
+  if (categoriesError) {
+    return <div className="text-red-500 text-center mt-8">{categoriesError}</div>;
   }
 
   return (
@@ -131,7 +134,7 @@ export default function Home() {
           )}
         </div>
         <div className="md:col-span-1">
-          <CategoryList categories={topCategories} />
+          <CategoryList categories={categories} /> {/* Use categories from the hook */}
         </div>
       </div>
     </>

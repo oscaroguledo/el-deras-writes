@@ -4,6 +4,7 @@ import { incrementVisitorCount } from './utils/api';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AdminLayout from './pages/admin/AdminLayout';
+import { CategoryProvider } from './hooks/CategoryProvider'; // Import CategoryProvider
 // Layout components
 const MainLayout = lazy(() => import('./components/MainLayout'));
 
@@ -61,7 +62,9 @@ export function App({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      {children}
+      <CategoryProvider> {/* Wrap children with CategoryProvider */}
+        {children}
+      </CategoryProvider>
       <ToastContainer />
     </div>
   );
