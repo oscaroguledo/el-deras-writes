@@ -31,6 +31,7 @@ export function UserFormModal({ show, onClose, user, onSubmit }: UserFormModalPr
         email: user.email,
         first_name: user.first_name,
         last_name: user.last_name,
+        title: user.title || '', // Initialize title from user data
         bio: user.bio,
         user_type: user.user_type,
         password: '', // Password should not be pre-filled for security
