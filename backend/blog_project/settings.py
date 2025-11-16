@@ -99,17 +99,20 @@ SIMPLE_JWT = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5174",
     "http://localhost:5173",
+    "http://localhost:5174",
     "http://192.168.0.221:5173",
-    "https://*.netlify.app",
-    "https://*.vercel.app",
-    "https://*.github.io",
-    "https://*.cloudflare.com",
     "https://el-deras-writes.onrender.com",
-    'el-deras-writes.onrender.com',
-    "https://*.onrender.com",
 ]
+
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https:\/\/.*\.onrender\.com$",
+    r"^https:\/\/.*\.vercel\.app$",
+    r"^https:\/\/.*\.netlify\.app$",
+    r"^https:\/\/.*\.github\.io$",
+    r"^https:\/\/.*\.cloudflare\.com$",
+]
+
 
 ROOT_URLCONF = 'blog_project.urls'
 
