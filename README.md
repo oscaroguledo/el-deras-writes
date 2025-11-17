@@ -50,7 +50,11 @@ El_Dera's Writes is a full-stack blog application built with Django (Python) for
     source venv/bin/activate
     pip install -r requirements.txt
     python manage.py migrate
-    python manage.py createsuperuser # Follow prompts to create an admin user
+    # Create a user.txt file in the backend directory with admin email on the first line and password on the second line.
+    # Example user.txt:
+    # admin@example.com
+    # adminpassword
+    python manage.py create_superuser_from_file # Creates an admin user from user.txt
     cd ..
     ```
 
@@ -70,7 +74,7 @@ El_Dera's Writes is a full-stack blog application built with Django (Python) for
     source venv/bin/activate
     python manage.py runserver
     ```
-    The backend will run on `https://el-deras-writes.onrender.com`.
+    The backend will run on `http://localhost:8000`.
 
 2.  **Start the Frontend Development Server:**
     ```bash
@@ -93,6 +97,16 @@ Social media links (WhatsApp, TikTok, Instagram, Facebook) are dynamically fetch
 ## Deployment
 
 This application is designed for deployment on platforms like Netlify, Vercel, GitHub Pages, or Cloudflare for the frontend, and any platform supporting Django for the backend (e.g., Heroku, DigitalOcean, AWS). PostgreSQL is recommended for production databases (e.g., Supabase).
+
+### Deployment Script
+
+A `deploy_production.py` script is available in the `backend` directory to automate migration, static file collection, and server startup for production environments.
+
+To use it:
+1.  Make it executable: `chmod +x backend/deploy_production.py`
+2.  Run it: `./backend/deploy_production.py`
+
+**Note:** The script currently starts the Django development server, which is **NOT RECOMMENDED FOR PRODUCTION**. For production, it's highly advised to use a production-ready WSGI server like Gunicorn with a reverse proxy.
 
 ## Contributing
 
