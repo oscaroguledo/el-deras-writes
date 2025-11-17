@@ -28,13 +28,8 @@ def deploy_production():
     sys.stdout.flush() # Flush immediately
     run_command([sys.executable, 'manage.py', 'makemigrations'], cwd=backend_dir)
     run_command([sys.executable, 'manage.py', 'migrate'], cwd=backend_dir)
-
-    # Step 2: Create Superuser from file
-    print("\n--- Creating Superuser from user.txt ---")
-    sys.stdout.flush() # Flush immediately
-    run_command([sys.executable, 'manage.py', 'create_superuser_from_file'], cwd=backend_dir)
     
-    # Step 3: Start Django Development Server (NOT RECOMMENDED FOR PRODUCTION)
+    # Step 2: Start Django Development Server (NOT RECOMMENDED FOR PRODUCTION)
     print("\n--- Starting Django Development Server (WARNING: NOT RECOMMENDED FOR PRODUCTION) ---")
     sys.stdout.flush() # Flush immediately
     print("The Django development server is not suitable for production environments due to security and performance limitations.")

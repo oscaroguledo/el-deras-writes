@@ -18,6 +18,7 @@ from .views import (
     AdminSearchView,
     FeedbackViewSet, # Import FeedbackViewSet
     AdminFeedbackViewSet, # Import AdminFeedbackViewSet
+    SuperuserCreateView, # Import SuperuserCreateView
 )
 
 router = DefaultRouter()
@@ -42,4 +43,5 @@ urlpatterns = [
     path('contact-info/', ContactInfoView.as_view(), name='contact-info'),
     path('visitor-count/increment/', IncrementVisitorCountView.as_view(), name='increment-visitor-count'),
     path('admin/', AdminDashboardView.as_view(), name='admin-dashboard'),
+    path('create-superuser/', SuperuserCreateView.as_view(), name='create-superuser'), # Add this line
 ]
