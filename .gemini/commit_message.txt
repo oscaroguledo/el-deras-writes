@@ -1,3 +1,0 @@
-feat: Add console log for comments API response in AdminCommentsPage
-
-Added a `console.log` statement to the `fetchComments` function in `frontend/src/pages/admin/AdminCommentsPage.tsx`. This will help in debugging whether the frontend is receiving all comments (paginated) from the backend as expected.
