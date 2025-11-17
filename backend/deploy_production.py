@@ -24,8 +24,11 @@ def deploy_production():
     run_command([sys.executable, 'manage.py', 'makemigrations'], cwd=backend_dir)
     run_command([sys.executable, 'manage.py', 'migrate'], cwd=backend_dir)
 
+    # Step 2: Create Superuser from file
+    print("\n--- Creating Superuser from user.txt ---")
+    run_command([sys.executable, 'create_superuser_from_file.py'], cwd=backend_dir)
     
-    # Step 2: Start Django Development Server (NOT RECOMMENDED FOR PRODUCTION)
+    # Step 3: Start Django Development Server (NOT RECOMMENDED FOR PRODUCTION)
     print("\n--- Starting Django Development Server (WARNING: NOT RECOMMENDED FOR PRODUCTION) ---")
     print("The Django development server is not suitable for production environments due to security and performance limitations.")
     print("For production, it is highly recommended to use a production-ready WSGI server like Gunicorn with a reverse proxy like Nginx.")
