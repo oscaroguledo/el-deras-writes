@@ -26,7 +26,7 @@ def deploy_production():
 
     # Step 2: Create Superuser from file
     print("\n--- Creating Superuser from user.txt ---")
-    run_command([sys.executable, 'create_superuser_from_file.py'], cwd=backend_dir)
+    run_command([sys.executable, 'manage.py', 'create_superuser_from_file'], cwd=backend_dir)
     
     # Step 3: Start Django Development Server (NOT RECOMMENDED FOR PRODUCTION)
     print("\n--- Starting Django Development Server (WARNING: NOT RECOMMENDED FOR PRODUCTION) ---")
