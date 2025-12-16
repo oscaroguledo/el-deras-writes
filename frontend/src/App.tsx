@@ -5,6 +5,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AdminLayout from './pages/admin/AdminLayout';
 import { CategoryProvider } from './hooks/CategoryProvider'; // Import CategoryProvider
+import { DatabaseProvider } from './contexts/DatabaseContext'; // Import DatabaseProvider
 // Layout components
 const MainLayout = lazy(() => import('./components/MainLayout'));
 
@@ -26,6 +27,7 @@ const About = lazy(() => import('./pages/About'));
 const Contact = lazy(() => import('./pages/Contact'));
 const Terms = lazy(() => import('./pages/Terms'));
 const Privacy = lazy(() => import('./pages/Privacy'));
+const BlogExample = lazy(() => import('./components/BlogExample'));
 
 import { ProtectedRoute } from './components/ProtectedRoute';
 
@@ -38,6 +40,7 @@ export const routes = createRoutesFromElements(
       <Route path="contact" element={<Contact />} />
       <Route path="terms" element={<Terms />} />
       <Route path="privacy" element={<Privacy />} />
+      <Route path="sqlite-demo" element={<BlogExample />} />
     </Route>
     <Route path="/admin/login" element={<AdminLogin />} />
     <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
@@ -62,9 +65,11 @@ export function App({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      <CategoryProvider> {/* Wrap children with CategoryProvider */}
-        {children}
-      </CategoryProvider>
+      <DatabaseProvider> {/* Wrap with DatabaseProvider */}
+        <CategoryProvider> {/* Wrap children with CategoryProvider */}
+          {children}
+        </CategoryProvider>
+      </DatabaseProvider>
       <ToastContainer />
     </div>
   );
