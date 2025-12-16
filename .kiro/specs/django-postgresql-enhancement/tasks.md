@@ -55,7 +55,7 @@
   - **Property 17: Relationship preservation**
   - **Validates: Requirements 4.3**
 
-- [ ] 3.4 Write property test for migration rollback integrity
+- [x] 3.4 Write property test for migration rollback integrity
   - **Property 19: Migration rollback integrity**
   - **Validates: Requirements 4.5**
 

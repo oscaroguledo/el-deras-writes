@@ -206,7 +206,7 @@ class DataTransferManager:
         self.transfer_stats = {}
 
     def transfer_data(self, sqlite_db_path: str, schema_mapping: Dict[str, Any], 
-                     dry_run: bool = False) -> Dict[str, int]:
+                     dry_run: bool = False, raise_on_error: bool = False) -> Dict[str, int]:
         """
         Transfer data from SQLite to PostgreSQL.
         Returns dictionary of table names to record counts transferred.
@@ -239,7 +239,7 @@ class DataTransferManager:
                 
                 # Transfer to PostgreSQL
                 transferred_count = self._transfer_table_data(
-                    model_class, rows, schema_info
+                    model_class, rows, schema_info, raise_on_error
                 )
                 transfer_results[table_name] = transferred_count
                 
@@ -251,7 +251,7 @@ class DataTransferManager:
             sqlite_conn.close()
 
     def _transfer_table_data(self, model_class: Model, rows: List[sqlite3.Row], 
-                           schema_info: Dict[str, Any]) -> int:
+                           schema_info: Dict[str, Any], raise_on_error: bool = False) -> int:
         """Transfer data for a specific table"""
         transferred_count = 0
         
@@ -270,6 +270,8 @@ class DataTransferManager:
             except Exception as e:
                 logger.error(f"Error transferring row from {model_class._meta.db_table}: {e}")
                 logger.error(f"Row data: {dict(row)}")
+                if raise_on_error:
+                    raise
                 # Continue with other rows
                 continue
         
