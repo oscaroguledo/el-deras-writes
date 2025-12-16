@@ -95,7 +95,7 @@
   - **Property 2: Article completeness**
   - **Validates: Requirements 1.2**
 
-- [ ] 5.3 Write property test for search result relevance
+- [x] 5.3 Write property test for search result relevance
   - **Property 4: Search result relevance**
   - **Validates: Requirements 1.4**
 
