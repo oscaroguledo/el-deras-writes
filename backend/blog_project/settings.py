@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
+    'channels',
     'blog',
     'rest_framework',
     'rest_framework_simplejwt', # Add this line
@@ -58,6 +59,10 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # Enhanced JWT middleware
+    'blog.jwt_middleware.EnhancedJWTMiddleware',
+    'blog.jwt_middleware.JWTSecurityMiddleware',
+    'blog.jwt_middleware.TokenBlacklistMiddleware',
 ]
 
 REST_FRAMEWORK = {
@@ -68,35 +73,44 @@ REST_FRAMEWORK = {
 
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-    'ROTATE_REFRESH_TOKENS': False,
-    'BLACKLIST_AFTER_ROTATION': False,
-    'UPDATE_LAST_LOGIN': False,
+    # Enhanced token lifetimes for better security
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),  # Increased from 5 minutes
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),     # Increased from 1 day
+    'ROTATE_REFRESH_TOKENS': True,                   # Enable token rotation for security
+    'BLACKLIST_AFTER_ROTATION': True,               # Blacklist old tokens after rotation
+    'UPDATE_LAST_LOGIN': False,                      # Disable automatic last_login updates
 
+    # Enhanced security settings
     'ALGORITHM': 'HS256',
     'SIGNING_KEY': SECRET_KEY,
     'VERIFYING_KEY': None,
     'AUDIENCE': None,
-    'ISSUER': None,
+    'ISSUER': 'django-blog-api',                     # Add issuer for token validation
     'JWK_URL': None,
-    'LEEWAY': 0,
+    'LEEWAY': 10,                                    # Allow 10 seconds clock skew
 
+    # Authentication headers
     'AUTH_HEADER_TYPES': ('Bearer',),
     'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
     'USER_ID_FIELD': 'id',
     'USER_ID_CLAIM': 'user_id',
     'USER_AUTHENTICATION_RULE': 'blog.jwt_auth_rules.custom_user_authentication_rule',
 
+    # Token classes and claims
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'TOKEN_TYPE_CLAIM': 'token_type',
     'TOKEN_USER_CLASS': 'blog.models.CustomUser',
 
+    # Additional claims
     'JTI_CLAIM': 'jti',
+    
+    # Custom token claims
+    'TOKEN_OBTAIN_SERIALIZER': 'blog.serializers.MyTokenObtainPairSerializer',
 
+    # Sliding token settings (not used but configured)
     'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
-    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
-    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=15),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=7),
 }
 
 CORS_ALLOWED_ORIGINS = [
@@ -133,6 +147,14 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'blog_project.wsgi.application'
+ASGI_APPLICATION = 'blog_project.asgi.application'
+
+# Django Channels configuration with in-memory channel layer
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 
 
 import os
@@ -141,10 +163,26 @@ import dj_database_url
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# PostgreSQL configuration with connection pooling
 DATABASES = {
     'default': dj_database_url.config(
-        default='sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3')
+        default='postgresql://postgres:password@localhost:5432/blog_db',
+        conn_max_age=600,  # Connection pooling - keep connections alive for 10 minutes
+        conn_health_checks=True,  # Enable connection health checks
     )
+}
+
+# Fallback to SQLite for development if PostgreSQL is not available
+if not os.environ.get('DATABASE_URL'):
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+
+# Database connection pooling settings
+DATABASE_CONNECTION_POOLING = {
+    'MAX_CONNS': 20,
+    'MIN_CONNS': 5,
 }
 
 
@@ -188,3 +226,94 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# PostgreSQL-specific settings
+if 'postgresql' in DATABASES['default']['ENGINE']:
+    # Enable PostgreSQL-specific features
+    DATABASES['default']['OPTIONS'] = {
+        'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        'charset': 'utf8mb4',
+    }
+
+# Logging configuration for monitoring
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'django.log'),
+            'formatter': 'verbose',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+    },
+    'root': {
+        'handlers': ['console', 'file'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'django.db.backends': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'propagate': False,
+        },
+        'blog': {
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}
+
+# Create logs directory if it doesn't exist
+LOGS_DIR = os.path.join(BASE_DIR, 'logs')
+os.makedirs(LOGS_DIR, exist_ok=True)
+
+# Caching configuration for JWT security features
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'cache_table',
+        'TIMEOUT': 3600,  # 1 hour default timeout
+        'OPTIONS': {
+            'MAX_ENTRIES': 10000,
+        }
+    }
+}
+
+# JWT Security settings
+JWT_SECURITY = {
+    'MAX_LOGIN_ATTEMPTS': 5,
+    'LOGIN_ATTEMPT_TIMEOUT': 3600,  # 1 hour
+    'MAX_REQUESTS_PER_HOUR': 1000,
+    'TOKEN_BLACKLIST_ENABLED': True,
+    'RATE_LIMITING_ENABLED': True,
+}
+
+# Media files configuration for image handling
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# File upload settings
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB

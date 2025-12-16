@@ -4,7 +4,21 @@ from django.db.models import JSONField # Import JSONField
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import BaseUserManager
 from django.contrib.auth.hashers import make_password, check_password
+try:
+    from django.contrib.postgres.search import SearchVectorField
+    from django.contrib.postgres.indexes import GinIndex
+    from django.contrib.postgres.fields import ArrayField
+    POSTGRES_AVAILABLE = True
+except ImportError:
+    # Fallback for non-PostgreSQL databases
+    SearchVectorField = models.TextField
+    GinIndex = models.Index
+    ArrayField = models.TextField
+    POSTGRES_AVAILABLE = False
 import uuid
+import base64
+import io
+from PIL import Image
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, username, password=None, **extra_fields):
@@ -55,11 +69,18 @@ class CustomUser(models.Model):
     )
     user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, default='normal')
 
+    # PostgreSQL-specific enhancements
+    preferences = JSONField(default=dict, blank=True)  # JSONB preferences storage
+    avatar_base64 = models.TextField(blank=True, null=True)  # Base64 avatar storage
+    location = models.CharField(max_length=200, blank=True, null=True)  # Simplified location
+    timezone = models.CharField(max_length=50, blank=True, null=True)
+
     ip_address = models.GenericIPAddressField(blank=True, null=True)
     country = models.CharField(max_length=100, blank=True, null=True)
     region = models.CharField(max_length=100, blank=True, null=True)
     city = models.CharField(max_length=100, blank=True, null=True)
     last_active = models.DateTimeField(auto_now=True)
+    last_login = models.DateTimeField(blank=True, null=True)  # Add last_login field for JWT compatibility
 
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -99,12 +120,48 @@ class CustomUser(models.Model):
     @property
     def is_authenticated(self):
         return True
+
+    def set_avatar_from_image(self, image_file):
+        """Convert uploaded image to base64 and store"""
+        try:
+            # Open and process the image
+            img = Image.open(image_file)
+            
+            # Resize image to reasonable size (max 200x200)
+            img.thumbnail((200, 200), Image.Resampling.LANCZOS)
+            
+            # Convert to RGB if necessary
+            if img.mode in ('RGBA', 'LA', 'P'):
+                img = img.convert('RGB')
+            
+            # Save to bytes
+            buffer = io.BytesIO()
+            img.save(buffer, format='JPEG', quality=85)
+            
+            # Convert to base64
+            img_str = base64.b64encode(buffer.getvalue()).decode()
+            self.avatar_base64 = f"data:image/jpeg;base64,{img_str}"
+            
+        except Exception as e:
+            raise ValidationError(f"Error processing avatar image: {str(e)}")
+
+    class Meta:
+        indexes = [
+            GinIndex(fields=['preferences']) if POSTGRES_AVAILABLE else models.Index(fields=['id']),  # PostgreSQL GIN index for JSONB
+        ]
 class Category(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255, unique=True)
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='children')
+    description = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name_plural = "Categories"
+        ordering = ['name']
 
 class Tag(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -119,24 +176,84 @@ class Article(models.Model):
     STATUS_CHOICES = (
         ('draft', 'Draft'),
         ('published', 'Published'),
+        ('archived', 'Archived'),
     )
     title = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255, unique=True, blank=True, null=True)
     excerpt = models.TextField(blank=True, null=True)
     content = models.TextField()
-    image = models.TextField(blank=True, null=True, default='/logo.png')
+    
+    # PostgreSQL full-text search
+    content_vector = SearchVectorField(null=True, blank=True)
+    
+    # Base64 image storage for embedded images
+    image_base64 = models.TextField(blank=True, null=True)
+    image = models.TextField(blank=True, null=True, default='/logo.png')  # Keep for backward compatibility
+    
     readTime = models.CharField(max_length=50, blank=True, null=True)
+    read_time = models.IntegerField(blank=True, null=True)  # Read time in minutes
+    
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='articles')
+    authors = models.ManyToManyField(CustomUser, related_name='co_authored_articles', blank=True)  # Multi-author support
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
     tags = models.ManyToManyField(Tag, blank=True)
+    
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft')
+    featured = models.BooleanField(default=False)
     views = models.PositiveIntegerField(default=0)
     likes = models.PositiveIntegerField(default=0)
+    
+    # Scheduling support
+    scheduled_publish = models.DateTimeField(null=True, blank=True)
+    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     published_at = models.DateTimeField(null=True, blank=True)
 
+    def save(self, *args, **kwargs):
+        # Auto-generate slug if not provided
+        if not self.slug:
+            from django.utils.text import slugify
+            self.slug = slugify(self.title)
+            
+        # Auto-publish if scheduled time has passed
+        if self.scheduled_publish and timezone.now() >= self.scheduled_publish and self.status == 'draft':
+            self.status = 'published'
+            self.published_at = timezone.now()
+            
+        super().save(*args, **kwargs)
+
+    def set_image_from_file(self, image_file):
+        """Convert uploaded image to base64 and store"""
+        try:
+            # Open and process the image
+            img = Image.open(image_file)
+            
+            # Resize image to reasonable size (max 800x600)
+            img.thumbnail((800, 600), Image.Resampling.LANCZOS)
+            
+            # Convert to RGB if necessary
+            if img.mode in ('RGBA', 'LA', 'P'):
+                img = img.convert('RGB')
+            
+            # Save to bytes
+            buffer = io.BytesIO()
+            img.save(buffer, format='JPEG', quality=85)
+            
+            # Convert to base64
+            img_str = base64.b64encode(buffer.getvalue()).decode()
+            self.image_base64 = f"data:image/jpeg;base64,{img_str}"
+            
+        except Exception as e:
+            raise ValidationError(f"Error processing article image: {str(e)}")
+
     class Meta:
         ordering = ['-created_at']
+        indexes = [
+            GinIndex(fields=['content_vector']) if POSTGRES_AVAILABLE else models.Index(fields=['id']),  # Full-text search index
+            models.Index(fields=['status', '-published_at']),  # Published articles index
+            models.Index(fields=['featured', '-created_at']),  # Featured articles index
+        ]
 
     def __str__(self):
         return self.title
@@ -147,11 +264,54 @@ class Comment(models.Model):
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
     content = models.TextField()
+    
+    # PostgreSQL full-text search for comments
+    content_vector = SearchVectorField(null=True, blank=True)
+    
     ip_address = models.GenericIPAddressField(blank=True, null=True)
+    user_agent = models.TextField(blank=True, null=True)
+    
+    # Enhanced moderation features
     approved = models.BooleanField(default=False)
     is_flagged = models.BooleanField(default=False)
+    moderation_notes = models.TextField(blank=True, null=True)
+    moderated_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, related_name='moderated_comments')
+    moderated_at = models.DateTimeField(null=True, blank=True)
+    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def clean(self):
+        """Validate comment threading constraints"""
+        if self.parent:
+            # Prevent deep nesting (max 3 levels)
+            depth = 0
+            current = self.parent
+            while current and depth < 5:  # Safety limit
+                if current.parent:
+                    depth += 1
+                    current = current.parent
+                else:
+                    break
+            
+            if depth >= 3:
+                raise ValidationError("Comments cannot be nested more than 3 levels deep")
+            
+            # Ensure parent comment belongs to the same article
+            if self.parent.article != self.article:
+                raise ValidationError("Parent comment must belong to the same article")
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
+
+    class Meta:
+        ordering = ['created_at']
+        indexes = [
+            GinIndex(fields=['content_vector']) if POSTGRES_AVAILABLE else models.Index(fields=['id']),  # Full-text search index
+            models.Index(fields=['article', 'parent', 'created_at']),  # Threading index
+            models.Index(fields=['approved', 'is_flagged', 'created_at']),  # Moderation index
+        ]
 
     def __str__(self):
         return f'Comment by {self.author} on {self.article}'
@@ -215,3 +375,82 @@ class Feedback(models.Model):
 
     def __str__(self):
         return f"Feedback from {self.name} ({self.email})"
+
+
+class Analytics(models.Model):
+    """Model for tracking blog analytics and metrics"""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    
+    # Metrics tracking
+    metric_type = models.CharField(max_length=50)  # 'page_view', 'article_view', 'user_action', etc.
+    metric_value = models.JSONField(default=dict)  # Flexible metric data storage
+    
+    # Associated objects (optional)
+    article = models.ForeignKey(Article, on_delete=models.CASCADE, null=True, blank=True, related_name='analytics')
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True, related_name='analytics')
+    
+    # Request metadata
+    ip_address = models.GenericIPAddressField(blank=True, null=True)
+    user_agent = models.TextField(blank=True, null=True)
+    referrer = models.URLField(blank=True, null=True)
+    
+    # Timing
+    timestamp = models.DateTimeField(auto_now_add=True)
+    session_id = models.CharField(max_length=255, blank=True, null=True)
+    
+    class Meta:
+        ordering = ['-timestamp']
+        indexes = [
+            models.Index(fields=['metric_type', '-timestamp']),
+            models.Index(fields=['article', '-timestamp']),
+            models.Index(fields=['user', '-timestamp']),
+            GinIndex(fields=['metric_value']) if POSTGRES_AVAILABLE else models.Index(fields=['id']),  # PostgreSQL GIN index for JSONB
+        ]
+        verbose_name_plural = "Analytics"
+
+    def __str__(self):
+        return f"{self.metric_type} - {self.timestamp}"
+
+
+class ArticleRevision(models.Model):
+    """Model for tracking article revision history"""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    
+    # Associated article
+    article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='revisions')
+    
+    # Revision metadata
+    revision_number = models.PositiveIntegerField()
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    excerpt = models.TextField(blank=True, null=True)
+    
+    # Change tracking
+    changed_by = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='article_revisions')
+    change_summary = models.CharField(max_length=500, blank=True, null=True)
+    change_type = models.CharField(max_length=50, default='edit')  # 'create', 'edit', 'publish', 'archive'
+    
+    # Timing
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    # Metadata snapshot
+    metadata_snapshot = models.JSONField(default=dict)  # Store category, tags, status at time of revision
+    
+    class Meta:
+        ordering = ['-revision_number']
+        unique_together = ['article', 'revision_number']
+        indexes = [
+            models.Index(fields=['article', '-revision_number']),
+            models.Index(fields=['changed_by', '-created_at']),
+            models.Index(fields=['change_type', '-created_at']),
+        ]
+
+    def save(self, *args, **kwargs):
+        if not self.revision_number:
+            # Auto-increment revision number
+            last_revision = ArticleRevision.objects.filter(article=self.article).order_by('-revision_number').first()
+            self.revision_number = (last_revision.revision_number + 1) if last_revision else 1
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.article.title} - Revision {self.revision_number}"

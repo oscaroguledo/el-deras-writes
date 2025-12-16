@@ -62,10 +62,22 @@ class CustomUserSerializer(serializers.ModelSerializer):
         return instance
 
 class CategorySerializer(serializers.ModelSerializer):
+    article_count = serializers.IntegerField(read_only=True)
+    total_articles = serializers.IntegerField(read_only=True)
+    children = serializers.SerializerMethodField()
+    parent_name = serializers.CharField(source='parent.name', read_only=True)
+
     class Meta:
         model = Category
         fields = '__all__'
         extra_kwargs = {'id': {'read_only': True}}
+
+    def get_children(self, obj):
+        """Get child categories"""
+        if hasattr(obj, 'children'):
+            children = obj.children.all()
+            return CategorySerializer(children, many=True, context=self.context).data
+        return []
 
     def validate_name(self, value):
         # Case-insensitive check for uniqueness
@@ -80,6 +92,9 @@ class CategorySerializer(serializers.ModelSerializer):
         return value
 
 class TagSerializer(serializers.ModelSerializer):
+    article_count = serializers.IntegerField(read_only=True)
+    total_articles = serializers.IntegerField(read_only=True)
+
     class Meta:
         model = Tag
         fields = '__all__'
@@ -108,21 +123,40 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class ArticleSerializer(serializers.ModelSerializer):
     author = CustomUserSerializer(read_only=True)
-    category_name = serializers.CharField(write_only=True) # For input
-    category = CategorySerializer(read_only=True) # For output
+    category_name = serializers.CharField(write_only=True, required=False)
+    category = CategorySerializer(read_only=True)
     tags = TagSerializer(many=True, required=False)
     comments = CommentSerializer(many=True, read_only=True)
+    comment_count = serializers.IntegerField(read_only=True)
+    tag_count = serializers.IntegerField(read_only=True)
+    authors = CustomUserSerializer(many=True, read_only=True)
+    
+    # Image handling
+    image_file = serializers.ImageField(write_only=True, required=False)
 
     class Meta:
         model = Article
-        fields = ['id', 'title', 'excerpt', 'content', 'image', 'readTime', 'author', 'category', 'tags', 'status', 'views', 'likes', 'created_at', 'updated_at', 'published_at', 'comments', 'category_name'] # Add category_name to fields
+        fields = [
+            'id', 'title', 'slug', 'excerpt', 'content', 'image', 'image_base64', 
+            'readTime', 'read_time', 'author', 'authors', 'category', 'tags', 
+            'status', 'featured', 'views', 'likes', 'scheduled_publish',
+            'created_at', 'updated_at', 'published_at', 'comments', 
+            'category_name', 'comment_count', 'tag_count', 'image_file'
+        ]
 
     def create(self, validated_data):
         tags_data = validated_data.pop('tags', [])
-        category = validated_data.pop('category_instance') # Get the category object from validation
+        category = validated_data.pop('category_instance', None)
+        image_file = validated_data.pop('image_file', None)
         
         article = Article.objects.create(category=category, **validated_data)
         
+        # Handle image upload
+        if image_file:
+            article.set_image_from_file(image_file)
+            article.save()
+        
+        # Handle tags
         for tag_data in tags_data:
             tag_name = tag_data.get('name')
             tag, _ = Tag.objects.get_or_create(name=tag_name)
@@ -130,14 +164,49 @@ class ArticleSerializer(serializers.ModelSerializer):
             
         return article
 
+    def update(self, instance, validated_data):
+        tags_data = validated_data.pop('tags', None)
+        category = validated_data.pop('category_instance', None)
+        image_file = validated_data.pop('image_file', None)
+        
+        # Update basic fields
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        
+        # Handle category update
+        if category:
+            instance.category = category
+        
+        # Handle image upload
+        if image_file:
+            instance.set_image_from_file(image_file)
+        
+        instance.save()
+        
+        # Handle tags update
+        if tags_data is not None:
+            instance.tags.clear()
+            for tag_data in tags_data:
+                tag_name = tag_data.get('name')
+                tag, _ = Tag.objects.get_or_create(name=tag_name)
+                instance.tags.add(tag)
+        
+        return instance
+
     def validate(self, attrs):
         category_name = attrs.get('category_name')
         if category_name:
             category, _ = Category.objects.get_or_create(name=category_name)
             attrs['category_instance'] = category
-            attrs.pop('category_name') # Remove category_name from attrs
-        else:
-            raise serializers.ValidationError({"category_name": "This field is required."})
+            attrs.pop('category_name')
+        
+        # Validate scheduled publishing
+        scheduled_publish = attrs.get('scheduled_publish')
+        if scheduled_publish and scheduled_publish <= timezone.now():
+            raise serializers.ValidationError({
+                "scheduled_publish": "Scheduled publish time must be in the future."
+            })
+        
         return attrs
 
 class VisitorCountSerializer(serializers.ModelSerializer):
