@@ -35,7 +35,7 @@
   - **Property 31: Version control**
   - **Validates: Requirements 7.5**
 
-- [-] 3. Implement SQLite to PostgreSQL migration system
+- [x] 3. Implement SQLite to PostgreSQL migration system
   - Create migration management commands
   - Implement data transfer utilities with integrity checks
   - Add schema conversion logic for SQLite to PostgreSQL types
@@ -59,7 +59,7 @@
   - **Property 19: Migration rollback integrity**
   - **Validates: Requirements 4.5**
 
-- [-] 4. Enhance authentication system with JWT improvements
+- [x] 4. Enhance authentication system with JWT improvements
   - Implement enhanced JWT token management with refresh tokens
   - Add secure password hashing with Django's latest methods
   - Create token refresh endpoints and middleware
@@ -109,7 +109,7 @@
 
 - [x] 6. Checkpoint - Ensure all tests pass, ask the user if questions arise
 
-- [-] 7. Implement real-time WebSocket system with Django Channels
+- [x] 7. Implement real-time WebSocket system with Django Channels
   - Set up Django Channels with in-memory channel layer
   - Create WebSocket consumers for real-time updates
   - Implement event broadcasting system for content changes
