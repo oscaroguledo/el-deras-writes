@@ -145,3 +145,8 @@ backend/venv/
 backend/db.sqlite3
 backend/media/
 backend/static_root/
+
+# Editor and tool specific files
+.kiro/
+.vscode/
+backend/.hypothesis/
