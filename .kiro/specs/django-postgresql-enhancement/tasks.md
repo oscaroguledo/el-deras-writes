@@ -99,7 +99,7 @@
   - **Property 4: Search result relevance**
   - **Validates: Requirements 1.4**
 
-- [ ] 5.4 Write property test for API response consistency
+- [x] 5.4 Write property test for API response consistency
   - **Property 22: API response consistency**
   - **Validates: Requirements 6.1**
 
