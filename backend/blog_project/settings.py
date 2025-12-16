@@ -61,9 +61,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # Enhanced JWT middleware
-    'blog.jwt_middleware.EnhancedJWTMiddleware',
-    'blog.jwt_middleware.JWTSecurityMiddleware',
-    'blog.jwt_middleware.TokenBlacklistMiddleware',
+    # 'blog.jwt_middleware.EnhancedJWTMiddleware',
+    # 'blog.jwt_middleware.JWTSecurityMiddleware',
+    # 'blog.jwt_middleware.TokenBlacklistMiddleware',
 ]
 
 REST_FRAMEWORK = {

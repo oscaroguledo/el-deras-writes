@@ -11,4 +11,6 @@ websocket_urlpatterns = [
     
     # User-specific notifications WebSocket
     re_path(r'ws/notifications/(?P<user_id>[0-9a-f-]+)/$', consumers.NotificationConsumer.as_asgi()),
+    # Comments WebSocket
+    re_path(r'ws/comments/(?P<article_id>[0-9a-f-]+)/$', consumers.CommentConsumer.as_asgi()),
 ]

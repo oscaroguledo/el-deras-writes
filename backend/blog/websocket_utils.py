@@ -142,6 +142,16 @@ class WebSocketBroadcaster:
             }
         )
         
+        # Broadcast to specific article comments group
+        self.broadcast_to_group(
+            f'comments_{comment.article.id}',
+            'comment_created',
+            {
+                'comment': comment_data,
+                'article_id': str(comment.article.id)
+            }
+        )
+        
         # Broadcast to admin updates for moderation
         if not comment.approved:
             self.broadcast_to_group(

@@ -399,3 +399,45 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         """Get current timestamp in ISO format"""
         from django.utils import timezone
         return timezone.now().isoformat()
+
+class CommentConsumer(AsyncWebsocketConsumer):
+    """WebSocket consumer for real-time comment updates for a specific article"""
+    
+    async def connect(self):
+        self.article_id = self.scope['url_route']['kwargs']['article_id']
+        self.room_group_name = f'comments_{self.article_id}'
+
+        # Join room group
+        await self.channel_layer.group_add(
+            self.room_group_name,
+            self.channel_name
+        )
+
+        await self.accept()
+        logger.info(f"Comment WebSocket connected for article {self.article_id}")
+
+    async def disconnect(self, close_code):
+        # Leave room group
+        await self.channel_layer.group_discard(
+            self.room_group_name,
+            self.channel_name
+        )
+        logger.info(f"Comment WebSocket disconnected for article {self.article_id}")
+
+    async def receive(self, text_data):
+        # We don't expect to receive messages from the client for now
+        pass
+
+    async def comment_created(self, event):
+        """Receive message from room group when a comment is created"""
+        await self.send(text_data=json.dumps({
+            'type': 'comment_created',
+            'comment': event['comment'],
+            'article_id': event['article_id'],
+            'timestamp': event.get('timestamp', self.get_current_timestamp())
+        }))
+
+    def get_current_timestamp(self):
+        """Get current timestamp in ISO format"""
+        from django.utils import timezone
+        return timezone.now().isoformat()

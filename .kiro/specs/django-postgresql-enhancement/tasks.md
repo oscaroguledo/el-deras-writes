@@ -125,7 +125,7 @@
   - **Property 33: Authentication state synchronization**
   - **Validates: Requirements 8.2**
 
-- [ ] 7.3 Write property test for real-time comment updates
+- [x] 7.3 Write property test for real-time comment updates
   - **Property 34: Real-time comment updates**
   - **Validates: Requirements 8.3**
 
