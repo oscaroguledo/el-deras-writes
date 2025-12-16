@@ -254,6 +254,10 @@ class LogoutView(APIView):
                     
                     logger.info(f"User {request.user.email} logged out successfully")
                     
+                    # Broadcast authentication event
+                    from .websocket_utils import broadcast_user_authenticated
+                    broadcast_user_authenticated(request.user, 'logout')
+                    
                     return Response({
                         "message": "Successfully logged out"
                     }, status=status.HTTP_200_OK)

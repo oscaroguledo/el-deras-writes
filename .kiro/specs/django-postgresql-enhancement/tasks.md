@@ -121,7 +121,7 @@
   - **Property 32: Real-time content notifications**
   - **Validates: Requirements 8.1**
 
-- [ ] 7.2 Write property test for authentication state synchronization
+- [x] 7.2 Write property test for authentication state synchronization
   - **Property 33: Authentication state synchronization**
   - **Validates: Requirements 8.2**
 
