@@ -129,7 +129,7 @@
   - **Property 34: Real-time comment updates**
   - **Validates: Requirements 8.3**
 
-- [ ] 7.4 Write property test for admin action broadcasting
+- [x] 7.4 Write property test for admin action broadcasting
   - **Property 35: Admin action broadcasting**
   - **Validates: Requirements 8.4**
 

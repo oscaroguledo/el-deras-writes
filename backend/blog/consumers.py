@@ -131,7 +131,7 @@ class BlogConsumer(AsyncWebsocketConsumer):
             self.subscriptions = set()
         
         for event_type in event_types:
-            if event_type in ['article_created', 'article_updated', 'comment_created', 'user_authenticated', 'admin_action']:
+            if event_type in ['article_created', 'article_updated', 'comment_created', 'user_authenticated', 'admin_action', 'content_moderated']:
                 self.subscriptions.add(event_type)
         
         await self.send(text_data=json.dumps({
@@ -217,7 +217,9 @@ class BlogConsumer(AsyncWebsocketConsumer):
 
     async def content_moderated(self, event):
         """Handle content moderation notifications"""
-        if self.should_send_event('content_moderated'):
+        should_send = self.should_send_event('content_moderated')
+        logger.debug(f"BlogConsumer.content_moderated: should_send_event returned {should_send} for event {event}")
+        if should_send:
             await self.send(text_data=json.dumps({
                 'type': 'content_moderated',
                 'content_type': event['content_type'],
@@ -226,6 +228,9 @@ class BlogConsumer(AsyncWebsocketConsumer):
                 'moderator': event.get('moderator'),
                 'timestamp': event.get('timestamp', self.get_current_timestamp())
             }))
+            logger.debug(f"BlogConsumer.content_moderated: Sent message for event {event['content_type']} {event['content_id']}")
+        else:
+            logger.debug(f"BlogConsumer.content_moderated: Not sending message for event {event['content_type']} {event['content_id']} due to subscription filter.")
 
     # Helper methods
     
