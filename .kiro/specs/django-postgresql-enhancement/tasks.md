@@ -91,7 +91,7 @@
   - **Property 1: Article API pagination consistency**
   - **Validates: Requirements 1.1**
 
-- [ ] 5.2 Write property test for article completeness
+- [x] 5.2 Write property test for article completeness
   - **Property 2: Article completeness**
   - **Validates: Requirements 1.2**
 
