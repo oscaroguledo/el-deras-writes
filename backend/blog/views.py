@@ -984,6 +984,11 @@ class FileUploadView(APIView):
             return Response({'error': 'No file provided'}, status=status.HTTP_400_BAD_REQUEST)
         
         uploaded_file = request.FILES['file']
+        
+        MAX_UPLOAD_SIZE = 5 * 1024 * 1024  # 5 MB
+        if uploaded_file.size > MAX_UPLOAD_SIZE:
+            return Response({'error': f'File size exceeds the limit of {MAX_UPLOAD_SIZE / (1024 * 1024)} MB'}, status=status.HTTP_400_BAD_REQUEST)
+        
         file_type = request.data.get('type', 'image')  # image, avatar, etc.
         
         try:
