@@ -1051,7 +1051,7 @@ class FileUploadView(APIView):
             
             # Calculate compression ratio
             original_size = image_file.size
-            compressed_size = len(base64_data)
+            compressed_size = len(buffer.getvalue()) # Corrected: use actual compressed bytes size
             compression_ratio = (1 - compressed_size / original_size) * 100 if original_size > 0 else 0
             
             return {
