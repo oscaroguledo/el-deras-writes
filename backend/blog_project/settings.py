@@ -58,12 +58,13 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.cache.UpdateCacheMiddleware',  # Cache middleware (first)
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
+    'django.middleware.cache.FetchFromCacheMiddleware',  # Cache middleware (last)
 ]
 
 REST_FRAMEWORK = {
@@ -173,10 +174,30 @@ if not os.environ.get('DATABASE_URL') and not any(['postgresql' in str(DATABASES
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 
-# Database connection pooling settings
+# Enhanced database connection pooling settings
 DATABASE_CONNECTION_POOLING = {
-    'MAX_CONNS': 20,
-    'MIN_CONNS': 5,
+    'MAX_CONNS': 50,  # Increased for better performance
+    'MIN_CONNS': 10,
+    'MAX_LIFETIME': 3600,  # Connection lifetime in seconds
+    'RETRY_ATTEMPTS': 3,
+    'RETRY_DELAY': 1,
+}
+
+# Database query optimization settings
+DATABASE_QUERY_OPTIMIZATION = {
+    'SELECT_RELATED_DEPTH': 2,
+    'PREFETCH_RELATED_LOOKUPS': True,
+    'USE_PREPARED_STATEMENTS': True,
+    'QUERY_TIMEOUT': 30,  # seconds
+}
+
+# Performance monitoring settings
+PERFORMANCE_MONITORING = {
+    'ENABLED': True,
+    'SLOW_QUERY_THRESHOLD': 1.0,  # Log queries slower than 1 second
+    'TRACK_CACHE_HITS': True,
+    'TRACK_DB_QUERIES': True,
+    'MAX_QUERY_LOG_SIZE': 1000,
 }
 
 
@@ -283,17 +304,53 @@ LOGGING = {
 LOGS_DIR = os.path.join(BASE_DIR, 'logs')
 os.makedirs(LOGS_DIR, exist_ok=True)
 
-# Caching configuration for JWT security features
+# Enhanced caching configuration for performance optimization
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
         'LOCATION': 'cache_table',
         'TIMEOUT': 3600,  # 1 hour default timeout
         'OPTIONS': {
+            'MAX_ENTRIES': 50000,  # Increased cache size
+            'CULL_FREQUENCY': 3,   # Remove 1/3 of entries when MAX_ENTRIES reached
+        }
+    },
+    'api_cache': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'api_cache_table',
+        'TIMEOUT': 900,  # 15 minutes for API responses
+        'OPTIONS': {
+            'MAX_ENTRIES': 25000,
+            'CULL_FREQUENCY': 4,
+        }
+    },
+    'session_cache': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'session_cache_table',
+        'TIMEOUT': 1800,  # 30 minutes for sessions
+        'OPTIONS': {
             'MAX_ENTRIES': 10000,
+            'CULL_FREQUENCY': 3,
+        }
+    },
+    'template_cache': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'template_cache_table',
+        'TIMEOUT': 7200,  # 2 hours for templates
+        'OPTIONS': {
+            'MAX_ENTRIES': 5000,
+            'CULL_FREQUENCY': 4,
         }
     }
 }
+
+# Cache key prefixes for different environments
+CACHE_KEY_PREFIX = os.environ.get('CACHE_KEY_PREFIX', 'blog_cache')
+
+# Cache middleware settings
+CACHE_MIDDLEWARE_ALIAS = 'default'
+CACHE_MIDDLEWARE_SECONDS = 300  # 5 minutes
+CACHE_MIDDLEWARE_KEY_PREFIX = CACHE_KEY_PREFIX
 
 # JWT Security settings
 JWT_SECURITY = {
