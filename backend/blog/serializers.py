@@ -229,10 +229,52 @@ class ArticleSerializer(serializers.ModelSerializer):
             'category_name', 'comment_count', 'tag_count', 'image_file'
         ]
 
+    def validate_title(self, value):
+        """Validate and sanitize article title"""
+        try:
+            sanitized = validate_input_field(value, 'title')
+            if not sanitized or sanitized.strip() == '':
+                raise serializers.ValidationError("Article title cannot be empty after sanitization")
+            return sanitized
+        except DjangoValidationError as e:
+            raise serializers.ValidationError(str(e))
+
+    def validate_content(self, value):
+        """Validate and sanitize article content"""
+        try:
+            sanitized = validate_input_field(value, 'content')
+            if not sanitized or sanitized.strip() == '':
+                raise serializers.ValidationError("Article content cannot be empty after sanitization")
+            return sanitized
+        except DjangoValidationError as e:
+            raise serializers.ValidationError(str(e))
+
+    def validate_excerpt(self, value):
+        """Validate and sanitize article excerpt"""
+        if value:
+            try:
+                return validate_input_field(value, 'content')
+            except DjangoValidationError as e:
+                raise serializers.ValidationError(str(e))
+        return value
+
+    def validate_category_name(self, value):
+        """Validate and sanitize category name"""
+        if value:
+            try:
+                return validate_input_field(value, 'text')
+            except DjangoValidationError as e:
+                raise serializers.ValidationError(str(e))
+        return value
+
     def create(self, validated_data):
         tags_data = validated_data.pop('tags', [])
         category = validated_data.pop('category_instance', None)
         image_file = validated_data.pop('image_file', None)
+        
+        # Generate safe slug from sanitized title
+        if 'title' in validated_data:
+            validated_data['slug'] = InputValidator.generate_safe_slug(validated_data['title'])
         
         article = Article.objects.create(category=category, **validated_data)
         
@@ -244,8 +286,15 @@ class ArticleSerializer(serializers.ModelSerializer):
         # Handle tags
         for tag_data in tags_data:
             tag_name = tag_data.get('name')
-            tag, _ = Tag.objects.get_or_create(name=tag_name)
-            article.tags.add(tag)
+            # Sanitize tag name
+            try:
+                sanitized_tag_name = validate_input_field(tag_name, 'text')
+                if sanitized_tag_name:
+                    tag, _ = Tag.objects.get_or_create(name=sanitized_tag_name)
+                    article.tags.add(tag)
+            except DjangoValidationError:
+                # Skip invalid tag names
+                continue
             
         return article
 
@@ -257,6 +306,10 @@ class ArticleSerializer(serializers.ModelSerializer):
         # Update basic fields
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
+        
+        # Update slug if title changed
+        if 'title' in validated_data:
+            instance.slug = InputValidator.generate_safe_slug(validated_data['title'])
         
         # Handle category update
         if category:
@@ -273,14 +326,22 @@ class ArticleSerializer(serializers.ModelSerializer):
             instance.tags.clear()
             for tag_data in tags_data:
                 tag_name = tag_data.get('name')
-                tag, _ = Tag.objects.get_or_create(name=tag_name)
-                instance.tags.add(tag)
+                # Sanitize tag name
+                try:
+                    sanitized_tag_name = validate_input_field(tag_name, 'text')
+                    if sanitized_tag_name:
+                        tag, _ = Tag.objects.get_or_create(name=sanitized_tag_name)
+                        instance.tags.add(tag)
+                except DjangoValidationError:
+                    # Skip invalid tag names
+                    continue
         
         return instance
 
     def validate(self, attrs):
         category_name = attrs.get('category_name')
         if category_name:
+            # Category name is already sanitized by validate_category_name
             category, _ = Category.objects.get_or_create(name=category_name)
             attrs['category_instance'] = category
             attrs.pop('category_name')
@@ -303,3 +364,33 @@ class FeedbackSerializer(serializers.ModelSerializer):
     class Meta:
         model = Feedback
         fields = '__all__'
+
+    def validate_name(self, value):
+        """Validate and sanitize feedback name"""
+        try:
+            sanitized = validate_input_field(value, 'text')
+            if not sanitized:
+                raise serializers.ValidationError("Name cannot be empty after sanitization")
+            return sanitized
+        except DjangoValidationError as e:
+            raise serializers.ValidationError(str(e))
+
+    def validate_email(self, value):
+        """Validate and sanitize feedback email"""
+        try:
+            sanitized = validate_input_field(value, 'email')
+            if not sanitized:
+                raise serializers.ValidationError("Email cannot be empty after sanitization")
+            return sanitized
+        except DjangoValidationError as e:
+            raise serializers.ValidationError(str(e))
+
+    def validate_message(self, value):
+        """Validate and sanitize feedback message"""
+        try:
+            sanitized = validate_input_field(value, 'content')
+            if not sanitized or sanitized.strip() == '':
+                raise serializers.ValidationError("Message cannot be empty after sanitization")
+            return sanitized
+        except DjangoValidationError as e:
+            raise serializers.ValidationError(str(e))

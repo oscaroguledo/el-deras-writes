@@ -11,9 +11,11 @@ export default defineConfig({
     },
   },
   server: {
+    port: 3000,
+    host: '0.0.0.0',
     proxy: {
       '/api': {
-        target: 'https://el-deras-writes.onrender.com',
+        target: process.env.VITE_API_URL || 'http://localhost:8000',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },

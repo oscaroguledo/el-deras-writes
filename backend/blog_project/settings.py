@@ -25,10 +25,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-4=r#=3)9z+sxmn=)*^p%ujw4!%%s)im7rka!w8mu**r(pwa&8r'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = ['127.0.0.1', '0.0.0.0', 'localhost', '.netlify.app', '.vercel.app', '.github.io', '.cloudflare.com',"el-deras-writes.onrender.com",
+ALLOWED_HOSTS = ['127.0.0.1', '0.0.0.0', 'localhost', 'backend', '.netlify.app', '.vercel.app', '.github.io', '.cloudflare.com',"el-deras-writes.onrender.com",
     ".onrender.com",]
+
+# Add allowed hosts from environment
+if os.environ.get('ALLOWED_HOSTS'):
+    ALLOWED_HOSTS.extend(os.environ.get('ALLOWED_HOSTS').split(','))
 
 AUTHENTICATION_BACKENDS = [
     'blog.auth_backends.CustomUserBackend',
@@ -111,6 +115,7 @@ SIMPLE_JWT = {
 }
 
 CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
     "http://localhost:5173",
     "http://localhost:5174",
     "http://192.168.0.221:5173",
@@ -155,14 +160,14 @@ import dj_database_url
 # PostgreSQL configuration with connection pooling
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgresql://postgres:password@localhost:5432/blog_db',
+        default=os.environ.get('DATABASE_URL', 'postgresql://postgres:postgres@db:5432/elderasblog'),
         conn_max_age=600,  # Connection pooling - keep connections alive for 10 minutes
         conn_health_checks=True,  # Enable connection health checks
     )
 }
 
 # Fallback to SQLite for development if PostgreSQL is not available
-if not os.environ.get('DATABASE_URL'):
+if not os.environ.get('DATABASE_URL') and not any(['postgresql' in str(DATABASES['default'].get('ENGINE', '')), 'postgres' in str(DATABASES['default'].get('NAME', ''))]):
     DATABASES['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
@@ -209,7 +214,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -220,8 +226,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 if 'postgresql' in DATABASES['default']['ENGINE']:
     # Enable PostgreSQL-specific features
     DATABASES['default']['OPTIONS'] = {
-        'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        'charset': 'utf8mb4',
+        'sslmode': 'prefer',
     }
 
 # Logging configuration for monitoring

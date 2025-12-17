@@ -89,7 +89,9 @@ class ArticleViewSet(viewsets.ModelViewSet):
     search_fields = ['title', 'content', 'author__username', 'category__name']
 
     def get_queryset(self):
-        """Enhanced queryset with PostgreSQL optimizations"""
+        """Enhanced queryset with PostgreSQL optimizations and input validation"""
+        from .utils.input_validation import InputValidator
+        
         queryset = Article.objects.select_related('author', 'category').prefetch_related(
             'tags',
             Prefetch('comments', queryset=Comment.objects.select_related('author').filter(approved=True))
@@ -102,40 +104,76 @@ class ArticleViewSet(viewsets.ModelViewSet):
         if not (self.request.user.is_authenticated and self.request.user.is_staff):
             queryset = queryset.filter(status='published')
         
-        # Category filtering
+        # Category filtering with input validation
         category = self.request.query_params.get('category')
         if category:
-            queryset = queryset.filter(category__name__iexact=category)
+            try:
+                if not InputValidator.is_malicious_input(category):
+                    sanitized_category = InputValidator.sanitize_text(category, allow_html=False)
+                    if sanitized_category:
+                        queryset = queryset.filter(category__name__iexact=sanitized_category)
+            except Exception:
+                # Skip invalid category filter
+                pass
         
-        # Tag filtering
+        # Tag filtering with input validation
         tag = self.request.query_params.get('tag')
         if tag:
-            queryset = queryset.filter(tags__name__iexact=tag)
+            try:
+                if not InputValidator.is_malicious_input(tag):
+                    sanitized_tag = InputValidator.sanitize_text(tag, allow_html=False)
+                    if sanitized_tag:
+                        queryset = queryset.filter(tags__name__iexact=sanitized_tag)
+            except Exception:
+                # Skip invalid tag filter
+                pass
         
-        # Status filtering (for admin users)
+        # Status filtering (for admin users) with validation
         status_filter = self.request.query_params.get('status')
         if status_filter and self.request.user.is_authenticated and self.request.user.is_staff:
-            queryset = queryset.filter(status=status_filter)
+            # Only allow valid status values
+            valid_statuses = ['draft', 'published', 'archived']
+            if status_filter in valid_statuses:
+                queryset = queryset.filter(status=status_filter)
         
         # Featured articles
         featured = self.request.query_params.get('featured')
         if featured and featured.lower() == 'true':
             queryset = queryset.filter(featured=True)
         
-        # Author filtering
+        # Author filtering with input validation
         author = self.request.query_params.get('author')
         if author:
-            queryset = queryset.filter(author__username__iexact=author)
+            try:
+                if not InputValidator.is_malicious_input(author):
+                    sanitized_author = InputValidator.sanitize_username(author)
+                    if sanitized_author:
+                        queryset = queryset.filter(author__username__iexact=sanitized_author)
+            except Exception:
+                # Skip invalid author filter
+                pass
         
-        # Date range filtering
+        # Date range filtering with basic validation
         date_from = self.request.query_params.get('date_from')
         date_to = self.request.query_params.get('date_to')
         if date_from:
-            queryset = queryset.filter(created_at__gte=date_from)
+            try:
+                # Basic validation - ensure it doesn't contain malicious patterns
+                if not InputValidator.is_malicious_input(date_from):
+                    queryset = queryset.filter(created_at__gte=date_from)
+            except Exception:
+                # Skip invalid date filter
+                pass
         if date_to:
-            queryset = queryset.filter(created_at__lte=date_to)
+            try:
+                # Basic validation - ensure it doesn't contain malicious patterns
+                if not InputValidator.is_malicious_input(date_to):
+                    queryset = queryset.filter(created_at__lte=date_to)
+            except Exception:
+                # Skip invalid date filter
+                pass
         
-        # Ordering
+        # Ordering with strict validation
         ordering = self.request.query_params.get('ordering', '-created_at')
         valid_orderings = ['created_at', '-created_at', 'title', '-title', 'views', '-views', 'likes', '-likes']
         if ordering in valid_orderings:
@@ -261,22 +299,62 @@ class ArticleViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'])
     def search(self, request):
-        """PostgreSQL full-text search endpoint"""
+        """Search endpoint with input validation (supports both PostgreSQL and SQLite)"""
         query = request.query_params.get('q', '').strip()
         if not query:
             return Response({'results': [], 'pagination': {'count': 0}})
         
-        # Use PostgreSQL full-text search
-        search_vector = SearchVector('title', weight='A') + SearchVector('content', weight='B') + SearchVector('excerpt', weight='C')
-        search_query = SearchQuery(query)
-        
-        queryset = Article.objects.annotate(
-            search=search_vector,
-            rank=SearchRank(search_vector, search_query)
-        ).filter(
-            search=search_query,
-            status='published'
-        ).select_related('author', 'category').prefetch_related('tags').order_by('-rank', '-created_at')
+        # Validate and sanitize search query
+        try:
+            from .utils.input_validation import InputValidator
+            from django.conf import settings
+            
+            # Check for malicious input
+            if InputValidator.is_malicious_input(query):
+                return Response(
+                    {'error': 'Invalid search query'}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Sanitize the query for safe use
+            sanitized_query = InputValidator.sanitize_text(query, allow_html=False)
+            
+            if not sanitized_query or len(sanitized_query.strip()) == 0:
+                return Response({'results': [], 'pagination': {'count': 0}})
+            
+            # Use different search methods based on database backend
+            db_engine = settings.DATABASES['default']['ENGINE']
+            
+            if 'postgresql' in db_engine:
+                # Use PostgreSQL full-text search with sanitized query
+                search_vector = SearchVector('title', weight='A') + SearchVector('content', weight='B') + SearchVector('excerpt', weight='C')
+                search_query = SearchQuery(sanitized_query)
+                
+                queryset = Article.objects.annotate(
+                    search=search_vector,
+                    rank=SearchRank(search_vector, search_query)
+                ).filter(
+                    search=search_query,
+                    status='published'
+                ).select_related('author', 'category').prefetch_related('tags').order_by('-rank', '-created_at')
+            else:
+                # Use simple text search for SQLite and other databases
+                queryset = Article.objects.filter(
+                    Q(title__icontains=sanitized_query) | 
+                    Q(content__icontains=sanitized_query) |
+                    Q(excerpt__icontains=sanitized_query),
+                    status='published'
+                ).select_related('author', 'category').prefetch_related('tags').order_by('-created_at')
+            
+        except Exception as e:
+            # Log the error and return safe response
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.warning(f"Search error with query '{query}': {str(e)}")
+            return Response(
+                {'error': 'Search temporarily unavailable'}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
         
         # Apply pagination
         page = self.paginate_queryset(queryset)
@@ -915,7 +993,24 @@ class AdminAnalyticsViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['get'])
     def timerange(self, request):
         """Get analytics for a specific time range."""
-        days = int(request.query_params.get('days', 7))
+        from .utils.input_validation import InputValidator
+        
+        days_param = request.query_params.get('days', '7')
+        
+        # Validate the days parameter
+        if InputValidator.is_malicious_input(days_param):
+            return Response(
+                {'error': 'Invalid days parameter'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            days = int(days_param)
+            # Limit to reasonable range
+            if days < 1 or days > 365:
+                days = 7
+        except (ValueError, TypeError):
+            days = 7
         end_date = timezone.now()
         start_date = end_date - timedelta(days=days)
         

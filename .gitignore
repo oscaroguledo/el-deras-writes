@@ -150,3 +150,13 @@ backend/static_root/
 
 .vscode/
 backend/.hypothesis/
+# Docker
+.env
+.env.local
+.env.production
+
+# Docker volumes
+postgres_data/
+static_volume/
+media_volume/
+frontend_build/

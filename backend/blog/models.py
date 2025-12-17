@@ -156,6 +156,27 @@ class Category(models.Model):
     description = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
 
+    def clean(self):
+        """Validate and sanitize category fields"""
+        from .utils.input_validation import InputValidator
+        
+        if self.name:
+            # Validate and sanitize name
+            if InputValidator.is_malicious_input(self.name):
+                raise ValidationError({'name': 'Invalid category name detected'})
+            self.name = InputValidator.sanitize_text(self.name, allow_html=False)
+        
+        if self.description:
+            # Validate and sanitize description
+            if InputValidator.is_malicious_input(self.description):
+                raise ValidationError({'description': 'Invalid description detected'})
+            self.description = InputValidator.sanitize_text(self.description, allow_html=True)
+
+    def save(self, *args, **kwargs):
+        """Override save to ensure validation"""
+        self.full_clean()
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.name
 
@@ -167,6 +188,21 @@ class Tag(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255, unique=True)
     created_at = models.DateTimeField(auto_now_add=True) # Added created_at field
+
+    def clean(self):
+        """Validate and sanitize tag fields"""
+        from .utils.input_validation import InputValidator
+        
+        if self.name:
+            # Validate and sanitize name
+            if InputValidator.is_malicious_input(self.name):
+                raise ValidationError({'name': 'Invalid tag name detected'})
+            self.name = InputValidator.sanitize_text(self.name, allow_html=False)
+
+    def save(self, *args, **kwargs):
+        """Override save to ensure validation"""
+        self.full_clean()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -213,8 +249,16 @@ class Article(models.Model):
     def save(self, *args, **kwargs):
         # Auto-generate slug if not provided
         if not self.slug:
-            from django.utils.text import slugify
-            self.slug = slugify(self.title)
+            from .utils.input_validation import InputValidator
+            self.slug = InputValidator.generate_safe_slug(self.title)
+            
+        # Ensure slug is unique
+        if self.slug:
+            original_slug = self.slug
+            counter = 1
+            while Article.objects.filter(slug=self.slug).exclude(pk=self.pk).exists():
+                self.slug = f"{original_slug}-{counter}"
+                counter += 1
             
         # Auto-publish if scheduled time has passed
         if self.scheduled_publish and timezone.now() >= self.scheduled_publish and self.status == 'draft':
@@ -282,7 +326,15 @@ class Comment(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def clean(self):
-        """Validate comment threading constraints"""
+        """Validate comment threading constraints and input security"""
+        from .utils.input_validation import InputValidator
+        
+        # Validate and sanitize content
+        if self.content:
+            if InputValidator.is_malicious_input(self.content):
+                raise ValidationError({'content': 'Invalid comment content detected'})
+            self.content = InputValidator.sanitize_text(self.content, allow_html=True)
+        
         if self.parent:
             # Prevent deep nesting (max 3 levels)
             depth = 0
