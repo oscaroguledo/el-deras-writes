@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { HeroPost } from '../components/HeroPost';
-import { BlogPostList } from '../components/BlogPostList';
+import { LazyBlogPostList } from '../components/LazyBlogPostList';
+import { LazyContent } from '../components/LazyContent';
 import { getArticles } from '../utils/api'; // Removed getTopFiveCategories
 import { Article } from '../types/Article';
 import { CategoryList } from '../components/CategoryList';
 import SkeletonLoader from '../components/SkeletonLoader';
+import SkeletonArticleList from '../components/SkeletonArticleList';
 import { useCategories } from '../hooks/CategoryProvider'; // Import useCategories hook
 
 export default function Home() {
@@ -115,13 +117,20 @@ export default function Home() {
           {featuredArticle && !searchQuery && !categoryFilter && (
             <HeroPost post={featuredArticle} />
           )}
-          <BlogPostList
-            posts={articles}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPreviousPage={handlePreviousPage}
-            onNextPage={handleNextPage}
-          />
+          <LazyContent
+            fallback={<SkeletonArticleList count={6} />}
+            threshold={0.1}
+            rootMargin="100px"
+          >
+            <LazyBlogPostList
+              posts={articles}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPreviousPage={handlePreviousPage}
+              onNextPage={handleNextPage}
+              loading={loading}
+            />
+          </LazyContent>
           {articles.length === 0 && (
             <div className="text-center py-12">
               <h3 className="text-lg font-medium text-gray-900 mb-2">

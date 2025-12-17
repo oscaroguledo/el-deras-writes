@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useArticles } from '../hooks/useArticles';
 import { useAuth } from '../hooks/useAuth';
 import { useDatabaseContext } from '../contexts/DatabaseContext';
-import { migrationUtils } from '../utils/migration';
+
 
 const BlogExample: React.FC = () => {
   const { database, isInitialized, isLoading, error } = useDatabaseContext();
@@ -246,28 +246,16 @@ const BlogExample: React.FC = () => {
           </div>
           <div className="space-x-2">
             <button
-              onClick={async () => {
-                try {
-                  await migrationUtils.createSampleData();
-                  alert('Sample data created! Refresh the page to see it.');
-                } catch (error) {
-                  alert('Failed to create sample data: ' + error);
-                }
+              onClick={() => {
+                alert('Sample data creation feature not implemented yet.');
               }}
               className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700"
             >
               Create Sample Data
             </button>
             <button
-              onClick={async () => {
-                if (confirm('This will migrate data from the backend. Continue?')) {
-                  try {
-                    await migrationUtils.migrateFromCurrentBackend();
-                    alert('Migration completed! Refresh the page to see the data.');
-                  } catch (error) {
-                    alert('Migration failed: ' + error);
-                  }
-                }
+              onClick={() => {
+                alert('Backend migration feature not implemented yet.');
               }}
               className="px-3 py-1 bg-purple-600 text-white text-sm rounded hover:bg-purple-700"
             >

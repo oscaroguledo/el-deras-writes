@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Article } from '../types/Article';
+import { LazyImage } from './LazyImage';
 
 interface BlogPostCardProps {
   post: Article;
@@ -12,8 +13,12 @@ export function BlogPostCard({
   return (
     <article className="flex flex-col overflow-hidden rounded-lg transition-all duration-200 hover:shadow-md h-full">
       <Link to={`/article/${post.id}`} className="block overflow-hidden">
-        <div className="aspect-w-16 aspect-h-9 bg-gray-100">
-          <img src={post.image} alt={post.title} className="object-cover w-full h-full transition-transform duration-500 hover:scale-105" />
+        <div className="aspect-w-16 aspect-h-9 bg-gray-100 h-48">
+          <LazyImage 
+            src={post.image} 
+            alt={post.title} 
+            className="object-cover w-full h-full transition-transform duration-500 hover:scale-105" 
+          />
         </div>
       </Link>
       <div className="flex flex-col flex-grow p-5 bg-white">
@@ -31,9 +36,17 @@ export function BlogPostCard({
           {post.excerpt}
         </p>
         <div className="flex items-center mt-auto pt-4 border-t border-gray-100">
-          {post.authorImage ? <img src={post.authorImage} alt={post.author.username} className="h-8 w-8 rounded-full" /> : <div className="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center text-xs font-medium text-gray-600">
+          {post.authorImage ? (
+            <LazyImage 
+              src={post.authorImage} 
+              alt={post.author.username} 
+              className="h-8 w-8 rounded-full" 
+            />
+          ) : (
+            <div className="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center text-xs font-medium text-gray-600">
               {post.author && post.author.username.charAt(0).toUpperCase()}
-            </div>}
+            </div>
+          )}
           <div className="ml-3">
           <p className="text-sm text-gray-500">{`${post.author.title} ${post.author.first_name} ${post.author.last_name}`}</p>
             <p className="text-gray-500 text-xs">

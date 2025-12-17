@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getArticleById } from '../utils/api';
 import { Article } from '../types/Article';
-import { CommentSection } from '../components/CommentSection';
+import { LazyCommentSection } from '../components/LazyCommentSection';
+import { LazyImage } from '../components/LazyImage';
+import { LazyContent } from '../components/LazyContent';
 import { CalendarIcon, ClockIcon, TagIcon, ChevronLeftIcon } from 'lucide-react';
 import { MetaData } from '../components/MetaData';
 import SkeletonLoader from '../components/SkeletonLoader';
@@ -97,9 +99,17 @@ export default function ArticleDetail() {
           </h1>
           <div className="flex flex-wrap items-center text-sm text-gray-600 gap-4 mb-6">
             <div className="flex items-center">
-              {article.authorImage ? <img src={article.authorImage} alt={article.author.username} className="h-8 w-8 rounded-full mr-2" /> : <div className="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center text-xs font-medium text-gray-600 mr-2">
+              {article.authorImage ? (
+                <LazyImage 
+                  src={article.authorImage} 
+                  alt={article.author.username} 
+                  className="h-8 w-8 rounded-full mr-2" 
+                />
+              ) : (
+                <div className="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center text-xs font-medium text-gray-600 mr-2">
                   {article.author && article.author.username.charAt(0).toUpperCase()}
-                </div>}
+                </div>
+              )}
               <span>{article.author.title} {article.author.first_name} {article.author.last_name}</span>
             </div>
             <div className="flex items-center">
@@ -124,13 +134,33 @@ export default function ArticleDetail() {
               </div>}
           </div>
         </div>
-        {article.image && <div className="mb-8 rounded-lg overflow-hidden">
-            <img src={article.image} alt={article.title} className="w-full h-auto object-cover" />
-          </div>}
-        <div className="prose prose-lg max-w-none text-justify" dangerouslySetInnerHTML={{
-        __html: article.content
-      }} />
-        <CommentSection articleId={article._id} />
+        {article.image && (
+          <div className="mb-8 rounded-lg overflow-hidden">
+            <LazyImage 
+              src={article.image} 
+              alt={article.title} 
+              className="w-full h-auto object-cover" 
+            />
+          </div>
+        )}
+        <LazyContent
+          fallback={
+            <div className="prose prose-lg max-w-none">
+              <SkeletonLoader className="h-6 w-full mb-2" />
+              <SkeletonLoader className="h-6 w-full mb-2" />
+              <SkeletonLoader className="h-6 w-5/6 mb-2" />
+              <SkeletonLoader className="h-6 w-full mb-2" />
+              <SkeletonLoader className="h-6 w-4/5" />
+            </div>
+          }
+          threshold={0.1}
+          rootMargin="50px"
+        >
+          <div className="prose prose-lg max-w-none text-justify animate-fade-in" dangerouslySetInnerHTML={{
+            __html: article.content
+          }} />
+        </LazyContent>
+        <LazyCommentSection articleId={article._id} />
       </article>
     </>
   );
