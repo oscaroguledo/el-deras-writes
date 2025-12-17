@@ -23,6 +23,13 @@ from .views import (
     FileUploadView,
     AnalyticsView,
 )
+from .frontend_api_views import (
+    FrontendStateAPIView,
+    FrontendValidationAPIView,
+    FrontendAuthContextAPIView,
+    FrontendConflictResolutionAPIView,
+    FrontendAnalyticsAPIView,
+)
 
 router = DefaultRouter()
 router.register(r'articles', ArticleViewSet)
@@ -51,4 +58,11 @@ urlpatterns = [
     path('create-superuser/', SuperuserCreateView.as_view(), name='create-superuser'),
     path('upload/', FileUploadView.as_view(), name='file-upload'),
     path('analytics/', AnalyticsView.as_view(), name='analytics'),
+    
+    # Frontend-optimized API endpoints
+    path('frontend/state/', FrontendStateAPIView.as_view(), name='frontend-state'),
+    path('frontend/validate/', FrontendValidationAPIView.as_view(), name='frontend-validate'),
+    path('frontend/auth-context/', FrontendAuthContextAPIView.as_view(), name='frontend-auth-context'),
+    path('frontend/conflict-resolution/', FrontendConflictResolutionAPIView.as_view(), name='frontend-conflict-resolution'),
+    path('frontend/analytics/', FrontendAnalyticsAPIView.as_view(), name='frontend-analytics'),
 ]
