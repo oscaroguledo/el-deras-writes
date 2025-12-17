@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
-    'channels',
     'blog',
     'rest_framework',
     'rest_framework_simplejwt', # Add this line
@@ -60,10 +59,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # Enhanced JWT middleware
-    # 'blog.jwt_middleware.EnhancedJWTMiddleware',
-    # 'blog.jwt_middleware.JWTSecurityMiddleware',
-    # 'blog.jwt_middleware.TokenBlacklistMiddleware',
+
 ]
 
 REST_FRAMEWORK = {
@@ -148,14 +144,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'blog_project.wsgi.application'
-ASGI_APPLICATION = 'blog_project.asgi.application'
-
-# Django Channels configuration with in-memory channel layer
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer',
-    },
-}
 
 
 import os

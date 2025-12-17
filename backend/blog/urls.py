@@ -12,6 +12,7 @@ from .views import (
     AdminCategoryViewSet,
     AdminTagViewSet,
     AdminUserViewSet,
+    AdminAnalyticsViewSet,
     ContactInfoView,
     IncrementVisitorCountView,
     AdminDashboardView,
@@ -35,6 +36,7 @@ router.register(r'admin/categories', AdminCategoryViewSet, basename='admin-categ
 router.register(r'admin/tags', AdminTagViewSet, basename='admin-tag')
 router.register(r'admin/users', AdminUserViewSet, basename='admin-user')
 router.register(r'admin/feedback', AdminFeedbackViewSet, basename='admin-feedback') # Register AdminFeedbackViewSet
+router.register(r'admin/analytics', AdminAnalyticsViewSet, basename='admin-analytics')
 
 articles_router = NestedDefaultRouter(router, r'articles', lookup='article')
 articles_router.register(r'comments', CommentViewSet, basename='article-comments')

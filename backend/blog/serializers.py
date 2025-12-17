@@ -1,6 +1,9 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.utils import timezone
+from django.core.exceptions import ValidationError as DjangoValidationError
 from .models import Article, Comment, Category, Tag, CustomUser,ContactInfo, VisitorCount, Feedback # Import Feedback model
+from .utils.input_validation import InputValidator, validate_input_field
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -31,6 +34,53 @@ class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['id', 'username', 'email', 'first_name', 'last_name', 'title', 'bio', 'user_type', 'password', 'is_active', 'is_staff', 'is_superuser', 'total_articles', 'total_comments', 'date_joined']
+
+    def validate_username(self, value):
+        """Validate and sanitize username"""
+        try:
+            sanitized = validate_input_field(value, 'username')
+            if not sanitized:
+                raise serializers.ValidationError("Username cannot be empty after sanitization")
+            return sanitized
+        except DjangoValidationError as e:
+            raise serializers.ValidationError(str(e))
+
+    def validate_email(self, value):
+        """Validate and sanitize email"""
+        try:
+            sanitized = validate_input_field(value, 'email')
+            if not sanitized:
+                raise serializers.ValidationError("Email cannot be empty after sanitization")
+            return sanitized
+        except DjangoValidationError as e:
+            raise serializers.ValidationError(str(e))
+
+    def validate_first_name(self, value):
+        """Validate and sanitize first name"""
+        if value:
+            try:
+                return validate_input_field(value, 'text')
+            except DjangoValidationError as e:
+                raise serializers.ValidationError(str(e))
+        return value
+
+    def validate_last_name(self, value):
+        """Validate and sanitize last name"""
+        if value:
+            try:
+                return validate_input_field(value, 'text')
+            except DjangoValidationError as e:
+                raise serializers.ValidationError(str(e))
+        return value
+
+    def validate_bio(self, value):
+        """Validate and sanitize bio"""
+        if value:
+            try:
+                return validate_input_field(value, 'content')
+            except DjangoValidationError as e:
+                raise serializers.ValidationError(str(e))
+        return value
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)
@@ -80,15 +130,32 @@ class CategorySerializer(serializers.ModelSerializer):
         return []
 
     def validate_name(self, value):
+        # First sanitize the input
+        try:
+            sanitized_value = validate_input_field(value, 'text')
+            if not sanitized_value:
+                raise serializers.ValidationError("Category name cannot be empty after sanitization")
+        except DjangoValidationError as e:
+            raise serializers.ValidationError(str(e))
+
         # Case-insensitive check for uniqueness
         existing_category = None
         if self.instance: # If updating an existing instance
-            existing_category = Category.objects.filter(name__iexact=value).exclude(id=self.instance.id).first()
+            existing_category = Category.objects.filter(name__iexact=sanitized_value).exclude(id=self.instance.id).first()
         else: # If creating a new instance
-            existing_category = Category.objects.filter(name__iexact=value).first()
+            existing_category = Category.objects.filter(name__iexact=sanitized_value).first()
 
         if existing_category:
             raise serializers.ValidationError(f"Category with name '{existing_category.name}' already exists.")
+        return sanitized_value
+
+    def validate_description(self, value):
+        """Validate and sanitize description"""
+        if value:
+            try:
+                return validate_input_field(value, 'content')
+            except DjangoValidationError as e:
+                raise serializers.ValidationError(str(e))
         return value
 
 class TagSerializer(serializers.ModelSerializer):
@@ -100,16 +167,24 @@ class TagSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def validate_name(self, value):
+        # First sanitize the input
+        try:
+            sanitized_value = validate_input_field(value, 'text')
+            if not sanitized_value:
+                raise serializers.ValidationError("Tag name cannot be empty after sanitization")
+        except DjangoValidationError as e:
+            raise serializers.ValidationError(str(e))
+
         # Case-insensitive check for uniqueness
         existing_tag = None
         if self.instance: # If updating an existing instance
-            existing_tag = Tag.objects.filter(name__iexact=value).exclude(id=self.instance.id).first()
+            existing_tag = Tag.objects.filter(name__iexact=sanitized_value).exclude(id=self.instance.id).first()
         else: # If creating a new instance
-            existing_tag = Tag.objects.filter(name__iexact=value).first()
+            existing_tag = Tag.objects.filter(name__iexact=sanitized_value).first()
 
         if existing_tag:
             raise serializers.ValidationError(f"Tag with name '{existing_tag.name}' already exists.")
-        return value
+        return sanitized_value
 
 class CommentSerializer(serializers.ModelSerializer):
     author = CustomUserSerializer(read_only=True)
@@ -120,6 +195,16 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = '__all__'
         depth = 1
+
+    def validate_content(self, value):
+        """Validate and sanitize comment content"""
+        try:
+            sanitized = validate_input_field(value, 'content')
+            if not sanitized or sanitized.strip() == '':
+                raise serializers.ValidationError("Comment content cannot be empty after sanitization")
+            return sanitized
+        except DjangoValidationError as e:
+            raise serializers.ValidationError(str(e))
 
 class ArticleSerializer(serializers.ModelSerializer):
     author = CustomUserSerializer(read_only=True)

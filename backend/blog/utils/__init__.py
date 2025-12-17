@@ -1,1 +1,1 @@
-# Blog utilities package
+# Utils package

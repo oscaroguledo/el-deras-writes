@@ -274,7 +274,7 @@ class Comment(models.Model):
     # Enhanced moderation features
     approved = models.BooleanField(default=False)
     is_flagged = models.BooleanField(default=False)
-    moderation_notes = models.TextField(blank=True, null=True)
+    moderation_notes = models.TextField(blank=True, default='')
     moderated_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, related_name='moderated_comments')
     moderated_at = models.DateTimeField(null=True, blank=True)
     

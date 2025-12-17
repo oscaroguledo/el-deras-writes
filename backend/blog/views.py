@@ -6,7 +6,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.response import Response
 from django.db import models
-from django.db.models import Q, Count, Avg, F, Prefetch
+from django.db.models import Q, Count, Avg, F, Prefetch, Sum
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.exceptions import ValidationError
@@ -15,6 +15,7 @@ from .serializers import ArticleSerializer, ContactInfoSerializer, CommentSerial
 from blog.permissions import IsAdminOrReadOnly, IsAuthorOrAdmin
 from rest_framework.decorators import action
 from rest_framework import filters
+from django_filters.rest_framework import DjangoFilterBackend
 from django.utils import timezone
 from datetime import timedelta
 import uuid
@@ -43,7 +44,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
                 user.save(update_fields=['last_login'])
                 
                 # Broadcast authentication event
-                from .websocket_utils import broadcast_user_authenticated
+                
                 broadcast_user_authenticated(user, 'login')
         
         return response
@@ -654,12 +655,31 @@ class AdminArticleViewSet(viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter]
     search_fields = ['title', 'author__username', 'category__name']
 
+    def perform_create(self, serializer):
+        """Set the author to the current admin user when creating articles"""
+        serializer.save(author=self.request.user)
+
 class AdminCommentViewSet(viewsets.ModelViewSet):
-    queryset = Comment.objects.all().order_by('-created_at') # Order by recently created
+    queryset = Comment.objects.all().order_by('-created_at')
     serializer_class = CommentSerializer
     permission_classes = [IsAdminUser]
-    filter_backends = [filters.SearchFilter]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = ['approved', 'is_flagged', 'article']
     search_fields = ['content', 'author__username', 'article__title']
+
+    def perform_update(self, serializer):
+        """Set moderation metadata when updating comments"""
+        # Get the data being updated
+        update_data = serializer.validated_data
+        
+        # Check if moderation fields are being updated
+        if 'approved' in update_data or 'is_flagged' in update_data or 'moderation_notes' in update_data:
+            serializer.save(
+                moderated_by=self.request.user,
+                moderated_at=timezone.now()
+            )
+        else:
+            serializer.save()
 
     @action(detail=True, methods=['post'])
     def approve_comment(self, request, pk=None):
@@ -770,6 +790,184 @@ class AdminFeedbackViewSet(viewsets.ModelViewSet):
     pagination_class = FeedbackPagination
     filter_backends = [filters.SearchFilter]
     search_fields = ['name', 'email', 'message']
+
+
+class AdminAnalyticsViewSet(viewsets.ViewSet):
+    """Admin analytics viewset for comprehensive analytics data."""
+    permission_classes = [IsAdminUser]
+    filter_backends = [DjangoFilterBackend]
+    
+    def list(self, request):
+        """Get general analytics overview."""
+        # Calculate article analytics
+        total_articles = Article.objects.count()
+        published_articles = Article.objects.filter(status='published').count()
+        total_views = Article.objects.aggregate(total=Sum('views'))['total'] or 0
+        total_likes = Article.objects.aggregate(total=Sum('likes'))['total'] or 0
+        avg_views = Article.objects.aggregate(avg=Avg('views'))['avg'] or 0
+        avg_likes = Article.objects.aggregate(avg=Avg('likes'))['avg'] or 0
+        
+        # Calculate comment analytics
+        total_comments = Comment.objects.count()
+        approved_comments = Comment.objects.filter(approved=True).count()
+        pending_comments = Comment.objects.filter(approved=False).count()
+        flagged_comments = Comment.objects.filter(is_flagged=True).count()
+        
+        # Calculate user analytics
+        total_users = CustomUser.objects.count()
+        active_users = CustomUser.objects.filter(is_active=True).count()
+        admin_users = CustomUser.objects.filter(user_type='admin').count()
+        
+        return Response({
+            'total_articles': total_articles,
+            'published_articles': published_articles,
+            'total_views': total_views,
+            'total_likes': total_likes,
+            'avg_views': round(avg_views, 2) if avg_views else 0,
+            'avg_likes': round(avg_likes, 2) if avg_likes else 0,
+            'total_comments': total_comments,
+            'approved_comments': approved_comments,
+            'pending_comments': pending_comments,
+            'flagged_comments': flagged_comments,
+            'total_users': total_users,
+            'active_users': active_users,
+            'admin_users': admin_users
+        })
+    
+    @action(detail=False, methods=['get'])
+    def comments(self, request):
+        """Get comment-specific analytics."""
+        total_comments = Comment.objects.count()
+        approved_comments = Comment.objects.filter(approved=True).count()
+        pending_comments = Comment.objects.filter(approved=False).count()
+        flagged_comments = Comment.objects.filter(is_flagged=True).count()
+        
+        # Calculate approval rate
+        approval_rate = (approved_comments / total_comments) if total_comments > 0 else 0
+        
+        # Comments by article
+        comments_by_article = Comment.objects.values('article__title').annotate(
+            comment_count=Count('id')
+        ).order_by('-comment_count')[:10]
+        
+        # Recent moderation activity
+        recent_moderated = Comment.objects.filter(
+            moderated_at__isnull=False
+        ).select_related('moderated_by').order_by('-moderated_at')[:10]
+        
+        return Response({
+            'total_comments': total_comments,
+            'approved_comments': approved_comments,
+            'pending_comments': pending_comments,
+            'flagged_comments': flagged_comments,
+            'approval_rate': round(approval_rate, 3),
+            'comments_by_article': list(comments_by_article),
+            'recent_moderated': [
+                {
+                    'id': comment.id,
+                    'content': comment.content[:100],
+                    'moderated_by': comment.moderated_by.username if comment.moderated_by else None,
+                    'moderated_at': comment.moderated_at,
+                    'approved': comment.approved
+                }
+                for comment in recent_moderated
+            ]
+        })
+    
+    @action(detail=False, methods=['get'])
+    def users(self, request):
+        """Get user-specific analytics."""
+        total_users = CustomUser.objects.count()
+        active_users = CustomUser.objects.filter(is_active=True).count()
+        admin_users = CustomUser.objects.filter(user_type='admin').count()
+        normal_users = CustomUser.objects.filter(user_type='normal').count()
+        guest_users = CustomUser.objects.filter(user_type='guest').count()
+        
+        # User registration trends (last 30 days)
+        thirty_days_ago = timezone.now() - timedelta(days=30)
+        recent_registrations = CustomUser.objects.filter(
+            date_joined__gte=thirty_days_ago
+        ).count()
+        
+        # Most active users (by article count)
+        top_authors = CustomUser.objects.annotate(
+            article_count=Count('articles')
+        ).filter(article_count__gt=0).order_by('-article_count')[:10]
+        
+        return Response({
+            'total_users': total_users,
+            'active_users': active_users,
+            'admin_users': admin_users,
+            'normal_users': normal_users,
+            'guest_users': guest_users,
+            'recent_registrations': recent_registrations,
+            'top_authors': [
+                {
+                    'id': user.id,
+                    'username': user.username,
+                    'article_count': user.article_count,
+                    'date_joined': user.date_joined
+                }
+                for user in top_authors
+            ]
+        })
+    
+    @action(detail=False, methods=['get'])
+    def timerange(self, request):
+        """Get analytics for a specific time range."""
+        days = int(request.query_params.get('days', 7))
+        end_date = timezone.now()
+        start_date = end_date - timedelta(days=days)
+        
+        # Articles created in period
+        articles_in_period = Article.objects.filter(
+            created_at__gte=start_date,
+            created_at__lte=end_date
+        ).count()
+        
+        # Comments created in period
+        comments_in_period = Comment.objects.filter(
+            created_at__gte=start_date,
+            created_at__lte=end_date
+        ).count()
+        
+        # Users registered in period
+        users_in_period = CustomUser.objects.filter(
+            date_joined__gte=start_date,
+            date_joined__lte=end_date
+        ).count()
+        
+        # Daily breakdown
+        daily_stats = []
+        for i in range(days):
+            day_start = start_date + timedelta(days=i)
+            day_end = day_start + timedelta(days=1)
+            
+            daily_articles = Article.objects.filter(
+                created_at__gte=day_start,
+                created_at__lt=day_end
+            ).count()
+            
+            daily_comments = Comment.objects.filter(
+                created_at__gte=day_start,
+                created_at__lt=day_end
+            ).count()
+            
+            daily_stats.append({
+                'date': day_start.date(),
+                'articles': daily_articles,
+                'comments': daily_comments
+            })
+        
+        return Response({
+            'period_days': days,
+            'start_date': start_date.date(),
+            'end_date': end_date.date(),
+            'articles_in_period': articles_in_period,
+            'comments_in_period': comments_in_period,
+            'users_in_period': users_in_period,
+            'daily_stats': daily_stats
+        })
 
 class ContactInfoView(APIView):
     permission_classes = [AllowAny]
