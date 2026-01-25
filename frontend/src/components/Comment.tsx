@@ -33,15 +33,15 @@ export function Comment({
       <div className="flex items-start">
         <div className="flex-shrink-0 mr-3">
           <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 font-medium">
-            {comment.author?.username?.charAt(0).toUpperCase() || 'U'}
+            {comment.author?.username?.charAt(0).toUpperCase() || 'A'}
           </div>
         </div>
         <div className="flex-grow">
           <div className="bg-gray-50 p-4 rounded-lg">
             <div className="flex items-center justify-between mb-2">
               <h4 className="text-sm font-medium text-gray-900">
-                {comment.author?.username || 'Unknown User'}
-                {comment.author.user_type === 'guest' && comment.ip_address && (
+                {comment.author?.username || 'Anonymous'}
+                {comment.author?.user_type === 'guest' && comment.ip_address && (
                   <span className="text-xs text-gray-500 ml-2">
                     (IP: {comment.ip_address})
                   </span>
