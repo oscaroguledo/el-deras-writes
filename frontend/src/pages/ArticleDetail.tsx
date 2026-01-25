@@ -128,8 +128,8 @@ export default function ArticleDetail() {
             </div>
             {article.category && <div className="flex items-center">
                 <TagIcon className="h-4 w-4 mr-1" />
-                <Link to={`/?category=${encodeURIComponent(article.category.name)}`} className="hover:underline">
-                  {article.category.name}
+                <Link to={`/?category=${encodeURIComponent(article.category)}`} className="hover:underline">
+                  {article.category}
                 </Link>
               </div>}
           </div>

@@ -6,7 +6,7 @@ export interface Article {
   excerpt: string;
   content: string;
   image: string;
-  category: Category;
+  category: string; // Category is returned as a string from the API
   author: string; // Author is returned as a string from the API
   authorImage?: string;
   readTime?: number;

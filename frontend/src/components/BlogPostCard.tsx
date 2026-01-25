@@ -24,7 +24,7 @@ export function BlogPostCard({
       <div className="flex flex-col flex-grow p-5 bg-white">
         <div className="mb-3">
           <span className="inline-block px-3 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">
-            {post.category.name}
+            {post.category}
           </span>
         </div>
         <h3 className="text-xl font-serif font-medium text-gray-900 mb-2">
