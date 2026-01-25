@@ -108,11 +108,11 @@ export default function Home() {
     <>
       {searchQuery && (
         <div className="mt-8 mb-4">
-          <h2 className="text-xl font-medium">
+          <h2 className="text-xl font-medium text-gray-900 dark:text-gray-100">
             Search results for:{' '}
             <span className="font-bold">"{searchQuery}"</span>
             {totalCount > 0 && (
-              <span className="text-sm text-gray-600 ml-2">
+              <span className="text-sm text-gray-600 dark:text-gray-400 ml-2">
                 ({totalCount} result{totalCount !== 1 ? 's' : ''})
               </span>
             )}
@@ -121,7 +121,7 @@ export default function Home() {
       )}
       {categoryFilter && (
         <div className="mt-8 mb-4">
-          <h2 className="text-xl font-medium">
+          <h2 className="text-xl font-medium text-gray-900 dark:text-gray-100">
             Category: <span className="font-bold">{categoryFilter}</span>
           </h2>
         </div>
@@ -147,10 +147,10 @@ export default function Home() {
           </LazyContent>
           {articles.length === 0 && (
             <div className="text-center py-12">
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
                 No articles found
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-600 dark:text-gray-400">
                 Try adjusting your search or filter criteria.
               </p>
             </div>

@@ -5,6 +5,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AdminLayout from './pages/admin/AdminLayout';
 import { CategoryProvider } from './hooks/CategoryProvider'; // Import CategoryProvider
+import { ThemeProvider } from './contexts/ThemeContext';
 // Layout components
 const MainLayout = lazy(() => import('./components/MainLayout'));
 
@@ -61,10 +62,12 @@ export function App({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-      <CategoryProvider> {/* Wrap children with CategoryProvider */}
-        {children}
-      </CategoryProvider>
+    <div className="min-h-screen bg-white dark:bg-gray-900 flex flex-col">
+      <ThemeProvider>
+        <CategoryProvider> {/* Wrap children with CategoryProvider */}
+          {children}
+        </CategoryProvider>
+      </ThemeProvider>
       <ToastContainer />
     </div>
   );

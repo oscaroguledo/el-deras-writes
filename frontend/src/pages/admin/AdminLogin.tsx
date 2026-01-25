@@ -36,7 +36,7 @@ export default function AdminLogin() {
             Admin Login
           </h1>
           <p className="mt-2 text-sm text-gray-600">
-            Sign in to manage Elder's Blog
+            Sign in to manage El Dera's Blog
           </p>
         </div>
         <div className="bg-white shadow-md rounded-lg p-8">

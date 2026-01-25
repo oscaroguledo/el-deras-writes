@@ -6,6 +6,7 @@ class Comment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid7, editable=False)
     article = models.ForeignKey('blog.Article', on_delete=models.CASCADE, related_name='comments')
     author = models.ForeignKey('blog.CustomUser', on_delete=models.CASCADE, related_name='comments', null=True, blank=True)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='replies', null=True, blank=True)
     content = models.TextField()
     
     approved = models.BooleanField(default=False, db_index=True)
@@ -20,6 +21,7 @@ class Comment(models.Model):
         indexes = [
             models.Index(fields=['article', 'approved'], name='comments_article_approved_idx'),
             models.Index(fields=['author'], name='comments_author_idx'),
+            models.Index(fields=['parent'], name='comments_parent_idx'),
             models.Index(fields=['created_at'], name='comments_created_idx'),
         ]
 

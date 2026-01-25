@@ -23,7 +23,7 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
   };
 
   return (
-    <header className="bg-gray-800 text-white shadow-md">
+    <header className="bg-gray-800 dark:bg-gray-900 text-white shadow-md">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <div className="flex items-center">
           <button
@@ -49,16 +49,16 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
             className="flex items-center space-x-2"
             onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
           >
-            <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold text-sm">
+            <div className="h-8 w-8 rounded-full bg-blue-600 dark:bg-blue-700 flex items-center justify-center text-white font-semibold text-sm">
               {userInitials}
             </div>
             <span className="hidden md:block">{user?.username || 'Admin'}</span>
           </button>
           {isUserMenuOpen && (
-            <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+            <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50">
               <Link
                 to="/admin/profile"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                 onClick={() => setIsUserMenuOpen(false)}
               >
                 <User size={16} className="inline-block mr-2" />
@@ -69,7 +69,7 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
                   handleLogout();
                   setIsUserMenuOpen(false);
                 }}
-                className="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                className="w-full text-left block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 <LogOut size={16} className="inline-block mr-2" />
                 Logout

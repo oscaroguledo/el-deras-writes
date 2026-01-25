@@ -2,29 +2,29 @@ import React from 'react';
 export default function Terms() {
   return <div className="py-12">
       <div className="max-w-3xl mx-auto">
-        <h1 className="text-3xl md:text-4xl font-serif font-medium text-gray-900 mb-6">
+        <h1 className="text-3xl md:text-4xl font-serif font-medium text-gray-900 dark:text-gray-100 mb-6">
           Terms of Service
         </h1>
-        <div className="prose prose-lg max-w-none text-justify">
+        <div className="prose prose-lg max-w-none text-justify text-gray-800 dark:text-gray-200">
           <p>
             Welcome to El Dera's writes. By accessing or using our website, you
             agree to be bound by these Terms of Service. Please read them
             carefully.
           </p>
-          <h2>1. Acceptance of Terms</h2>
+          <h2 className="text-gray-900 dark:text-gray-100">1. Acceptance of Terms</h2>
           <p>
             By accessing or using the El Dera's writes website ("Site"), you
             agree to be bound by these Terms of Service ("Terms"). If you do not
             agree to all of these Terms, you may not access or use the Site.
           </p>
-          <h2>2. Changes to Terms</h2>
+          <h2 className="text-gray-900 dark:text-gray-100">2. Changes to Terms</h2>
           <p>
             We reserve the right to modify these Terms at any time. We will
             provide notice of any material changes by posting the new Terms on
             the Site. Your continued use of the Site after such modifications
             constitutes your acceptance of the modified Terms.
           </p>
-          <h2>3. User Content</h2>
+          <h2 className="text-gray-900 dark:text-gray-100">3. User Content</h2>
           <p>
             Our Site allows you to post, link, store, share and otherwise make
             available certain information, text, graphics, videos, or other
@@ -40,7 +40,7 @@ export default function Terms() {
             violate the privacy rights, publicity rights, copyrights, contract
             rights or any other rights of any person.
           </p>
-          <h2>4. Comments</h2>
+          <h2 className="text-gray-900 dark:text-gray-100">4. Comments</h2>
           <p>
             When you create an account with us, you must provide us information
             that is accurate, complete, and current at all times. Failure to do
@@ -53,7 +53,7 @@ export default function Terms() {
             password. You agree not to disclose your password to any third
             party.
           </p>
-          <h2>5. Prohibited Uses</h2>
+          <h2 className="text-gray-900 dark:text-gray-100">5. Prohibited Uses</h2>
           <p>You agree not to use the Site:</p>
           <ul>
             <li>In any way that violates any applicable law or regulation</li>
@@ -69,7 +69,7 @@ export default function Terms() {
               use or enjoyment of the Site
             </li>
           </ul>
-          <h2>6. Intellectual Property</h2>
+          <h2 className="text-gray-900 dark:text-gray-100">6. Intellectual Property</h2>
           <p>
             The Site and its original content, features, and functionality are
             and will remain the exclusive property of El Dera's writes. The Site
@@ -78,14 +78,14 @@ export default function Terms() {
             may not be used in connection with any product or service without
             the prior written consent of El Dera's writes.
           </p>
-          <h2>7. Termination</h2>
+          <h2 className="text-gray-900 dark:text-gray-100">7. Termination</h2>
           <p>
             We may terminate or suspend your account immediately, without prior
             notice or liability, for any reason whatsoever, including without
             limitation if you breach the Terms. Upon termination, your right to
             use the Site will immediately cease.
           </p>
-          <h2>8. Limitation of Liability</h2>
+          <h2 className="text-gray-900 dark:text-gray-100">8. Limitation of Liability</h2>
           <p>
             In no event shall El Dera's writes, nor its directors, employees,
             partners, agents, suppliers, or affiliates, be liable for any
@@ -94,13 +94,13 @@ export default function Terms() {
             or other intangible losses, resulting from your access to or use of
             or inability to access or use the Site.
           </p>
-          <h2>9. Governing Law</h2>
+          <h2 className="text-gray-900 dark:text-gray-100">9. Governing Law</h2>
           <p>
             These Terms shall be governed and construed in accordance with the
             laws of the United States, without regard to its conflict of law
             provisions.
           </p>
-          <h2>10. Contact Us</h2>
+          <h2 className="text-gray-900 dark:text-gray-100">10. Contact Us</h2>
           <p>
             If you have any questions about these Terms, please contact us at
             terms@el-deras-writes.com.

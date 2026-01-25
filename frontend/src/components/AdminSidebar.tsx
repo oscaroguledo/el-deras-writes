@@ -32,7 +32,7 @@ export default function AdminSidebar({ isSidebarOpen, setIsSidebarOpen }: AdminS
   return (
     <>
       <aside
-        className={`bg-gray-900 text-white w-64 min-h-screen p-4 fixed md:relative md:translate-x-0 transform ${
+        className={`bg-gray-900 dark:bg-gray-950 text-white w-64 min-h-screen p-4 fixed md:relative md:translate-x-0 transform ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } transition-transform duration-300 ease-in-out z-40`}
       >
@@ -56,8 +56,8 @@ export default function AdminSidebar({ isSidebarOpen, setIsSidebarOpen }: AdminS
                   className={({ isActive }) =>
                     `flex items-center p-3 rounded-lg transition-colors ${
                       isActive
-                        ? 'bg-gray-700 text-white'
-                        : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                        ? 'bg-gray-700 dark:bg-gray-800 text-white'
+                        : 'text-gray-400 dark:text-gray-300 hover:bg-gray-800 dark:hover:bg-gray-700 hover:text-white'
                     }`
                   }
                   onClick={() => setIsSidebarOpen(false)}

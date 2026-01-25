@@ -15,26 +15,39 @@ class CommentViewSet(BaseViewMixin, viewsets.ModelViewSet):
     permission_classes = [AllowAny]
 
     def get_queryset(self):
-        """Get comments for an article"""
+        """Get comments for an article with nested structure"""
         article_id = self.kwargs.get('article_pk')
-        queryset = Comment.objects.filter(article_id=article_id).select_related('author', 'article')
+        queryset = Comment.objects.filter(article_id=article_id)
         
         # Only show approved comments for non-admin users
         if not (self.request.user.is_authenticated and self.request.user.is_staff):
             queryset = queryset.filter(approved=True)
         
-        return queryset.order_by('created_at')
+        # Only return top-level comments (no parent) - replies will be included via serializer
+        return queryset.filter(parent__isnull=True).order_by('created_at').prefetch_related(
+            'replies__author', 'author', 'replies__replies__author'
+        )
 
     def perform_create(self, serializer):
         """Create comment"""
         article_id = self.kwargs.get('article_pk')
         article = Article.objects.get(pk=article_id)
         
-        # Auto-approve comments from staff users or anonymous comments for now
-        approved = True  # Auto-approve all comments for better UX
+        # Get parent comment if specified
+        parent_id = self.request.data.get('parent')
+        parent = None
+        if parent_id:
+            try:
+                parent = Comment.objects.get(pk=parent_id, article=article)
+            except Comment.DoesNotExist:
+                pass  # Invalid parent ID, create as top-level comment
+        
+        # Auto-approve all comments for better UX
+        approved = True
         
         serializer.save(
             author=self.request.user if self.request.user.is_authenticated else None,
             article=article,
+            parent=parent,
             approved=approved
         )

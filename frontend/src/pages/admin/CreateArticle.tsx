@@ -44,7 +44,7 @@ export default function CreateArticle() {
           Create New Article
         </h1>
         <p className="mt-2 text-gray-600">
-          Fill in the details to create a new article for Elder's Blog
+          Fill in the details to create a new article for El Dera's Blog
         </p>
       </div>
       <div className="bg-white shadow-md rounded-lg p-6">

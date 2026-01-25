@@ -5,9 +5,9 @@ import { CustomUser } from '../types/CustomUser';
 import { jwtDecode } from 'jwt-decode';
 
 const API_URL = 'http://localhost:8000/api';
-const ACCESS_TOKEN_KEY = 'elder_blog_access_token';
-const REFRESH_TOKEN_KEY = 'elder_blog_refresh_token';
-const USER_KEY = 'elder_blog_user';
+const ACCESS_TOKEN_KEY = 'el_dera_blog_access_token';
+const REFRESH_TOKEN_KEY = 'el_dera_blog_refresh_token';
+const USER_KEY = 'el_dera_blog_user';
 
 // Set up Axios interceptor for automatic token refresh
 axios.interceptors.request.use(

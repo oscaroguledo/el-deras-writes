@@ -9,7 +9,7 @@ django.setup()
 
 def seed_data():
     from django.contrib.auth.models import User
-    from blog.models import Article, Category, CustomUser, ContactInfo # Import ContactInfo
+    from blog.models import Article, Category, CustomUser, ContactInfo, Comment # Import Comment
     import random
 
     # Seed ContactInfo
@@ -292,7 +292,131 @@ def seed_data():
             created_at=datetime.fromisoformat(article_data['createdAt'].replace('Z', '+00:00')),
             updated_at=datetime.fromisoformat(article_data['updatedAt'].replace('Z', '+00:00')),
         )
+    
+    # Seed Comments with nested replies
+    seed_comments()
     print("Data seeded successfully!")
+
+def seed_comments():
+    """Seed sample comments with nested replies to demonstrate reply functionality"""
+    from blog.models import Article, CustomUser, Comment
+    from datetime import datetime, timedelta
+    import random
+    
+    # Get some articles to comment on
+    articles = Article.objects.all()[:5]  # Get first 5 articles
+    
+    # Get some users to be commenters (create additional users if needed)
+    commenters_data = [
+        {'username': 'commenter_alice', 'email': 'alice@example.com', 'first_name': 'Alice', 'last_name': 'Johnson'},
+        {'username': 'commenter_bob', 'email': 'bob@example.com', 'first_name': 'Bob', 'last_name': 'Smith'},
+        {'username': 'commenter_charlie', 'email': 'charlie@example.com', 'first_name': 'Charlie', 'last_name': 'Brown'},
+        {'username': 'commenter_diana', 'email': 'diana@example.com', 'first_name': 'Diana', 'last_name': 'Wilson'},
+        {'username': 'commenter_eve', 'email': 'eve@example.com', 'first_name': 'Eve', 'last_name': 'Davis'},
+    ]
+    
+    commenters = []
+    for commenter_data in commenters_data:
+        commenter, created = CustomUser.objects.get_or_create(
+            username=commenter_data['username'],
+            email=commenter_data['email'],
+            defaults={
+                'first_name': commenter_data['first_name'],
+                'last_name': commenter_data['last_name'],
+                'user_type': 'normal'
+            }
+        )
+        commenters.append(commenter)
+    
+    # Sample comment content
+    sample_comments = [
+        "This is a fantastic article! Really enjoyed reading it.",
+        "Great insights, thanks for sharing your perspective.",
+        "I have a different opinion on this topic, but appreciate the thoughtful analysis.",
+        "This really helped me understand the concept better.",
+        "Excellent writing style, very engaging!",
+        "Could you elaborate more on the second point?",
+        "I've been thinking about this topic lately, and your article provides great clarity.",
+        "Well researched and well written. Looking forward to more content like this.",
+        "This resonates with my own experience in the field.",
+        "Interesting take on the subject. Thanks for the fresh perspective!"
+    ]
+    
+    sample_replies = [
+        "Thanks for your comment! I'm glad you found it helpful.",
+        "That's a great point you raise. I hadn't considered that angle.",
+        "I appreciate your feedback and different perspective.",
+        "Absolutely! I'm planning to write more on this topic soon.",
+        "Thank you for the kind words!",
+        "Great question! Let me think about that and get back to you.",
+        "I'm so happy this resonated with you!",
+        "Thanks for sharing your experience too!",
+        "You're absolutely right about that.",
+        "I'd love to hear more about your thoughts on this."
+    ]
+    
+    # Create comments for each article
+    for article in articles:
+        # Create 2-4 top-level comments per article
+        num_comments = random.randint(2, 4)
+        
+        for i in range(num_comments):
+            # Create top-level comment
+            commenter = random.choice(commenters)
+            comment_content = random.choice(sample_comments)
+            
+            # Create comment with a timestamp within the last 30 days
+            comment_date = datetime.now() - timedelta(days=random.randint(1, 30))
+            
+            top_comment = Comment.objects.create(
+                article=article,
+                author=commenter,
+                content=comment_content,
+                approved=True,
+                created_at=comment_date,
+                updated_at=comment_date
+            )
+            
+            # 70% chance to have replies to this comment
+            if random.random() < 0.7:
+                # Create 1-3 replies to this comment
+                num_replies = random.randint(1, 3)
+                
+                for j in range(num_replies):
+                    # Choose a different commenter for the reply
+                    reply_author = random.choice([c for c in commenters if c != commenter])
+                    reply_content = random.choice(sample_replies)
+                    
+                    # Reply timestamp should be after the original comment
+                    reply_date = comment_date + timedelta(hours=random.randint(1, 48))
+                    
+                    reply_comment = Comment.objects.create(
+                        article=article,
+                        author=reply_author,
+                        parent=top_comment,  # This makes it a reply
+                        content=reply_content,
+                        approved=True,
+                        created_at=reply_date,
+                        updated_at=reply_date
+                    )
+                    
+                    # 30% chance for a reply to the reply (nested conversation)
+                    if random.random() < 0.3:
+                        nested_reply_author = random.choice([c for c in commenters if c not in [commenter, reply_author]])
+                        nested_reply_content = random.choice(sample_replies)
+                        nested_reply_date = reply_date + timedelta(hours=random.randint(1, 24))
+                        
+                        Comment.objects.create(
+                            article=article,
+                            author=nested_reply_author,
+                            parent=reply_comment,  # Reply to the reply
+                            content=nested_reply_content,
+                            approved=True,
+                            created_at=nested_reply_date,
+                            updated_at=nested_reply_date
+                        )
+    
+    print("Comments with nested replies seeded successfully!")
 
 if __name__ == "__main__":
     seed_data()

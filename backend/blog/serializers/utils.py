@@ -19,5 +19,5 @@ class VisitorCountSerializer(serializers.ModelSerializer):
 class FeedbackSerializer(serializers.ModelSerializer):
     class Meta:
         model = Feedback
-        fields = ['id', 'name', 'email', 'message', 'created_at']
+        fields = ['id', 'name', 'email', 'subject', 'message', 'created_at']
         read_only_fields = ['id', 'created_at']

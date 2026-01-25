@@ -55,7 +55,7 @@ export function CommentForm({
           placeholder={isReply ? 'Write a reply...' : 'Join the discussion...'}
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
+          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500 dark:focus:ring-gray-400 focus:border-gray-500 dark:focus:border-gray-400 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           rows={isReply ? 3 : 4}
           required
         />
@@ -65,7 +65,7 @@ export function CommentForm({
           <button
             type="button"
             onClick={onCancel}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+            className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 dark:focus:ring-gray-400"
           >
             Cancel
           </button>
@@ -73,13 +73,13 @@ export function CommentForm({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="px-4 py-2 text-sm font-medium text-white bg-gray-900 border border-transparent rounded-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50"
+          className="px-4 py-2 text-sm font-medium text-white bg-gray-900 dark:bg-gray-700 border border-transparent rounded-md hover:bg-gray-800 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 dark:focus:ring-gray-400 disabled:opacity-50"
         >
           {isSubmitting ? 'Posting...' : isReply ? 'Reply' : 'Post Comment'}
         </button>
       </div>
       {userLoggedIn && user && (
-        <div className="text-sm text-gray-600">
+        <div className="text-sm text-gray-600 dark:text-gray-400">
           Commenting as <span className="font-medium">{user.username}</span>
         </div>
       )}

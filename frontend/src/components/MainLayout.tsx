@@ -6,7 +6,7 @@ import { MetaData } from './MetaData';
 
 export default function MainLayout() {
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-white dark:bg-gray-900 flex flex-col">
       <MetaData />
       <Header />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 w-full flex-grow">

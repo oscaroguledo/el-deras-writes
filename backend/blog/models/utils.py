@@ -52,6 +52,7 @@ class Feedback(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid7, editable=False)
     name = models.CharField(max_length=100)
     email = models.EmailField()
+    subject = models.CharField(max_length=200, blank=True)
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
 

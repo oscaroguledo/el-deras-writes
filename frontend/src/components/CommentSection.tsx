@@ -15,33 +15,19 @@ export function CommentSection({ articleId }: CommentSectionProps) {
   const [comments, setComments] = useState<CommentType[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Helper function to count total comments including replies
+  const countTotalComments = (comments: CommentType[]): number => {
+    return comments.reduce((total, comment) => {
+      return total + 1 + (comment.replies ? countTotalComments(comment.replies) : 0);
+    }, 0);
+  };
+
   const fetchComments = useCallback(async () => {
     try {
       setLoading(true);
       const fetchedComments = await getCommentsByArticle(articleId);
-      const commentMap = new Map<string, CommentType>();
-      const topLevelComments: CommentType[] = [];
-
-      fetchedComments.forEach((comment) => {
-        commentMap.set(comment.id, { ...comment, replies: [] });
-      });
-
-      fetchedComments.forEach((comment) => {
-        if (comment.parent && commentMap.has(comment.parent)) {
-          const parent = commentMap.get(comment.parent);
-          const currentComment = commentMap.get(comment.id);
-          if (parent && currentComment) {
-            parent.replies = [...(parent.replies || []), currentComment];
-          }
-        } else {
-          const currentComment = commentMap.get(comment.id);
-          if (currentComment) {
-            topLevelComments.push(currentComment);
-          }
-        }
-      });
-
-      setComments(topLevelComments);
+      // Comments are now properly nested by the backend serializer
+      setComments(fetchedComments);
     } catch (error) {
       console.error('Error loading comments:', error);
       toast.error('Failed to load comments.');
@@ -72,10 +58,10 @@ export function CommentSection({ articleId }: CommentSectionProps) {
   };
 
   return (
-    <section className="mt-12 pt-8 border-t border-gray-100">
-      <h2 className="text-2xl font-serif font-medium text-gray-900 mb-6 flex items-center">
+    <section className="mt-12 pt-8 border-t border-gray-100 dark:border-gray-700">
+      <h2 className="text-2xl font-serif font-medium text-gray-900 dark:text-gray-100 mb-6 flex items-center">
         <MessageCircleIcon className="h-6 w-6 mr-2" />
-        Comments {comments.length > 0 && `(${comments.length})`}
+        Comments {comments.length > 0 && `(${countTotalComments(comments)})`}
       </h2>
       <CommentForm articleId={articleId} onCommentSubmit={handleCommentSubmit} />
       {loading ? (
@@ -97,7 +83,7 @@ export function CommentSection({ articleId }: CommentSectionProps) {
           ))}
         </div>
       ) : (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-gray-500 dark:text-gray-400">
           <p>Be the first to leave a comment!</p>
         </div>
       )}
