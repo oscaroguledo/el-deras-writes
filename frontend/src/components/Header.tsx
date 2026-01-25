@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { MenuIcon, XIcon, SearchIcon } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getTopFiveCategories } from '../utils/api';
+import { getCategories } from '../utils/api';
 import { Category } from '../types/Category';
 
 export default function Header() {
@@ -11,9 +11,9 @@ export default function Header() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    getTopFiveCategories()
-      .then(data => setTopCategories(data))
-      .catch(error => console.error('Failed to fetch top categories:', error));
+    getCategories()
+      .then(data => setTopCategories(data.slice(0, 5))) // Get first 5 categories
+      .catch(error => console.error('Failed to fetch categories:', error));
   }, []);
 
   const handleSearch = (e: React.FormEvent) => {
@@ -56,9 +56,6 @@ export default function Header() {
               </Link>
               <Link to="/contact" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium">
                 Contact
-              </Link>
-              <Link to="/sqlite-demo" className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium">
-                SQLite Demo
               </Link>
               {topCategories.slice(0, 2).map(category => (
                 <Link
@@ -110,9 +107,6 @@ export default function Header() {
             </Link>
             <Link to="/contact" className="block px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-md" onClick={() => setIsMenuOpen(false)}>
               Contact
-            </Link>
-            <Link to="/sqlite-demo" className="block px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-md" onClick={() => setIsMenuOpen(false)}>
-              SQLite Demo
             </Link>
             {topCategories.slice(0, 2).map(category => (
               <Link

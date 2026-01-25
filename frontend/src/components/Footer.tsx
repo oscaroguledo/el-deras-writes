@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FeedbackForm } from './FeedbackForm';
-import { getContactInfo, getTopFiveCategories } from '../utils/api';
+import { getContactInfo, getCategories } from '../utils/api';
 import { ContactInfo } from '../types/ContactInfo';
 import { Category } from '../types/Category';
 import { Instagram, Facebook, Twitter, Youtube, Globe } from 'lucide-react'; // Added more Lucide icons
@@ -16,10 +16,10 @@ export default function Footer() {
       try {
         const [contactInfoData, topCategoriesData] = await Promise.all([
           getContactInfo(),
-          getTopFiveCategories(),
+          getCategories(),
         ]);
         setContactInfo(contactInfoData);
-        setTopCategories(topCategoriesData);
+        setTopCategories(topCategoriesData.slice(0, 5)); // Get first 5 categories
       } catch (error) {
         console.error('Failed to fetch footer data:', error);
       }

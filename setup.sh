@@ -57,15 +57,6 @@ if ! command -v docker-compose &> /dev/null; then
     exit 1
 fi
 
-# Check if Git is installed
-if ! command -v git &> /dev/null; then
-    print_error "Git is not installed. Please install Git first."
-    echo "Visit: https://git-scm.com/downloads"
-    exit 1
-fi
-
-print_status "All prerequisites are installed"
-
 # Setup environment
 print_header "Setting Up Environment"
 
@@ -160,16 +151,7 @@ if [[ $load_sample =~ ^[Yy]$ ]]; then
     fi
 fi
 
-# Git setup
-print_header "Git Repository Setup"
-
-echo ""
-print_info "Would you like to initialize Git repository? (y/n)"
-read -r setup_git
-if [[ $setup_git =~ ^[Yy]$ ]]; then
-    print_info "Running Git setup..."
-    ./setup_git.sh
-fi
+# Git setup removed - not needed
 
 # Final verification
 print_header "Final Verification"

@@ -25,9 +25,6 @@ export default defineConfig({
       'Cross-Origin-Opener-Policy': 'same-origin',
     },
   },
-  optimizeDeps: {
-    exclude: ['sql.js']
-  },
   build: {
     rollupOptions: {
       external: [],

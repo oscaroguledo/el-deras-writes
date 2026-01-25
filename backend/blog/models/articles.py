@@ -15,6 +15,8 @@ class Article(models.Model):
     slug = models.SlugField(max_length=200, unique=True, blank=True, db_index=True)
     content = models.TextField()
     excerpt = models.TextField(blank=True)
+    image = models.ImageField(upload_to='articles/', blank=True, null=True)
+    readTime = models.PositiveIntegerField(default=0, help_text="Estimated read time in minutes")
     
     author = models.ForeignKey('blog.CustomUser', on_delete=models.CASCADE, related_name='articles')
     category = models.ForeignKey('blog.Category', on_delete=models.SET_NULL, null=True, blank=True)

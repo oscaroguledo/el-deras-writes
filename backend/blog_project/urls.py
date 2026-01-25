@@ -15,6 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 # from django.contrib import admin
+from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenRefreshView
 from blog.views import MyTokenObtainPairView, SuperuserCreateView
@@ -28,6 +29,7 @@ from blog.views import MyTokenObtainPairView, SuperuserCreateView
 # )
 
 urlpatterns = [
+    path('admin/', admin.site.urls),
     path('api/', include('blog.urls')),
     # Enhanced JWT endpoints
     # path('api/auth/login/', EnhancedTokenObtainPairView.as_view(), name='enhanced_token_obtain_pair'),

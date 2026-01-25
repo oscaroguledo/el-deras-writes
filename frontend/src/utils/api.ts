@@ -8,7 +8,7 @@ import { ContactInfo } from '../types/ContactInfo';
 import { VisitorCount } from '../types/VisitorCount';
 import { AdminDashboardData, SearchResult } from '../types/Admin';
 import { Feedback } from '../types/Feedback'; // Import Feedback type
-const API_URL = 'https://el-deras-writes.onrender.com/api';
+const API_URL = 'http://localhost:8000/api/api';
 
 
 interface PaginatedResponse<T> {
@@ -65,30 +65,30 @@ export async function submitFeedback(feedback: {
 }
 
 export async function getFeedback(params: { page?: number; pageSize?: number; search?: string } = {}): Promise<PaginatedResponse<Feedback>> {
-  const response = await axios.get(`${API_URL}/admin/feedback/`, { params: { page: params.page, page_size: params.pageSize, search: params.search } });
+  const response = await axios.get(`http://localhost:8000/api/admin-api/feedback/`, { params: { page: params.page, page_size: params.pageSize, search: params.search } });
   return response.data;
 }
 
 export async function deleteFeedback(id: string): Promise<void> {
-  await axios.delete(`${API_URL}/admin/feedback/${id}/`);
+  await axios.delete(`http://localhost:8000/api/admin-api/feedback/${id}/`);
 }
 
 export async function approveComment(id: string): Promise<Comment> {
-  const response = await axios.post(`${API_URL}/admin/comments/${id}/approve_comment/`);
+  const response = await axios.post(`http://localhost:8000/api/admin-api/comments/${id}/approve_comment/`);
   return response.data;
 }
 
 export async function deleteComment(id: string): Promise<void> {
-  await axios.delete(`${API_URL}/admin/comments/${id}/delete_comment/`);
+  await axios.delete(`http://localhost:8000/api/admin-api/comments/${id}/delete_comment/`);
 }
 
 export async function flagComment(id: string): Promise<Comment> {
-  const response = await axios.post(`${API_URL}/admin/comments/${id}/flag_comment/`);
+  const response = await axios.post(`http://localhost:8000/api/admin-api/comments/${id}/flag_comment/`);
   return response.data;
 }
 
 export async function getComments(params: { page?: number; pageSize?: number; search?: string } = {}): Promise<PaginatedResponse<Comment>> {
-  const response = await axios.get(`${API_URL}/admin/comments/`, { params: { page: params.page, page_size: params.pageSize, search: params.search } });
+  const response = await axios.get(`http://localhost:8000/api/admin-api/comments/`, { params: { page: params.page, page_size: params.pageSize, search: params.search } });
   return response.data;
 }
 
@@ -113,10 +113,7 @@ export async function getCategories(params: { search?: string } = {}): Promise<C
   return response.data;
 }
 
-export async function getTopFiveCategories(): Promise<Category[]> {
-  const response = await axios.get(`${API_URL}/categories/top_five/`);
-  return response.data;
-}
+
 
 export async function getTags(params: { search?: string } = {}): Promise<Tag[]> {
   const response = await axios.get(`${API_URL}/tags/`, { params });
@@ -130,22 +127,22 @@ export interface GetUsersParams {
 }
 
 export async function getUsers(params: GetUsersParams = {}): Promise<PaginatedResponse<CustomUser>> {
-  const response = await axios.get(`${API_URL}/users/`, { params });
+  const response = await axios.get(`http://localhost:8000/api/admin-api/users/`, { params });
   return response.data;
 }
 
 export async function createUser(userData: Partial<CustomUser>): Promise<CustomUser> { // Updated type
-  const response = await axios.post(`${API_URL}/users/`, userData);
+  const response = await axios.post(`http://localhost:8000/api/admin-api/users/`, userData);
   return response.data;
 }
 
 export async function updateUser(id: string, userData: Partial<CustomUser>): Promise<CustomUser> { // Updated type
-  const response = await axios.patch(`${API_URL}/users/${id}/`, userData);
+  const response = await axios.patch(`http://localhost:8000/api/admin-api/users/${id}/`, userData);
   return response.data;
 }
 
 export async function deleteUser(id: string): Promise<void> {
-  await axios.delete(`${API_URL}/users/${id}/`);
+  await axios.delete(`http://localhost:8000/api/admin-api/users/${id}/`);
 }
 
 export async function createCategory(categoryData: { name: string }): Promise<Category> {
@@ -177,26 +174,22 @@ export async function deleteTag(id: string): Promise<void> {
 }
 
 export async function getAdminDashboardData(): Promise<AdminDashboardData> { // Updated type
-  const response = await axios.get(`${API_URL}/admin/`);
+  const response = await axios.get(`http://localhost:8000/api/admin-api/dashboard/`);
   return response.data;
 }
 
 export async function getContactInfo(): Promise<ContactInfo> { // New function to get contact info
-  const response = await axios.get(`${API_URL}/contact-info/`);
+  const response = await axios.get(`${API_URL}/contact/`);
   return response.data;
 }
 
 export async function updateContactInfo(contactData: Partial<ContactInfo>): Promise<ContactInfo> { // Updated type
-  const response = await axios.patch(`${API_URL}/contact-info/`, contactData);
+  const response = await axios.patch(`${API_URL}/contact/`, contactData);
   return response.data;
 }
 
 export async function incrementVisitorCount(): Promise<VisitorCount> { // Updated type
-  const response = await axios.post(`${API_URL}/visitor-count/increment/`);
+  const response = await axios.post(`${API_URL}/visitor-count/`);
   return response.data;
 }
 
-export async function adminSearch(query: string): Promise<SearchResult[]> {
-  const response = await axios.get(`${API_URL}/admin/search/`, { params: { q: query } });
-  return response.data;
-}
