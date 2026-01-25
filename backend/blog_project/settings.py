@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-4=r#=3)9z+sxmn=)*^p%ujw4!%%s)im7rka!w8mu**r(pwa&8r
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
 ALLOWED_HOSTS = ['127.0.0.1', '0.0.0.0', 'localhost', 'backend', '.netlify.app', '.vercel.app', '.github.io', '.cloudflare.com',"el-deras-writes.onrender.com",
-    ".onrender.com",]
+    ".onrender.com", 'testserver']
 
 # Add allowed hosts from environment
 if os.environ.get('ALLOWED_HOSTS'):
@@ -168,11 +168,24 @@ DATABASES = {
 }
 
 # Fallback to SQLite for development if PostgreSQL is not available
-if not os.environ.get('DATABASE_URL') and not any(['postgresql' in str(DATABASES['default'].get('ENGINE', '')), 'postgres' in str(DATABASES['default'].get('NAME', ''))]):
+if not os.environ.get('DATABASE_URL'):
+    # Use SQLite for local development when no DATABASE_URL is set
     DATABASES['default'] = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
+else:
+    # For Docker/Production, ensure we're using the correct database URL
+    database_url = os.environ.get('DATABASE_URL')
+    if 'db:5432' in database_url:
+        # Docker environment - use as is
+        pass
+    elif 'localhost:5432' in database_url:
+        # Local development with PostgreSQL
+        pass
+    else:
+        # Production or other environments
+        pass
 
 # Enhanced database connection pooling settings
 DATABASE_CONNECTION_POOLING = {

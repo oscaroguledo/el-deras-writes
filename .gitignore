@@ -147,7 +147,7 @@ backend/media/
 backend/static_root/
 
 # Editor and tool specific files
-
+.DS_Store
 .vscode/
 backend/.hypothesis/
 # Docker

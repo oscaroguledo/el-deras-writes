@@ -9,7 +9,7 @@ djangorestframework==3.16.1
 djangorestframework_simplejwt==5.5.1
 drf-nested-routers==0.95.0
 hypothesis==6.92.1
-pillow==10.1.0
+pillow==10.4.0
 psycopg2-binary==2.9.10
 PyJWT==2.10.1
 redis==5.0.1

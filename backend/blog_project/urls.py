@@ -18,24 +18,24 @@ Including another URLconf
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenRefreshView
 from blog.views import MyTokenObtainPairView, SuperuserCreateView
-from blog.jwt_views import (
-    EnhancedTokenObtainPairView,
-    EnhancedTokenRefreshView,
-    TokenValidationView,
-    LogoutView,
-    UserSessionsView,
-    revoke_token
-)
+# from blog.jwt_views import (
+#     EnhancedTokenObtainPairView,
+#     EnhancedTokenRefreshView,
+#     TokenValidationView,
+#     LogoutView,
+#     UserSessionsView,
+#     revoke_token
+# )
 
 urlpatterns = [
     path('api/', include('blog.urls')),
     # Enhanced JWT endpoints
-    path('api/auth/login/', EnhancedTokenObtainPairView.as_view(), name='enhanced_token_obtain_pair'),
-    path('api/auth/refresh/', EnhancedTokenRefreshView.as_view(), name='enhanced_token_refresh'),
-    path('api/auth/validate/', TokenValidationView.as_view(), name='token_validate'),
-    path('api/auth/logout/', LogoutView.as_view(), name='logout'),
-    path('api/auth/revoke/', revoke_token, name='revoke_token'),
-    path('api/auth/sessions/', UserSessionsView.as_view(), name='user_sessions'),
+    # path('api/auth/login/', EnhancedTokenObtainPairView.as_view(), name='enhanced_token_obtain_pair'),
+    # path('api/auth/refresh/', EnhancedTokenRefreshView.as_view(), name='enhanced_token_refresh'),
+    # path('api/auth/validate/', TokenValidationView.as_view(), name='token_validate'),
+    # path('api/auth/logout/', LogoutView.as_view(), name='logout'),
+    # path('api/auth/revoke/', revoke_token, name='revoke_token'),
+    # path('api/auth/sessions/', UserSessionsView.as_view(), name='user_sessions'),
     
     # Legacy JWT endpoints (for backward compatibility)
     path('api/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
