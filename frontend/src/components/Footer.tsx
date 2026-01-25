@@ -81,7 +81,7 @@ export default function Footer() {
           </div>
 
           {/* Categories Section */}
-          <div className="col-span-1">
+          <div className="col-span-1 sm:col-span-2 ">
             <h3 className="text-sm font-medium text-gray-900 mb-3 sm:mb-4">
               Categories
             </h3>
@@ -100,7 +100,7 @@ export default function Footer() {
           </div>
 
           {/* Information Section */}
-          <div className="col-span-1">
+          <div className="col-span-1 sm:col-span-2 ">
             <h3 className="text-sm font-medium text-gray-900 mb-3 sm:mb-4">
               Information
             </h3>

@@ -94,6 +94,29 @@ class ArticleViewSet(BaseViewMixin, viewsets.ModelViewSet):
         return Response({'results': serializer.data})
 
     @action(detail=False, methods=['get'])
+    def suggestions(self, request):
+        """Get search suggestions"""
+        query = request.query_params.get('q', '').strip()
+        if not query or len(query) < 2:
+            return Response({'suggestions': []})
+        
+        # Get article titles that match the query
+        articles = Article.objects.filter(
+            title__icontains=query,
+            status='published'
+        ).values_list('title', flat=True)[:5]
+        
+        # Get category names that match
+        from ..models import Category
+        categories = Category.objects.filter(
+            name__icontains=query
+        ).values_list('name', flat=True)[:3]
+        
+        suggestions = list(articles) + [f"in {cat}" for cat in categories]
+        
+        return Response({'suggestions': suggestions[:8]})
+
+    @action(detail=False, methods=['get'])
     def featured(self, request):
         """Get featured articles"""
         queryset = self.get_queryset().filter(featured=True, status='published')

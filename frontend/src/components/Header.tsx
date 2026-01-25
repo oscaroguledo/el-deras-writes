@@ -18,6 +18,24 @@ export default function Header() {
       .catch(error => console.error('Failed to fetch categories:', error));
   }, []);
 
+  // Keyboard shortcut for search
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
+        event.preventDefault();
+        if (searchInputRef.current) {
+          searchInputRef.current.focus();
+        } else if (mobileSearchInputRef.current) {
+          setIsMenuOpen(true);
+          setTimeout(() => mobileSearchInputRef.current?.focus(), 100);
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -39,8 +57,9 @@ export default function Header() {
           <div className="hidden md:flex items-center space-x-8">
             <form onSubmit={handleSearch} className="relative">
               <input
+                ref={searchInputRef}
                 type="text"
-                placeholder="Search articles..."
+                placeholder="Search articles... (⌘K)"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-64 py-1 px-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-gray-500"
@@ -90,6 +109,7 @@ export default function Header() {
         <div className="px-4 py-6">
           <form onSubmit={handleSearch} className="relative mb-6">
             <input
+              ref={mobileSearchInputRef}
               type="text"
               placeholder="Search articles..."
               value={searchQuery}
