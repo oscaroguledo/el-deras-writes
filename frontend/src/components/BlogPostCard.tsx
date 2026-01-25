@@ -17,7 +17,8 @@ export function BlogPostCard({
           <LazyImage 
             src={post.image} 
             alt={post.title} 
-            className="object-cover w-full h-full transition-transform duration-500 hover:scale-105" 
+            className="object-cover w-full h-full transition-transform duration-500 hover:scale-105"
+            fallbackType="article"
           />
         </div>
       </Link>
@@ -40,7 +41,8 @@ export function BlogPostCard({
             <LazyImage 
               src={post.authorImage} 
               alt={typeof post.author === 'string' ? post.author : post.author.username} 
-              className="h-8 w-8 rounded-full" 
+              className="h-8 w-8 rounded-full"
+              fallbackType="avatar"
             />
           ) : (
             <div className="h-8 w-8 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-300">

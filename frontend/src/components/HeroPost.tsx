@@ -14,7 +14,8 @@ export function HeroPost({
           <LazyImage 
             src={post.image || 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d'} 
             alt={post.title} 
-            className="object-cover w-full h-full" 
+            className="object-cover w-full h-full"
+            fallbackType="hero"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/10"></div>
         </div>
@@ -40,7 +41,8 @@ export function HeroPost({
               <LazyImage 
                 src={post.authorImage} 
                 alt={typeof post.author === 'string' ? post.author : post.author.username} 
-                className="h-10 w-10 rounded-full border-2 border-white" 
+                className="h-10 w-10 rounded-full border-2 border-white"
+                fallbackType="avatar"
               />
             ) : (
               <div className="h-10 w-10 rounded-full border-2 border-white bg-gray-300 flex items-center justify-center">

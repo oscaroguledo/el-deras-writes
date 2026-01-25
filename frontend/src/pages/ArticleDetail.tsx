@@ -103,7 +103,8 @@ export default function ArticleDetail() {
                 <LazyImage 
                   src={article.authorImage} 
                   alt={typeof article.author === 'string' ? article.author : article.author.username} 
-                  className="h-8 w-8 rounded-full mr-2" 
+                  className="h-8 w-8 rounded-full mr-2"
+                  fallbackType="avatar"
                 />
               ) : (
                 <div className="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center text-xs font-medium text-gray-600 mr-2">
@@ -139,7 +140,8 @@ export default function ArticleDetail() {
             <LazyImage 
               src={article.image} 
               alt={article.title} 
-              className="w-full h-auto object-cover" 
+              className="w-full h-auto object-cover"
+              fallbackType="article"
             />
           </div>
         )}

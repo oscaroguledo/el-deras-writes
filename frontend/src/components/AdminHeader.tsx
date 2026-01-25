@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.ts';
 import { Menu, User, LogOut } from 'lucide-react';
+import { SafeImage } from './SafeImage';
 import logo from '/logo.webp';
 
 interface AdminHeaderProps {
@@ -34,8 +35,12 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
             <Menu size={24} />
           </button>
           <Link to="/" className="flex items-center">
-            <img src={logo} alt="Logo" className="h-8 w-auto mr-2" />
-
+            <SafeImage 
+              src={logo} 
+              alt="Logo" 
+              className="h-8 w-auto mr-2"
+              fallbackType="avatar"
+            />
           </Link>
         </div>
 

@@ -181,28 +181,43 @@ export default function AdminCategoriesTagsPage() {
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-4 md:p-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8 p-4 md:p-8">
         {/* Categories Management Skeleton */}
-        <div className="bg-white shadow-lg rounded-xl p-6">
+        <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-4 md:p-6">
           <SkeletonLoader className="h-8 w-1/2 mb-4" /> {/* Title */}
           <SkeletonLoader className="h-10 w-full mb-4" /> {/* Search Bar */}
           <div className="flex mb-4">
             <SkeletonLoader className="h-10 w-full rounded-l-md" /> {/* New Category Input */}
             <SkeletonLoader className="h-10 w-10 rounded-r-md" /> {/* Plus Icon Button */}
           </div>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+          
+          {/* Mobile Card Layout Skeleton */}
+          <div className="block md:hidden space-y-4">
+            {[...Array(3)].map((_, index) => (
+              <div key={index} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                <SkeletonLoader className="h-5 w-3/4 mb-2" />
+                <div className="flex space-x-2">
+                  <SkeletonLoader className="h-8 w-16" />
+                  <SkeletonLoader className="h-8 w-16" />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop Table Layout Skeleton */}
+          <div className="hidden md:block overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-700">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/2">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-1/2">
                     <SkeletonLoader className="h-4 w-3/4" />
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/2">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-1/2">
                     <SkeletonLoader className="h-4 w-3/4" />
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                 {[...Array(5)].map((_, index) => (
                   <tr key={index}>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -222,26 +237,41 @@ export default function AdminCategoriesTagsPage() {
         </div>
 
         {/* Tags Management Skeleton */}
-        <div className="bg-white shadow-lg rounded-xl p-6">
+        <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-4 md:p-6">
           <SkeletonLoader className="h-8 w-1/2 mb-4" /> {/* Title */}
           <SkeletonLoader className="h-10 w-full mb-4" /> {/* Search Bar */}
           <div className="flex mb-4">
             <SkeletonLoader className="h-10 w-full rounded-l-md" /> {/* New Tag Input */}
             <SkeletonLoader className="h-10 w-10 rounded-r-md" /> {/* Plus Icon Button */}
           </div>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+          
+          {/* Mobile Card Layout Skeleton */}
+          <div className="block md:hidden space-y-4">
+            {[...Array(3)].map((_, index) => (
+              <div key={index} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                <SkeletonLoader className="h-5 w-3/4 mb-2" />
+                <div className="flex space-x-2">
+                  <SkeletonLoader className="h-8 w-16" />
+                  <SkeletonLoader className="h-8 w-16" />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop Table Layout Skeleton */}
+          <div className="hidden md:block overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-700">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/2">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-1/2">
                     <SkeletonLoader className="h-4 w-3/4" />
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/2">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-1/2">
                     <SkeletonLoader className="h-4 w-3/4" />
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                 {[...Array(5)].map((_, index) => (
                   <tr key={index}>
                     <td className="px-6 py-4 whitespace-nowrap">
