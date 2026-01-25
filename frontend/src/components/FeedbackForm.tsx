@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { SendIcon } from 'lucide-react';
 import { submitFeedback } from '../utils/api';
