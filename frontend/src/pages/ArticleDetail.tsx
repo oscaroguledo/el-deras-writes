@@ -40,31 +40,31 @@ export default function ArticleDetail() {
   if (loading) {
     return (
       <div className="py-8">
-        <SkeletonLoader className="h-6 w-48 mb-6" /> {/* Back to articles link */}
+        <SkeletonLoader className="h-6 w-48 mb-6 dark:bg-gray-700" /> {/* Back to articles link */}
         <div className="mb-8">
-          <SkeletonLoader className="h-10 w-3/4 mb-4" /> {/* Title */}
-          <div className="flex flex-wrap items-center text-sm text-gray-600 gap-4 mb-6">
-            <SkeletonLoader className="h-8 w-24" /> {/* Author */}
-            <SkeletonLoader className="h-8 w-32" /> {/* Date */}
-            <SkeletonLoader className="h-8 w-24" /> {/* Read Time */}
-            <SkeletonLoader className="h-8 w-24" /> {/* Category */}
+          <SkeletonLoader className="h-10 w-3/4 mb-4 dark:bg-gray-700" /> {/* Title */}
+          <div className="flex flex-wrap items-center text-sm text-gray-600 dark:text-gray-400 gap-4 mb-6">
+            <SkeletonLoader className="h-8 w-24 dark:bg-gray-700" /> {/* Author */}
+            <SkeletonLoader className="h-8 w-32 dark:bg-gray-700" /> {/* Date */}
+            <SkeletonLoader className="h-8 w-24 dark:bg-gray-700" /> {/* Read Time */}
+            <SkeletonLoader className="h-8 w-24 dark:bg-gray-700" /> {/* Category */}
           </div>
         </div>
-        <SkeletonLoader className="h-96 w-full mb-8 rounded-lg" /> {/* Article Image */}
-        <div className="prose prose-lg max-w-none">
-          <SkeletonLoader className="h-6 w-full mb-2" />
-          <SkeletonLoader className="h-6 w-full mb-2" />
-          <SkeletonLoader className="h-6 w-5/6 mb-2" />
-          <SkeletonLoader className="h-6 w-full mb-2" />
-          <SkeletonLoader className="h-6 w-4/5" />
+        <SkeletonLoader className="h-96 w-full mb-8 rounded-lg dark:bg-gray-700" /> {/* Article Image */}
+        <div className="prose prose-lg dark:prose-invert max-w-none">
+          <SkeletonLoader className="h-6 w-full mb-2 dark:bg-gray-700" />
+          <SkeletonLoader className="h-6 w-full mb-2 dark:bg-gray-700" />
+          <SkeletonLoader className="h-6 w-5/6 mb-2 dark:bg-gray-700" />
+          <SkeletonLoader className="h-6 w-full mb-2 dark:bg-gray-700" />
+          <SkeletonLoader className="h-6 w-4/5 dark:bg-gray-700" />
         </div>
         <div className="mt-12">
-          <SkeletonLoader className="h-8 w-48 mb-6" /> {/* Comments title */}
-          <SkeletonLoader className="h-24 w-full mb-4" /> {/* Comment form */}
+          <SkeletonLoader className="h-8 w-48 mb-6 dark:bg-gray-700" /> {/* Comments title */}
+          <SkeletonLoader className="h-24 w-full mb-4 dark:bg-gray-700" /> {/* Comment form */}
           {[...Array(3)].map((_, index) => (
             <div key={index} className="mb-4">
-              <SkeletonLoader className="h-6 w-32 mb-2" /> {/* Comment author */}
-              <SkeletonLoader className="h-16 w-full" /> {/* Comment content */}
+              <SkeletonLoader className="h-6 w-32 mb-2 dark:bg-gray-700" /> {/* Comment author */}
+              <SkeletonLoader className="h-16 w-full dark:bg-gray-700" /> {/* Comment content */}
             </div>
           ))}
         </div>
@@ -72,11 +72,11 @@ export default function ArticleDetail() {
     );
   }
   if (error || !article) {
-    return <div className="flex justify-center items-center h-64">
-        <h2 className="text-2xl font-medium text-gray-900 mb-4">
+    return <div className="flex flex-col justify-center items-center h-64">
+        <h2 className="text-2xl font-medium text-gray-900 dark:text-gray-100 mb-4">
           {error || 'Article not found'}
         </h2>
-        <Link to="/" className="text-gray-600 hover:text-gray-900 inline-flex items-center">
+        <Link to="/" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 inline-flex items-center">
           <ChevronLeftIcon className="h-4 w-4 mr-1" /> Back to home
         </Link>
       </div>;
@@ -90,14 +90,14 @@ export default function ArticleDetail() {
         url={`${window.location.origin}/article/${article._id}`}
       />
       <article className="py-8">
-        <Link to="/" className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-6">
+        <Link to="/" className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 mb-6 transition-colors">
           <ChevronLeftIcon className="h-4 w-4 mr-1" /> Back to articles
         </Link>
         <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-medium text-gray-900 mb-4">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-serif font-medium text-gray-900 dark:text-gray-100 mb-4">
             {article.title}
           </h1>
-          <div className="flex flex-wrap items-center text-sm text-gray-600 gap-4 mb-6">
+          <div className="flex flex-wrap items-center text-sm text-gray-600 dark:text-gray-400 gap-4 mb-6">
             <div className="flex items-center">
               {article.authorImage ? (
                 <LazyImage 
@@ -107,14 +107,14 @@ export default function ArticleDetail() {
                   fallbackType="avatar"
                 />
               ) : (
-                <div className="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center text-xs font-medium text-gray-600 mr-2">
+                <div className="h-8 w-8 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-300 mr-2">
                   {typeof article.author === 'string' ? article.author.charAt(0).toUpperCase() : article.author?.username?.charAt(0).toUpperCase()}
                 </div>
               )}
-              <span>{typeof article.author === 'string' ? article.author : `${article.author.first_name} ${article.author.last_name}`}</span>
+              <span className="text-gray-800 dark:text-gray-200">{typeof article.author === 'string' ? article.author : `${article.author.first_name} ${article.author.last_name}`}</span>
             </div>
             <div className="flex items-center">
-              <CalendarIcon className="h-4 w-4 mr-1" />
+              <CalendarIcon className="h-4 w-4 mr-1 text-gray-500 dark:text-gray-400" />
               <span>
                 {new Date(article.createdAt).toLocaleDateString('en-US', {
                 year: 'numeric',
@@ -124,12 +124,12 @@ export default function ArticleDetail() {
               </span>
             </div>
             <div className="flex items-center">
-              <ClockIcon className="h-4 w-4 mr-1" />
+              <ClockIcon className="h-4 w-4 mr-1 text-gray-500 dark:text-gray-400" />
               <span>{article.formatted_read_time || '5 mins'}</span>
             </div>
             {article.category && <div className="flex items-center">
-                <TagIcon className="h-4 w-4 mr-1" />
-                <Link to={`/?category=${encodeURIComponent(article.category)}`} className="hover:underline">
+                <TagIcon className="h-4 w-4 mr-1 text-gray-500 dark:text-gray-400" />
+                <Link to={`/?category=${encodeURIComponent(article.category)}`} className="hover:underline text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
                   {article.category}
                 </Link>
               </div>}
@@ -147,18 +147,18 @@ export default function ArticleDetail() {
         )}
         <LazyContent
           fallback={
-            <div className="prose prose-lg max-w-none">
-              <SkeletonLoader className="h-6 w-full mb-2" />
-              <SkeletonLoader className="h-6 w-full mb-2" />
-              <SkeletonLoader className="h-6 w-5/6 mb-2" />
-              <SkeletonLoader className="h-6 w-full mb-2" />
-              <SkeletonLoader className="h-6 w-4/5" />
+            <div className="article-content">
+              <SkeletonLoader className="h-6 w-full mb-2 dark:bg-gray-700" />
+              <SkeletonLoader className="h-6 w-full mb-2 dark:bg-gray-700" />
+              <SkeletonLoader className="h-6 w-5/6 mb-2 dark:bg-gray-700" />
+              <SkeletonLoader className="h-6 w-full mb-2 dark:bg-gray-700" />
+              <SkeletonLoader className="h-6 w-4/5 dark:bg-gray-700" />
             </div>
           }
           threshold={0.1}
           rootMargin="50px"
         >
-          <div className="prose prose-lg max-w-none text-justify animate-fade-in" dangerouslySetInnerHTML={{
+          <div className="article-content animate-fade-in" dangerouslySetInnerHTML={{
             __html: article.content
           }} />
         </LazyContent>

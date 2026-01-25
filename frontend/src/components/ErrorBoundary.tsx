@@ -47,10 +47,10 @@ class ErrorBoundary extends Component<Props, State> {
             <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
               <div className="text-center">
                 <AlertTriangle className="mx-auto h-16 w-16 text-red-500 mb-4" />
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
                   Oops! Something went wrong
                 </h2>
-                <p className="text-gray-600 mb-6">
+                <p className="text-gray-600 dark:text-gray-400 mb-6">
                   We encountered an unexpected error. Don't worry, our team has been notified.
                 </p>
                 
@@ -74,7 +74,7 @@ class ErrorBoundary extends Component<Props, State> {
                   </button>
                   <button
                     onClick={this.handleGoHome}
-                    className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                   >
                     <Home className="h-4 w-4 mr-2" />
                     Go Home

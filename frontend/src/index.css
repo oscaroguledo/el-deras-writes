@@ -3,3 +3,229 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 /* DO NOT DELETE THESE TAILWIND IMPORTS, OTHERWISE THE STYLING WILL NOT RENDER AT ALL */
+
+/* Custom utilities for responsive text truncation */
+@layer utilities {
+  .text-truncate-mobile {
+    @apply sm:hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .text-truncate-desktop {
+    @apply hidden sm:block;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .comment-content {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-in-out;
+  }
+}
+
+/* Keyframes for animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Enhanced article content styling for both light and dark modes */
+@layer components {
+  .article-content {
+    @apply max-w-none text-justify;
+    font-size: 1.125rem;
+    line-height: 1.75;
+    color: #374151; /* gray-700 */
+  }
+  
+  /* Light mode article content */
+  .article-content h1 {
+    @apply text-3xl font-serif font-bold text-gray-900 mb-6 mt-8;
+  }
+  
+  .article-content h2 {
+    @apply text-2xl font-serif font-bold text-gray-900 mb-4 mt-6;
+  }
+  
+  .article-content h3 {
+    @apply text-xl font-serif font-semibold text-gray-900 mb-3 mt-5;
+  }
+  
+  .article-content h4 {
+    @apply text-lg font-serif font-semibold text-gray-900 mb-2 mt-4;
+  }
+  
+  .article-content h5,
+  .article-content h6 {
+    @apply text-base font-serif font-semibold text-gray-900 mb-2 mt-3;
+  }
+  
+  .article-content p {
+    @apply text-gray-700 leading-relaxed mb-4;
+  }
+  
+  .article-content p:last-child {
+    @apply mb-0;
+  }
+  
+  .article-content a {
+    @apply text-blue-600 hover:text-blue-800 underline underline-offset-2;
+  }
+  
+  .article-content strong,
+  .article-content b {
+    @apply text-gray-900 font-semibold;
+  }
+  
+  .article-content em,
+  .article-content i {
+    @apply text-gray-800 italic;
+  }
+  
+  .article-content blockquote {
+    @apply border-l-4 border-gray-300 pl-6 italic text-gray-600 bg-gray-50 py-4 my-6 rounded-r-lg;
+  }
+  
+  .article-content ul {
+    @apply text-gray-700 mb-4 pl-6;
+    list-style-type: disc;
+  }
+  
+  .article-content ol {
+    @apply text-gray-700 mb-4 pl-6;
+    list-style-type: decimal;
+  }
+  
+  .article-content li {
+    @apply mb-2;
+  }
+  
+  .article-content code {
+    @apply bg-gray-100 text-gray-800 px-2 py-1 rounded text-sm font-mono;
+  }
+  
+  .article-content pre {
+    @apply bg-gray-100 text-gray-800 p-4 rounded-lg overflow-x-auto mb-6 text-sm;
+  }
+  
+  .article-content pre code {
+    @apply bg-transparent p-0 text-sm;
+  }
+  
+  .article-content img {
+    @apply rounded-lg shadow-sm my-6 max-w-full h-auto;
+  }
+  
+  .article-content table {
+    @apply w-full border-collapse border border-gray-300 my-6 text-sm;
+  }
+  
+  .article-content th,
+  .article-content td {
+    @apply border border-gray-300 px-4 py-2 text-left;
+  }
+  
+  .article-content th {
+    @apply bg-gray-100 font-semibold text-gray-900;
+  }
+  
+  .article-content td {
+    @apply text-gray-700;
+  }
+  
+  .article-content hr {
+    @apply border-gray-300 my-8 border-t;
+  }
+}
+
+/* Dark mode overrides for article content */
+@layer components {
+  .dark .article-content {
+    color: #d1d5db; /* gray-300 */
+  }
+  
+  .dark .article-content h1,
+  .dark .article-content h2,
+  .dark .article-content h3,
+  .dark .article-content h4,
+  .dark .article-content h5,
+  .dark .article-content h6 {
+    @apply text-gray-100;
+  }
+  
+  .dark .article-content p {
+    @apply text-gray-300;
+  }
+  
+  .dark .article-content p:last-child {
+    @apply mb-0;
+  }
+  
+  .dark .article-content a {
+    @apply text-blue-400 hover:text-blue-300;
+  }
+  
+  .dark .article-content strong,
+  .dark .article-content b {
+    @apply text-gray-100;
+  }
+  
+  .dark .article-content em,
+  .dark .article-content i {
+    @apply text-gray-200;
+  }
+  
+  .dark .article-content blockquote {
+    @apply border-gray-600 text-gray-400 bg-gray-800;
+  }
+  
+  .dark .article-content ul,
+  .dark .article-content ol {
+    @apply text-gray-300;
+  }
+  
+  .dark .article-content code {
+    @apply bg-gray-800 text-gray-200;
+  }
+  
+  .dark .article-content pre {
+    @apply bg-gray-800 text-gray-200;
+  }
+  
+  .dark .article-content table {
+    @apply border-gray-600;
+  }
+  
+  .dark .article-content th,
+  .dark .article-content td {
+    @apply border-gray-600;
+  }
+  
+  .dark .article-content th {
+    @apply bg-gray-700 text-gray-100;
+  }
+  
+  .dark .article-content td {
+    @apply text-gray-300;
+  }
+  
+  .dark .article-content hr {
+    @apply border-gray-600;
+  }
+}

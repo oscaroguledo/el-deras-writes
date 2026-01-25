@@ -190,7 +190,7 @@ export default function AdminDashboardOverview() {
       <div className="p-4 md:p-8">
         <h1 className="text-3xl font-serif font-medium text-gray-900 dark:text-gray-100 mb-6">Dashboard Overview</h1>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
           {overviewCards.map((card, index) => (
             <div key={index} className={`shadow-lg rounded-xl p-6 text-white ${card.color}`}>
               <div className="flex items-center justify-between">
@@ -234,9 +234,14 @@ export default function AdminDashboardOverview() {
             <ul className="space-y-3">
               {safeArray(dashboardData.recent_articles).length > 0 ? (
                 safeArray(dashboardData.recent_articles).map((article) => {
-                  const authorName = typeof article.author === 'string' 
-                    ? article.author 
-                    : article.author?.username || 'Unknown';
+                  // Get author name - handle both string and object types
+                  let authorName = 'Unknown';
+                  if (typeof article.author === 'string') {
+                    authorName = article.author;
+                  } else if (article.author) {
+                    authorName = `${article.author.first_name || ''} ${article.author.last_name || ''}`.trim() || article.author.username || 'Unknown';
+                  }
+                  
                   return (
                     <li key={article.id} className="text-sm text-gray-700 dark:text-gray-300 flex justify-between items-center">
                       <span className="truncate">{safeValue(article.title, 'Untitled')} by {authorName}</span>
@@ -257,14 +262,21 @@ export default function AdminDashboardOverview() {
             </h3>
             <ul className="space-y-3">
               {safeArray(dashboardData.recent_comments).length > 0 ? (
-                safeArray(dashboardData.recent_comments).map((comment) => (
-                  <li key={comment.id} className="text-sm text-gray-700 dark:text-gray-300">
-                    <p className="truncate">"{safeValue(comment.content, 'No content')}"</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                      on "{safeValue(comment.article?.title, 'Unknown article')}" by {safeValue(comment.author?.username, 'Anonymous')}
-                    </p>
-                  </li>
-                ))
+                safeArray(dashboardData.recent_comments).map((comment) => {
+                  // Get full name or fallback to username
+                  const authorName = comment.author 
+                    ? `${comment.author.first_name || ''} ${comment.author.last_name || ''}`.trim() || comment.author.username || 'Anonymous'
+                    : 'Anonymous';
+                  
+                  return (
+                    <li key={comment.id} className="text-sm text-gray-700 dark:text-gray-300">
+                      <p className="truncate">"{safeValue(comment.content, 'No content')}"</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                        on "{safeValue(comment.article?.title, 'Unknown article')}" by {authorName}
+                      </p>
+                    </li>
+                  );
+                })
               ) : (
                 <li className="text-sm text-gray-500 dark:text-gray-400 italic">No recent comments</li>
               )}
@@ -278,12 +290,19 @@ export default function AdminDashboardOverview() {
             </h3>
             <ul className="space-y-3">
               {safeArray(dashboardData.top_authors).length > 0 ? (
-                safeArray(dashboardData.top_authors).map((author) => (
-                  <li key={author.id} className="text-sm text-gray-700 dark:text-gray-300 flex justify-between items-center">
-                    <span className="truncate">{safeValue(author.username, 'Unknown')}</span>
-                    <span className="text-gray-500 dark:text-gray-400 text-xs">{safeValue(author.total_articles, 0)} articles</span>
-                  </li>
-                ))
+                safeArray(dashboardData.top_authors).map((author) => {
+                  // Get full name or fallback to username
+                  const authorName = author 
+                    ? `${author.first_name || ''} ${author.last_name || ''}`.trim() || author.username || 'Unknown'
+                    : 'Unknown';
+                  
+                  return (
+                    <li key={author.id} className="text-sm text-gray-700 dark:text-gray-300 flex justify-between items-center">
+                      <span className="truncate">{authorName}</span>
+                      <span className="text-gray-500 dark:text-gray-400 text-xs">{safeValue(author.total_articles, 0)} articles</span>
+                    </li>
+                  );
+                })
               ) : (
                 <li className="text-sm text-gray-500 dark:text-gray-400 italic">No authors found</li>
               )}

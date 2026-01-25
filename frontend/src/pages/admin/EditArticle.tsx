@@ -53,13 +53,13 @@ export default function EditArticle() {
   };
   if (loading) {
     return (
-      <div className="py-8">
+      <div className="p-4 md:p-8">
         {/* Header Skeleton */}
-        <div className="mb-8">
+        <div className="mb-6 md:mb-8">
           <SkeletonLoader className="h-8 w-64 mb-2" />
           <SkeletonLoader className="h-5 w-96" />
         </div>
-        <div className="bg-white shadow-md rounded-lg p-6">
+        <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 md:p-6">
           {/* ArticleForm Skeletons */}
           <div className="space-y-6">
             {/* Title */}
@@ -98,9 +98,9 @@ export default function EditArticle() {
               <SkeletonLoader className="h-10 w-full" />
             </div>
             {/* Buttons */}
-            <div className="flex justify-end space-x-4">
-              <SkeletonLoader className="h-10 w-24" />
-              <SkeletonLoader className="h-10 w-24" />
+            <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4">
+              <SkeletonLoader className="h-10 w-full sm:w-24" />
+              <SkeletonLoader className="h-10 w-full sm:w-24" />
             </div>
           </div>
         </div>
@@ -109,22 +109,25 @@ export default function EditArticle() {
   }
   if (!article) {
     return <div className="text-center py-12">
-        <h2 className="text-2xl font-medium text-gray-900 mb-4">
+        <h2 className="text-2xl font-medium text-gray-900 dark:text-gray-100 mb-4">
           Article not found
         </h2>
-        <button onClick={() => navigate('/admin/dashboard')} className="text-gray-600 hover:text-gray-900">
+        <button 
+          onClick={() => navigate('/admin/dashboard')} 
+          className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors duration-200"
+        >
           Back to dashboard
         </button>
       </div>;
   }
-  return <div className="py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-serif font-medium text-gray-900">
+  return <div className="p-4 md:p-8">
+      <div className="mb-6 md:mb-8">
+        <h1 className="text-2xl md:text-3xl font-serif font-medium text-gray-900 dark:text-gray-100">
           Edit Article
         </h1>
-        <p className="mt-2 text-gray-600">Update the details of your article</p>
+        <p className="mt-2 text-gray-600 dark:text-gray-400">Update the details of your article</p>
       </div>
-      <div className="bg-white shadow-md rounded-lg p-6">
+      <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 md:p-6 transition-colors duration-200">
         <ArticleForm initialData={article} onSubmit={handleSubmit} isSubmitting={isSubmitting} />
       </div>
     </div>;

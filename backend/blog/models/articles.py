@@ -19,7 +19,7 @@ class Article(models.Model):
     readTime = models.PositiveIntegerField(default=0, help_text="Estimated read time in minutes")
     
     author = models.ForeignKey('blog.CustomUser', on_delete=models.CASCADE, related_name='articles')
-    category = models.ForeignKey('blog.Category', on_delete=models.SET_NULL, null=True, blank=True)
+    category = models.ForeignKey('blog.Category', on_delete=models.PROTECT, related_name='articles')
     tags = models.ManyToManyField('blog.Tag', blank=True)
     
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft', db_index=True)

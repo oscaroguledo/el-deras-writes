@@ -5,6 +5,7 @@ import { CustomUser } from '../../types/CustomUser';
 import { getUsers, deleteUser } from '../../utils/api';
 import { UserFormModal } from '../../components/UserFormModal';
 import SkeletonLoader from '../../components/SkeletonLoader';
+import { getUserAvatarUrl, getUserDisplayName } from '../../utils/userUtils';
 
 const PAGE_SIZE = 10;
 
@@ -231,14 +232,27 @@ export default function AdminUsersPage() {
                     <div className="flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10">
                       <img 
                         className="h-8 w-8 sm:h-10 sm:w-10 rounded-full border-2 border-gray-200 dark:border-gray-600" 
-                        src={`https://ui-avatars.com/api/?name=${user.first_name}+${user.last_name}&background=random&size=40`} 
-                        alt="User Avatar" 
+                        src={getUserAvatarUrl(user, 40)} 
+                        alt={`${getUserDisplayName(user)} Avatar`} 
+                        onError={(e) => {
+                          // Fallback to a simple colored div with initials if image fails
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          const parent = target.parentElement;
+                          if (parent && !parent.querySelector('.initials-fallback')) {
+                            const initials = user.first_name?.charAt(0) || user.last_name?.charAt(0) || user.username?.charAt(0) || 'U';
+                            const fallback = document.createElement('div');
+                            fallback.className = 'initials-fallback h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-gray-500 dark:bg-gray-400 flex items-center justify-center text-white font-medium text-xs sm:text-sm';
+                            fallback.textContent = initials.toUpperCase();
+                            parent.appendChild(fallback);
+                          }
+                        }}
                       />
                     </div>
                   </td>
                   <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900 dark:text-white">
-                      {user.first_name} {user.last_name}
+                      {getUserDisplayName(user)}
                     </div>
                     <div className="text-sm text-gray-500 dark:text-gray-400">
                       @{user.username}

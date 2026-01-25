@@ -15,7 +15,7 @@ from ..serializers import (
     ArticleSerializer, CommentSerializer, CategorySerializer, 
     TagSerializer, CustomUserSerializer, FeedbackSerializer
 )
-from .base import UserPagination, FeedbackPagination
+from .base import UserPagination, FeedbackPagination, CommentPagination
 
 
 class AdminArticleViewSet(viewsets.ModelViewSet):
@@ -35,6 +35,7 @@ class AdminCommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all().order_by('-created_at')
     serializer_class = CommentSerializer
     permission_classes = [IsAdminUser]
+    pagination_class = CommentPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['approved', 'is_flagged', 'article']
     search_fields = ['content', 'author__username', 'article__title']

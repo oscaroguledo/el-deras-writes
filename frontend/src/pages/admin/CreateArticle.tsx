@@ -38,16 +38,16 @@ export default function CreateArticle() {
   };
 
   return (
-    <div className="py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-serif font-medium text-gray-900">
+    <div className="p-4 md:p-8">
+      <div className="mb-6 md:mb-8">
+        <h1 className="text-2xl md:text-3xl font-serif font-medium text-gray-900 dark:text-gray-100">
           Create New Article
         </h1>
-        <p className="mt-2 text-gray-600">
+        <p className="mt-2 text-gray-600 dark:text-gray-400">
           Fill in the details to create a new article for El Dera's Blog
         </p>
       </div>
-      <div className="bg-white shadow-md rounded-lg p-6">
+      <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 md:p-6 transition-colors duration-200">
         <ArticleForm onSubmit={handleSubmit} isSubmitting={isSubmitting} loggedInUser={user || undefined} />
       </div>
     </div>

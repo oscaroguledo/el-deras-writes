@@ -294,56 +294,107 @@ export default function AdminCategoriesTagsPage() {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-4 md:p-8">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8 p-4 md:p-8">
       {/* Categories Management */}
-      <div className="bg-white shadow-lg rounded-xl p-6">
+      <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-4 md:p-6 transition-colors duration-200">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-serif font-medium text-gray-900">Categories</h2>
+          <h2 className="text-xl md:text-2xl font-serif font-medium text-gray-900 dark:text-gray-100">Categories</h2>
         </div>
         <div className="mb-4 relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                      <input
-                        type="text"
-                        placeholder="Search categories..."
-                        className="w-full bg-white rounded-md py-2 pl-10 pr-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                        value={categorySearchQuery}
-                        onChange={(e) => setCategorySearchQuery(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            fetchCategories(categorySearchQuery);
-                          }
-                        }}
-                      />        </div>
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" size={20} />
+          <input
+            type="text"
+            placeholder="Search categories..."
+            className="w-full bg-white dark:bg-gray-700 rounded-md py-2 pl-10 pr-4 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400 focus:border-transparent transition-colors duration-200"
+            value={categorySearchQuery}
+            onChange={(e) => setCategorySearchQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                fetchCategories(categorySearchQuery);
+              }
+            }}
+          />
+        </div>
         <form onSubmit={handleCreateCategory} className="flex mb-4">
           <input
             type="text"
             value={newCategoryName}
             onChange={(e) => setNewCategoryName(e.target.value)}
             placeholder="New category name"
-            className="w-full px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-l-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-500 dark:focus:ring-gray-400 focus:border-gray-500 dark:focus:border-gray-400 transition-colors duration-200"
           />
-          <button type="submit" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-r-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+          <button 
+            type="submit" 
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-r-md text-white bg-gray-900 dark:bg-gray-600 hover:bg-gray-800 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 dark:focus:ring-gray-400 transition-colors duration-200"
+          >
             <PlusIcon className="h-4 w-4" />
           </button>
         </form>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+
+        {/* Mobile Card Layout */}
+        <div className="block md:hidden space-y-4">
+          {categories.map(category => (
+            <div key={category.id} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 transition-colors duration-200">
+              <div className="flex justify-between items-start mb-3">
+                <div className="flex-1">
+                  {editingCategory?.id === category.id ? (
+                    <input
+                      type="text"
+                      value={editingCategory.name}
+                      onChange={(e) => setEditingCategory({ ...editingCategory, name: e.target.value })}
+                      className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-500 dark:focus:ring-gray-400 transition-colors duration-200"
+                    />
+                  ) : (
+                    <h3 className="font-medium text-gray-900 dark:text-gray-100">{category.name}</h3>
+                  )}
+                </div>
+              </div>
+              <div className="flex space-x-2">
+                {editingCategory?.id === category.id ? (
+                  <button 
+                    onClick={handleUpdateCategory} 
+                    className="px-3 py-1 text-sm bg-green-600 hover:bg-green-700 text-white rounded-md transition-colors duration-200"
+                  >
+                    Save
+                  </button>
+                ) : (
+                  <button 
+                    onClick={() => setEditingCategory(category)} 
+                    className="p-2 text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-md transition-colors duration-200"
+                  >
+                    <EditIcon className="h-4 w-4" />
+                  </button>
+                )}
+                <button 
+                  onClick={() => handleDeleteCategoryClick(category.id)} 
+                  className="p-2 text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors duration-200"
+                >
+                  <TrashIcon className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop Table Layout */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-700">
               <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Name</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               {categories.map(category => (
-                <tr key={category.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                <tr key={category.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
                     {editingCategory?.id === category.id ? (
                       <input
                         type="text"
                         value={editingCategory.name}
                         onChange={(e) => setEditingCategory({ ...editingCategory, name: e.target.value })}
-                        className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                        className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-500 dark:focus:ring-gray-400 transition-colors duration-200"
                       />
                     ) : (
                       category.name
@@ -352,11 +403,26 @@ export default function AdminCategoriesTagsPage() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
                       {editingCategory?.id === category.id ? (
-                        <button onClick={handleUpdateCategory} className="text-green-600 hover:text-green-900">Save</button>
+                        <button 
+                          onClick={handleUpdateCategory} 
+                          className="text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300 transition-colors duration-200"
+                        >
+                          Save
+                        </button>
                       ) : (
-                        <button onClick={() => setEditingCategory(category)} className="text-indigo-600 hover:text-indigo-900"><EditIcon className="h-5 w-5" /></button>
+                        <button 
+                          onClick={() => setEditingCategory(category)} 
+                          className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 transition-colors duration-200"
+                        >
+                          <EditIcon className="h-5 w-5" />
+                        </button>
                       )}
-                      <button onClick={() => handleDeleteCategoryClick(category.id)} className="text-red-600 hover:text-red-900"><TrashIcon className="h-5 w-5" /></button>
+                      <button 
+                        onClick={() => handleDeleteCategoryClick(category.id)} 
+                        className="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 transition-colors duration-200"
+                      >
+                        <TrashIcon className="h-5 w-5" />
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -367,54 +433,105 @@ export default function AdminCategoriesTagsPage() {
       </div>
 
       {/* Tags Management */}
-      <div className="bg-white shadow-lg rounded-xl p-6">
+      <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-4 md:p-6 transition-colors duration-200">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-serif font-medium text-gray-900">Tags</h2>
+          <h2 className="text-xl md:text-2xl font-serif font-medium text-gray-900 dark:text-gray-100">Tags</h2>
         </div>
         <div className="mb-4 relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                      <input
-                        type="text"
-                        placeholder="Search tags..."
-                        className="w-full bg-white rounded-md py-2 pl-10 pr-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
-                        value={tagSearchQuery}
-                        onChange={(e) => setTagSearchQuery(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            fetchTags(tagSearchQuery);
-                          }
-                        }}
-                      />        </div>
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" size={20} />
+          <input
+            type="text"
+            placeholder="Search tags..."
+            className="w-full bg-white dark:bg-gray-700 rounded-md py-2 pl-10 pr-4 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400 focus:border-transparent transition-colors duration-200"
+            value={tagSearchQuery}
+            onChange={(e) => setTagSearchQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                fetchTags(tagSearchQuery);
+              }
+            }}
+          />
+        </div>
         <form onSubmit={handleCreateTag} className="flex mb-4">
           <input
             type="text"
             value={newTagName}
             onChange={(e) => setNewTagName(e.target.value)}
             placeholder="New tag name"
-            className="w-full px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-l-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-500 dark:focus:ring-gray-400 focus:border-gray-500 dark:focus:border-gray-400 transition-colors duration-200"
           />
-          <button type="submit" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-r-md text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+          <button 
+            type="submit" 
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-r-md text-white bg-gray-900 dark:bg-gray-600 hover:bg-gray-800 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 dark:focus:ring-gray-400 transition-colors duration-200"
+          >
             <PlusIcon className="h-4 w-4" />
           </button>
         </form>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+
+        {/* Mobile Card Layout */}
+        <div className="block md:hidden space-y-4">
+          {tags.map(tag => (
+            <div key={tag.id} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 transition-colors duration-200">
+              <div className="flex justify-between items-start mb-3">
+                <div className="flex-1">
+                  {editingTag?.id === tag.id ? (
+                    <input
+                      type="text"
+                      value={editingTag.name}
+                      onChange={(e) => setEditingTag({ ...editingTag, name: e.target.value })}
+                      className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-500 dark:focus:ring-gray-400 transition-colors duration-200"
+                    />
+                  ) : (
+                    <h3 className="font-medium text-gray-900 dark:text-gray-100">{tag.name}</h3>
+                  )}
+                </div>
+              </div>
+              <div className="flex space-x-2">
+                {editingTag?.id === tag.id ? (
+                  <button 
+                    onClick={handleUpdateTag} 
+                    className="px-3 py-1 text-sm bg-green-600 hover:bg-green-700 text-white rounded-md transition-colors duration-200"
+                  >
+                    Save
+                  </button>
+                ) : (
+                  <button 
+                    onClick={() => setEditingTag(tag)} 
+                    className="p-2 text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-md transition-colors duration-200"
+                  >
+                    <EditIcon className="h-4 w-4" />
+                  </button>
+                )}
+                <button 
+                  onClick={() => handleDeleteTagClick(tag.id)} 
+                  className="p-2 text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors duration-200"
+                >
+                  <TrashIcon className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop Table Layout */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-700">
               <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Name</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               {tags.map(tag => (
-                <tr key={tag.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                <tr key={tag.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
                     {editingTag?.id === tag.id ? (
                       <input
                         type="text"
                         value={editingTag.name}
                         onChange={(e) => setEditingTag({ ...editingTag, name: e.target.value })}
-                        className="w-full px-2 py-1 border border-gray-300 rounded-md"
+                        className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-500 dark:focus:ring-gray-400 transition-colors duration-200"
                       />
                     ) : (
                       tag.name
@@ -423,11 +540,26 @@ export default function AdminCategoriesTagsPage() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
                       {editingTag?.id === tag.id ? (
-                        <button onClick={handleUpdateTag} className="text-green-600 hover:text-green-900">Save</button>
+                        <button 
+                          onClick={handleUpdateTag} 
+                          className="text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300 transition-colors duration-200"
+                        >
+                          Save
+                        </button>
                       ) : (
-                        <button onClick={() => setEditingTag(tag)} className="text-indigo-600 hover:text-indigo-900"><EditIcon className="h-5 w-5" /></button>
+                        <button 
+                          onClick={() => setEditingTag(tag)} 
+                          className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 transition-colors duration-200"
+                        >
+                          <EditIcon className="h-5 w-5" />
+                        </button>
                       )}
-                      <button onClick={() => handleDeleteTagClick(tag.id)} className="text-red-600 hover:text-red-900"><TrashIcon className="h-5 w-5" /></button>
+                      <button 
+                        onClick={() => handleDeleteTagClick(tag.id)} 
+                        className="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 transition-colors duration-200"
+                      >
+                        <TrashIcon className="h-5 w-5" />
+                      </button>
                     </div>
                   </td>
                 </tr>

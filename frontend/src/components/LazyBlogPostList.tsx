@@ -58,10 +58,10 @@ export function LazyBlogPostList({
   return (
     <section className="mt-16 lg:mt-24">
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-2xl md:text-3xl font-serif font-medium text-gray-900">
+        <h2 className="text-2xl md:text-3xl font-serif font-medium text-gray-900 dark:text-gray-100">
           Latest Articles
         </h2>
-        <Link to="/" className="text-sm font-medium text-gray-900 hover:underline">
+        <Link to="/" className="text-sm font-medium text-gray-900 dark:text-gray-100 hover:underline">
           View all articles →
         </Link>
       </div>
@@ -72,15 +72,15 @@ export function LazyBlogPostList({
           <LazyContent
             key={post.id}
             fallback={
-              <div className="bg-white rounded-lg shadow-md overflow-hidden animate-pulse">
-                <div className="w-full h-48 bg-gray-300"></div>
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden animate-pulse">
+                <div className="w-full h-48 bg-gray-300 dark:bg-gray-600"></div>
                 <div className="p-6">
-                  <div className="h-6 bg-gray-300 rounded mb-4"></div>
-                  <div className="h-6 bg-gray-300 rounded w-3/4 mb-4"></div>
+                  <div className="h-6 bg-gray-300 dark:bg-gray-600 rounded mb-4"></div>
+                  <div className="h-6 bg-gray-300 dark:bg-gray-600 rounded w-3/4 mb-4"></div>
                   <div className="space-y-2 mb-4">
-                    <div className="h-4 bg-gray-200 rounded"></div>
-                    <div className="h-4 bg-gray-200 rounded"></div>
-                    <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-2/3"></div>
                   </div>
                 </div>
               </div>
@@ -98,7 +98,7 @@ export function LazyBlogPostList({
         <div ref={loadMoreRef} className="flex justify-center mt-8">
           <button
             onClick={loadMorePosts}
-            className="px-6 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-800 transition-colors"
+            className="px-6 py-2 bg-gray-900 dark:bg-gray-700 text-white rounded-md hover:bg-gray-800 dark:hover:bg-gray-600 transition-colors"
             disabled={loading}
           >
             {loading ? 'Loading...' : 'Load More Articles'}
@@ -118,18 +118,18 @@ export function LazyBlogPostList({
         <button 
           onClick={onPreviousPage} 
           disabled={currentPage === 1} 
-          className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+          className="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
         >
           <ChevronLeftIcon className="h-5 w-5" />
           Previous
         </button>
-        <span className="text-sm text-gray-700">
+        <span className="text-sm text-gray-700 dark:text-gray-300">
           Page {currentPage} of {totalPages}
         </span>
         <button 
           onClick={onNextPage} 
           disabled={currentPage === totalPages} 
-          className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+          className="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
         >
           Next
           <ChevronRightIcon className="h-5 w-5" />

@@ -17,7 +17,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         """Get categories with article counts"""
         return Category.objects.annotate(
-            article_count=Count('article', filter=Q(article__status='published'))
+            article_count=Count('articles', filter=Q(articles__status='published'))
         ).order_by('name')
 
     @action(detail=True, methods=['get'])

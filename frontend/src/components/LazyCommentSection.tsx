@@ -17,35 +17,21 @@ export function LazyCommentSection({ articleId }: LazyCommentSectionProps) {
   const [loading, setLoading] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
 
+  // Helper function to count total comments including replies
+  const countTotalComments = (comments: CommentType[]): number => {
+    return comments.reduce((total, comment) => {
+      return total + 1 + (comment.replies ? countTotalComments(comment.replies) : 0);
+    }, 0);
+  };
+
   const fetchComments = useCallback(async () => {
     if (hasLoaded) return; // Prevent multiple loads
     
     try {
       setLoading(true);
       const fetchedComments = await getCommentsByArticle(articleId);
-      const commentMap = new Map<string, CommentType>();
-      const topLevelComments: CommentType[] = [];
-
-      fetchedComments.forEach((comment) => {
-        commentMap.set(comment.id, { ...comment, replies: [] });
-      });
-
-      fetchedComments.forEach((comment) => {
-        if (comment.parent && commentMap.has(comment.parent)) {
-          const parent = commentMap.get(comment.parent);
-          const currentComment = commentMap.get(comment.id);
-          if (parent && currentComment) {
-            parent.replies = [...(parent.replies || []), currentComment];
-          }
-        } else {
-          const currentComment = commentMap.get(comment.id);
-          if (currentComment) {
-            topLevelComments.push(currentComment);
-          }
-        }
-      });
-
-      setComments(topLevelComments);
+      // Comments are already properly nested by the backend
+      setComments(fetchedComments);
       setHasLoaded(true);
     } catch (error) {
       console.error('Error loading comments:', error);
@@ -75,8 +61,8 @@ export function LazyCommentSection({ articleId }: LazyCommentSectionProps) {
   };
 
   const CommentSkeleton = () => (
-    <div className="mt-8 space-y-4">
-      <div className="h-24 bg-gray-100 rounded-lg animate-pulse"></div>
+    <div className="mt-6 sm:mt-8 space-y-3 sm:space-y-4">
+      <div className="h-20 sm:h-24 bg-gray-100 rounded-lg animate-pulse"></div>
       {[...Array(3)].map((_, index) => (
         <SkeletonCommentCard key={index} />
       ))}
@@ -94,10 +80,10 @@ export function LazyCommentSection({ articleId }: LazyCommentSectionProps) {
     }
 
     return (
-      <div className="mt-8">
+      <div className="mt-6 sm:mt-8">
         <CommentForm articleId={articleId} onCommentSubmit={handleCommentSubmit} />
         {comments.length > 0 ? (
-          <div className="mt-8 space-y-4">
+          <div className="mt-6 sm:mt-8 space-y-2 sm:space-y-3">
             {comments.map((comment) => (
               <LazyContent
                 key={comment.id}
@@ -114,8 +100,8 @@ export function LazyCommentSection({ articleId }: LazyCommentSectionProps) {
             ))}
           </div>
         ) : (
-          <div className="text-center py-8 text-gray-500">
-            <p>Be the first to leave a comment!</p>
+          <div className="text-center py-6 sm:py-8 text-gray-500">
+            <p className="text-sm sm:text-base">Be the first to leave a comment!</p>
           </div>
         )}
       </div>
@@ -123,10 +109,10 @@ export function LazyCommentSection({ articleId }: LazyCommentSectionProps) {
   };
 
   return (
-    <section className="mt-12 pt-8 border-t border-gray-100">
-      <h2 className="text-2xl font-serif font-medium text-gray-900 mb-6 flex items-center">
-        <MessageCircleIcon className="h-6 w-6 mr-2" />
-        Comments {comments.length > 0 && `(${comments.length})`}
+    <section className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-gray-100">
+      <h2 className="text-xl sm:text-2xl font-serif font-medium text-gray-900 mb-4 sm:mb-6 flex items-center">
+        <MessageCircleIcon className="h-5 w-5 sm:h-6 sm:w-6 mr-2" />
+        Comments {comments.length > 0 && `(${countTotalComments(comments)})`}
       </h2>
       
       <LazyContent

@@ -26,7 +26,7 @@ export function CommentSection({ articleId }: CommentSectionProps) {
     try {
       setLoading(true);
       const fetchedComments = await getCommentsByArticle(articleId);
-      // Comments are now properly nested by the backend serializer
+      // Comments are already properly nested by the backend serializer
       setComments(fetchedComments);
     } catch (error) {
       console.error('Error loading comments:', error);
@@ -58,33 +58,33 @@ export function CommentSection({ articleId }: CommentSectionProps) {
   };
 
   return (
-    <section className="mt-12 pt-8 border-t border-gray-100 dark:border-gray-700">
-      <h2 className="text-2xl font-serif font-medium text-gray-900 dark:text-gray-100 mb-6 flex items-center">
-        <MessageCircleIcon className="h-6 w-6 mr-2" />
+    <section className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-gray-100 dark:border-gray-700">
+      <h2 className="text-xl sm:text-2xl font-serif font-medium text-gray-900 dark:text-gray-100 mb-4 sm:mb-6 flex items-center">
+        <MessageCircleIcon className="h-5 w-5 sm:h-6 sm:w-6 mr-2" />
         Comments {comments.length > 0 && `(${countTotalComments(comments)})`}
       </h2>
       <CommentForm articleId={articleId} onCommentSubmit={handleCommentSubmit} />
       {loading ? (
-        <div className="mt-8">
+        <div className="mt-6 sm:mt-8">
           {/* Comment Form Skeleton */}
-          <SkeletonLoader className="h-24 w-full mb-4" />
+          <SkeletonLoader className="h-20 sm:h-24 w-full mb-3 sm:mb-4" />
           {/* Individual Comment Skeletons */}
           {[...Array(3)].map((_, index) => (
-            <div key={index} className="mb-4">
-              <SkeletonLoader className="h-6 w-32 mb-2" /> {/* Author */}
-              <SkeletonLoader className="h-16 w-full" /> {/* Content */}
+            <div key={index} className="mb-3 sm:mb-4">
+              <SkeletonLoader className="h-5 sm:h-6 w-24 sm:w-32 mb-2" /> {/* Author */}
+              <SkeletonLoader className="h-12 sm:h-16 w-full" /> {/* Content */}
             </div>
           ))}
         </div>
       ) : comments.length > 0 ? (
-        <div className="mt-8">
+        <div className="mt-6 sm:mt-8">
           {comments.map((comment) => (
             <Comment key={comment.id} comment={comment} onReply={handleCommentSubmit} articleId={articleId} />
           ))}
         </div>
       ) : (
-        <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-          <p>Be the first to leave a comment!</p>
+        <div className="text-center py-6 sm:py-8 text-gray-500 dark:text-gray-400">
+          <p className="text-sm sm:text-base">Be the first to leave a comment!</p>
         </div>
       )}
     </section>

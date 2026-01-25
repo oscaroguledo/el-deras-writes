@@ -5,6 +5,7 @@ import { getComments, approveComment, deleteComment, flagComment } from '../../u
 import SkeletonLoader from '../../components/SkeletonLoader';
 import { ConfirmationModal } from '../../components/ConfirmationModal';
 import { useCallback, useEffect, useState } from 'react';
+import { getUserDisplayName } from '../../utils/userUtils';
 
 const PAGE_SIZE = 10;
 
@@ -22,11 +23,13 @@ export default function AdminCommentsPage() {
     try {
       setLoading(true);
       const response = await getComments({ page, pageSize: PAGE_SIZE, search });
-      setComments(response);
+      console.log('Fetched comments response:', response);
+      setComments(response.results || response);
       setTotalCommentsCount(response.count || 0);
       setTotalPages(Math.ceil((response.count || 0) / PAGE_SIZE));
     } catch (error) {
       toast.error('Failed to fetch comments.');
+      console.error('Error fetching comments:', error);
     } finally {
       setLoading(false);
     }
@@ -254,7 +257,7 @@ export default function AdminCommentsPage() {
                     <div className="flex items-center">
                       <User className="h-4 w-4 text-gray-400 dark:text-gray-500 mr-2" />
                       <div className="text-sm text-gray-900 dark:text-white">
-                        {comment.author?.username || 'Anonymous'}
+                        {comment.author ? getUserDisplayName(comment.author) : 'Anonymous'}
                       </div>
                     </div>
                   </td>
@@ -349,7 +352,7 @@ export default function AdminCommentsPage() {
                 <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                   <div className="flex items-center">
                     <User className="h-3 w-3 mr-1" />
-                    {comment.author?.username || 'Anonymous'}
+                    {comment.author ? getUserDisplayName(comment.author) : 'Anonymous'}
                   </div>
                   <div className="flex items-center">
                     <Calendar className="h-3 w-3 mr-1" />

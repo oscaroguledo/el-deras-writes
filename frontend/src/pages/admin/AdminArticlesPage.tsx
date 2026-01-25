@@ -5,6 +5,7 @@ import { Article } from '../../types/Article';
 import { toast } from 'react-toastify';
 import { Plus, Edit, Trash, ChevronLeft, ChevronRight, Search, FileText, Eye, Calendar } from 'lucide-react';
 import SkeletonLoader from '../../components/SkeletonLoader';
+import { LazyImage } from '../../components/LazyImage';
 
 export default function AdminArticlesPage() {
   const [articles, setArticles] = useState<Article[]>([]);
@@ -228,14 +229,11 @@ export default function AdminArticlesPage() {
                   <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="h-10 w-10 flex-shrink-0">
-                        <img 
-                          className="h-10 w-10 rounded object-cover border border-gray-200 dark:border-gray-600" 
-                          src={article.image || '/placeholder-image.jpg'} 
+                        <LazyImage 
+                          src={article.image || ''} 
                           alt={article.title}
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.src = '/placeholder-image.jpg';
-                          }}
+                          className="h-10 w-10 rounded object-cover border border-gray-200 dark:border-gray-600"
+                          fallbackType="article"
                         />
                       </div>
                       <div className="ml-4">
@@ -251,11 +249,16 @@ export default function AdminArticlesPage() {
                   </td>
                   <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                     <span className="inline-flex px-2 py-1 text-xs leading-5 font-semibold rounded-full bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
-                      {article.category?.name || 'Uncategorized'}
+                      {article.category || 'Uncategorized'}
                     </span>
                   </td>
                   <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    {typeof article.author === 'string' ? article.author : article.author?.username || 'Unknown'}
+                    {typeof article.author === 'string' 
+                      ? article.author 
+                      : article.author 
+                        ? `${article.author.first_name || ''} ${article.author.last_name || ''}`.trim() || article.author.username || 'Unknown'
+                        : 'Unknown'
+                    }
                   </td>
                   <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex px-2 py-1 text-xs leading-5 font-semibold rounded-full ${
@@ -338,7 +341,7 @@ export default function AdminArticlesPage() {
                 </h3>
                 <div className="flex flex-wrap items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                   <span className="inline-flex px-2 py-1 text-xs leading-4 font-semibold rounded-full bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200">
-                    {article.category?.name || 'Uncategorized'}
+                    {article.category || 'Uncategorized'}
                   </span>
                   <span className={`inline-flex px-2 py-1 text-xs leading-4 font-semibold rounded-full ${
                     article.status === 'published' 
@@ -367,7 +370,12 @@ export default function AdminArticlesPage() {
             </div>
             <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
               <div className="flex items-center space-x-4">
-                <span>By {typeof article.author === 'string' ? article.author : article.author?.username || 'Unknown'}</span>
+                <span>By {typeof article.author === 'string' 
+                  ? article.author 
+                  : article.author 
+                    ? `${article.author.first_name || ''} ${article.author.last_name || ''}`.trim() || article.author.username || 'Unknown'
+                    : 'Unknown'
+                }</span>
                 <div className="flex items-center">
                   <Calendar className="h-4 w-4 mr-1" />
                   {new Date(article.created_at).toLocaleDateString()}
