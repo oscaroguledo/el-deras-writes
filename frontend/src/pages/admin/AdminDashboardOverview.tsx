@@ -64,7 +64,7 @@ export default function AdminDashboardOverview() {
         {/* Overview Cards Skeleton */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
           {[...Array(12)].map((_, index) => (
-            <div key={index} className="shadow-lg rounded-xl p-6">
+            <div key={index} className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6">
               <div className="flex items-center justify-between">
                 <div className="flex flex-col">
                   <SkeletonLoader className="h-4 w-24 mb-2" />
@@ -79,7 +79,7 @@ export default function AdminDashboardOverview() {
         {/* Lists Skeleton */}
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {[...Array(6)].map((_, listIndex) => (
-            <div key={listIndex} className="bg-white shadow-lg rounded-xl p-6">
+            <div key={listIndex} className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6">
               <SkeletonLoader className="h-6 w-48 mb-4" /> {/* List Title */}
               <ul className="space-y-3">
                 {[...Array(5)].map((_, itemIndex) => (
@@ -98,7 +98,7 @@ export default function AdminDashboardOverview() {
 
   if (!dashboardData) {
     return (
-      <div className="text-center text-gray-500">
+      <div className="text-center text-gray-500 dark:text-gray-400">
         No dashboard data available.
       </div>
     );
@@ -188,7 +188,7 @@ export default function AdminDashboardOverview() {
   return (
     <ErrorBoundary>
       <div className="p-4 md:p-8">
-        <h1 className="text-3xl font-serif font-medium text-gray-900 mb-6">Dashboard Overview</h1>
+        <h1 className="text-3xl font-serif font-medium text-gray-900 dark:text-gray-100 mb-6">Dashboard Overview</h1>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
           {overviewCards.map((card, index) => (
@@ -207,27 +207,27 @@ export default function AdminDashboardOverview() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-          <div className="bg-white shadow-lg rounded-xl p-6">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+          <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6">
+            <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
               <UserPlus className="h-6 w-6 mr-2 text-blue-500" />
               Recently Registered Users
             </h3>
             <ul className="space-y-3">
               {safeArray(dashboardData.recently_registered_users).length > 0 ? (
                 safeArray(dashboardData.recently_registered_users).map((user) => (
-                  <li key={user.id} className="text-sm text-gray-700 flex justify-between items-center">
+                  <li key={user.id} className="text-sm text-gray-700 dark:text-gray-300 flex justify-between items-center">
                     <span className="truncate">{safeValue(user.username, 'Unknown')} ({safeValue(user.email, 'No email')})</span>
-                    <span className="text-gray-500 text-xs">{formatDate(user.date_joined)}</span>
+                    <span className="text-gray-500 dark:text-gray-400 text-xs">{formatDate(user.date_joined)}</span>
                   </li>
                 ))
               ) : (
-                <li className="text-sm text-gray-500 italic">No recent users</li>
+                <li className="text-sm text-gray-500 dark:text-gray-400 italic">No recent users</li>
               )}
             </ul>
           </div>
           
-          <div className="bg-white shadow-lg rounded-xl p-6">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+          <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6">
+            <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
               <FileText className="h-6 w-6 mr-2 text-green-500" />
               Recent Articles
             </h3>
@@ -238,96 +238,96 @@ export default function AdminDashboardOverview() {
                     ? article.author 
                     : article.author?.username || 'Unknown';
                   return (
-                    <li key={article.id} className="text-sm text-gray-700 flex justify-between items-center">
+                    <li key={article.id} className="text-sm text-gray-700 dark:text-gray-300 flex justify-between items-center">
                       <span className="truncate">{safeValue(article.title, 'Untitled')} by {authorName}</span>
-                      <span className="text-gray-500 text-xs">{formatDate(article.created_at)}</span>
+                      <span className="text-gray-500 dark:text-gray-400 text-xs">{formatDate(article.created_at)}</span>
                     </li>
                   );
                 })
               ) : (
-                <li className="text-sm text-gray-500 italic">No recent articles</li>
+                <li className="text-sm text-gray-500 dark:text-gray-400 italic">No recent articles</li>
               )}
             </ul>
           </div>
           
-          <div className="bg-white shadow-lg rounded-xl p-6">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+          <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6">
+            <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
               <MessageSquare className="h-6 w-6 mr-2 text-yellow-500" />
               Recent Comments
             </h3>
             <ul className="space-y-3">
               {safeArray(dashboardData.recent_comments).length > 0 ? (
                 safeArray(dashboardData.recent_comments).map((comment) => (
-                  <li key={comment.id} className="text-sm text-gray-700">
+                  <li key={comment.id} className="text-sm text-gray-700 dark:text-gray-300">
                     <p className="truncate">"{safeValue(comment.content, 'No content')}"</p>
-                    <p className="text-xs text-gray-500 truncate">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                       on "{safeValue(comment.article?.title, 'Unknown article')}" by {safeValue(comment.author?.username, 'Anonymous')}
                     </p>
                   </li>
                 ))
               ) : (
-                <li className="text-sm text-gray-500 italic">No recent comments</li>
+                <li className="text-sm text-gray-500 dark:text-gray-400 italic">No recent comments</li>
               )}
             </ul>
           </div>
           
-          <div className="bg-white shadow-lg rounded-xl p-6">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+          <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6">
+            <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
               <UsersIcon className="h-6 w-6 mr-2 text-blue-500" />
               Top Authors
             </h3>
             <ul className="space-y-3">
               {safeArray(dashboardData.top_authors).length > 0 ? (
                 safeArray(dashboardData.top_authors).map((author) => (
-                  <li key={author.id} className="text-sm text-gray-700 flex justify-between items-center">
+                  <li key={author.id} className="text-sm text-gray-700 dark:text-gray-300 flex justify-between items-center">
                     <span className="truncate">{safeValue(author.username, 'Unknown')}</span>
-                    <span className="text-gray-500 text-xs">{safeValue(author.total_articles, 0)} articles</span>
+                    <span className="text-gray-500 dark:text-gray-400 text-xs">{safeValue(author.total_articles, 0)} articles</span>
                   </li>
                 ))
               ) : (
-                <li className="text-sm text-gray-500 italic">No authors found</li>
+                <li className="text-sm text-gray-500 dark:text-gray-400 italic">No authors found</li>
               )}
             </ul>
           </div>
           
-          <div className="bg-white shadow-lg rounded-xl p-6">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+          <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6">
+            <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
               <Eye className="h-6 w-6 mr-2 text-indigo-500" />
               Most Viewed Articles
             </h3>
             <ul className="space-y-3">
               {safeArray(dashboardData.most_viewed_articles).length > 0 ? (
                 safeArray(dashboardData.most_viewed_articles).map((article) => (
-                  <li key={article.id} className="text-sm text-gray-700 flex justify-between items-center">
+                  <li key={article.id} className="text-sm text-gray-700 dark:text-gray-300 flex justify-between items-center">
                     <span className="truncate">{safeValue(article.title, 'Untitled')}</span>
-                    <span className="text-gray-500 text-xs flex items-center">
+                    <span className="text-gray-500 dark:text-gray-400 text-xs flex items-center">
                       {safeValue(article.views, 0)} <Eye className="inline-block h-4 w-4 ml-1" />
                     </span>
                   </li>
                 ))
               ) : (
-                <li className="text-sm text-gray-500 italic">No articles found</li>
+                <li className="text-sm text-gray-500 dark:text-gray-400 italic">No articles found</li>
               )}
             </ul>
           </div>
           
-          <div className="bg-white shadow-lg rounded-xl p-6">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+          <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6">
+            <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
               <Heart className="h-6 w-6 mr-2 text-red-500" />
               Most Liked Articles
             </h3>
             <ul className="space-y-3">
               {safeArray(dashboardData.most_liked_articles).length > 0 ? (
                 safeArray(dashboardData.most_liked_articles).map((article) => (
-                  <li key={article.id} className="text-sm text-gray-700 flex justify-between items-center">
+                  <li key={article.id} className="text-sm text-gray-700 dark:text-gray-300 flex justify-between items-center">
                     <span className="truncate">{safeValue(article.title, 'Untitled')}</span>
-                    <span className="text-gray-500 text-xs flex items-center">
+                    <span className="text-gray-500 dark:text-gray-400 text-xs flex items-center">
                       {safeValue(article.likes, 0)} <ThumbsUp className="inline-block h-4 w-4 ml-1" />
                     </span>
                   </li>
                 ))
               ) : (
-                <li className="text-sm text-gray-500 italic">No articles found</li>
+                <li className="text-sm text-gray-500 dark:text-gray-400 italic">No articles found</li>
               )}
             </ul>
           </div>

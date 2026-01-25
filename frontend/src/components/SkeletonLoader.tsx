@@ -45,7 +45,7 @@ const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
 
   return (
     <div
-      className={`${getAnimationClass()} bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%] ${getRoundedClass()} transition-opacity duration-300 ${width} ${height} ${className}`}
+      className={`${getAnimationClass()} bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 dark:from-gray-700 dark:via-gray-600 dark:to-gray-700 bg-[length:200%_100%] ${getRoundedClass()} transition-opacity duration-300 ${width} ${height} ${className}`}
       style={{
         backgroundImage: variant === 'shimmer' 
           ? 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)'
