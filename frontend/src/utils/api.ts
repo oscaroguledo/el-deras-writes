@@ -25,6 +25,7 @@ export async function getArticles(params: GetArticlesParams): Promise<PaginatedR
     ...article,
     _id: article.id,
     createdAt: article.created_at,
+    updatedAt: article.updated_at,
   }));
   return {
     ...response.data,
@@ -39,6 +40,7 @@ export async function getArticleById(id: string): Promise<Article> {
     ...article,
     _id: article.id,
     createdAt: article.created_at,
+    updatedAt: article.updated_at,
   };
 }
 

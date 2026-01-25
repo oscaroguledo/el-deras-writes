@@ -283,6 +283,8 @@ def seed_data():
             title=article_data['title'],
             excerpt=article_data['excerpt'],
             content=article_data['content'],
+            image=article_data['image'],
+            readTime=int(article_data['readTime'].split()[0]) if 'readTime' in article_data else 5,
             category=category,
             author=author,
             status='published',

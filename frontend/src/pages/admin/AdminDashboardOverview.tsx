@@ -224,7 +224,7 @@ export default function AdminDashboardOverview() {
             {dashboardData.recent_articles.map((article) => {
               return (
                 <li key={article.id} className="text-sm text-gray-700 flex justify-between items-center">
-                  <span className="truncate">{article.title} by {article.author.username}</span>
+                  <span className="truncate">{article.title} by {typeof article.author === 'string' ? article.author : article.author?.username || 'Unknown'}</span>
                   <span className="text-gray-500 text-xs">{formatDate(article.created_at)}</span>
                 </li>
               );

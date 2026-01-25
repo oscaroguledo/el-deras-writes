@@ -242,7 +242,7 @@ export default function AdminArticlesPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {article.author.username}
+                    {typeof article.author === 'string' ? article.author : article.author?.username || 'Unknown'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {new Date(article.createdAt).toLocaleDateString()}
@@ -300,7 +300,7 @@ export default function AdminArticlesPage() {
               </div>
             </div>
             <div className="text-sm text-gray-500 mb-1">Category: {article.category.name}</div>
-            <div className="text-sm text-gray-500 mb-1">Author: {article.author.username}</div>
+            <div className="text-sm text-gray-500 mb-1">Author: {typeof article.author === 'string' ? article.author : article.author?.username || 'Unknown'}</div>
             <div className="text-sm text-gray-500">Date: {new Date(article.createdAt).toLocaleDateString()}</div>
           </div>
         )) : (

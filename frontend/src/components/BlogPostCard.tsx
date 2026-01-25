@@ -39,16 +39,16 @@ export function BlogPostCard({
           {post.authorImage ? (
             <LazyImage 
               src={post.authorImage} 
-              alt={post.author.username} 
+              alt={typeof post.author === 'string' ? post.author : post.author.username} 
               className="h-8 w-8 rounded-full" 
             />
           ) : (
             <div className="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center text-xs font-medium text-gray-600">
-              {post.author && post.author.username.charAt(0).toUpperCase()}
+              {typeof post.author === 'string' ? post.author.charAt(0).toUpperCase() : post.author?.username?.charAt(0).toUpperCase()}
             </div>
           )}
           <div className="ml-3">
-          <p className="text-sm text-gray-500">{`${post.author.title} ${post.author.first_name} ${post.author.last_name}`}</p>
+          <p className="text-sm text-gray-500">{typeof post.author === 'string' ? post.author : `${post.author.first_name} ${post.author.last_name}`}</p>
             <p className="text-gray-500 text-xs">
               {new Date(post.createdAt).toLocaleDateString('en-US', {
               year: 'numeric',
