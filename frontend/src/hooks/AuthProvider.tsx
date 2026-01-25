@@ -4,7 +4,7 @@ import { AuthContext } from './AuthContext';
 import { CustomUser } from '../types/CustomUser';
 import { jwtDecode } from 'jwt-decode';
 
-const API_URL = 'https://el-deras-writes.onrender.com/api';
+const API_URL = 'http://localhost:8000/api';
 const ACCESS_TOKEN_KEY = 'elder_blog_access_token';
 const REFRESH_TOKEN_KEY = 'elder_blog_refresh_token';
 const USER_KEY = 'elder_blog_user';
