@@ -38,10 +38,17 @@ export default function Home() {
           page_size: articlesPerPage,
         });
 
-        // Set the first article as featured if available
+        // Set the first article as featured if available and not searching/filtering
         if (articlesResponse.results.length > 0) {
-          setFeaturedArticle(articlesResponse.results[0]);
-          setArticles(articlesResponse.results.slice(1));
+          if (searchQuery || categoryFilter) {
+            // When searching or filtering, show all results in the list
+            setFeaturedArticle(null);
+            setArticles(articlesResponse.results);
+          } else {
+            // Normal homepage: first article as hero, rest in list
+            setFeaturedArticle(articlesResponse.results[0]);
+            setArticles(articlesResponse.results.slice(1));
+          }
         } else {
           setFeaturedArticle(null);
           setArticles([]);
