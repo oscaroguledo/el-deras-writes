@@ -124,7 +124,7 @@ export default function ArticleDetail() {
             </div>
             <div className="flex items-center">
               <ClockIcon className="h-4 w-4 mr-1" />
-              <span>{article.readTime || '5 min read'}</span>
+              <span>{article.formatted_read_time || '5 mins'}</span>
             </div>
             {article.category && <div className="flex items-center">
                 <TagIcon className="h-4 w-4 mr-1" />

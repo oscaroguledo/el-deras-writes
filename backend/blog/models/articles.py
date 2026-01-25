@@ -57,3 +57,14 @@ class Article(models.Model):
 
     def __str__(self):
         return self.title
+    
+    @property
+    def formatted_read_time(self):
+        """Return read time with appropriate units (mins or secs)"""
+        if self.readTime >= 1:
+            return f"{self.readTime} min{'s' if self.readTime != 1 else ''}"
+        else:
+            # For articles with less than 1 minute read time, show in seconds
+            # Assuming 1 minute = 60 seconds, so 0 minutes = 30 seconds as default
+            seconds = max(30, self.readTime * 60) if self.readTime > 0 else 30
+            return f"{seconds} sec{'s' if seconds != 1 else ''}"

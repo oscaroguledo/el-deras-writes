@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MenuIcon, XIcon, SearchIcon } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getCategories } from '../utils/api';
@@ -8,6 +8,8 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [topCategories, setTopCategories] = useState<Category[]>([]);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const mobileSearchInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,7 +33,7 @@ export default function Header() {
         <div className="flex justify-between items-center h-16">
           <div className="flex-shrink-0">
             <Link to="/" className="text-2xl font-serif font-medium tracking-tight text-gray-900">
-              El_Dera's writes
+              El Dera's writes
             </Link>
           </div>
           <div className="hidden md:flex items-center space-x-8">

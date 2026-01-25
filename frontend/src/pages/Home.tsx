@@ -18,6 +18,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [articles, setArticles] = useState<Article[]>([]);
   const [featuredArticle, setFeaturedArticle] = useState<Article | null>(null);
+  const [totalCount, setTotalCount] = useState(0);
   // Removed topCategories state
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -45,6 +46,7 @@ export default function Home() {
           setFeaturedArticle(null);
           setArticles([]);
         }
+        setTotalCount(articlesResponse.count);
         setTotalPages(Math.ceil(articlesResponse.count / articlesPerPage));
         // Removed setTopCategories
       } catch (error) {
@@ -102,6 +104,11 @@ export default function Home() {
           <h2 className="text-xl font-medium">
             Search results for:{' '}
             <span className="font-bold">"{searchQuery}"</span>
+            {totalCount > 0 && (
+              <span className="text-sm text-gray-600 ml-2">
+                ({totalCount} result{totalCount !== 1 ? 's' : ''})
+              </span>
+            )}
           </h2>
         </div>
       )}

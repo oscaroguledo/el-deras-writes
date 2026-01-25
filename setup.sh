@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# El_Dera's Writes - Complete Setup Script
+# El Dera's Writes - Complete Setup Script
 # This script sets up the entire application from scratch
 
 set -e  # Exit on any error
 
-echo "🚀 El_Dera's Writes - Complete Setup"
+echo "🚀 El Dera's Writes - Complete Setup"
 echo "===================================="
 echo "Modern Blog Platform with UUID v7 and Docker"
 echo ""
@@ -177,7 +177,7 @@ echo ""
 echo "🎉 Setup Complete!"
 echo "=================="
 echo ""
-print_status "Your El_Dera's Writes blog is ready!"
+print_status "Your El Dera's Writes blog is ready!"
 echo ""
 echo "📍 Access Points:"
 echo "  🌐 Frontend:     http://localhost:3000"

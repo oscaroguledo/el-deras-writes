@@ -85,7 +85,7 @@ image = models.URLField(blank=True, null=True, help_text="URL to article image")
 
 ## 🎉 **Result**
 
-Your El_Dera's Writes blog is now fully functional with:
+Your El Dera's Writes blog is now fully functional with:
 
 - ✅ **Working article images** from Unsplash
 - ✅ **Complete API data** including images and read times

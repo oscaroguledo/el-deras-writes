@@ -9,7 +9,8 @@ export interface Article {
   category: Category;
   author: string; // Author is returned as a string from the API
   authorImage?: string;
-  readTime?: string;
+  readTime?: number;
+  formatted_read_time?: string;
   createdAt: string; 
   updatedAt: string;
   views?: number;

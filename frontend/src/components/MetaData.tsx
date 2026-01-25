@@ -13,11 +13,11 @@ interface MetaDataProps {
 }
 
 export const MetaData: React.FC<MetaDataProps> = ({
-  title = "El_Dera's writes - Curating thoughtful perspectives",
-  description = "El_Dera's writes is a blog curating thoughtful perspectives on technology, design, and the art of mindful living.",
+  title = "El Dera's writes - Curating thoughtful perspectives",
+  description = "El Dera's writes is a blog curating thoughtful perspectives on technology, design, and the art of mindful living.",
   image = "https://el-deras-writes.vercel.app/logo512.webp", // Replace with your actual default logo URL
   url = "https://el-deras-writes.vercel.app/", // Replace with your actual base URL
-  siteName = "El_Dera's writes",
+  siteName = "El Dera's writes",
   locale = "en_US",
   twitterCreator = "@el_deras_writes", // Replace with your Twitter handle
   twitterSite = "@el_deras_writes", // Replace with your Twitter handle

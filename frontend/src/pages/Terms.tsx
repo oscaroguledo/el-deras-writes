@@ -7,13 +7,13 @@ export default function Terms() {
         </h1>
         <div className="prose prose-lg max-w-none text-justify">
           <p>
-            Welcome to El_Dera's writes. By accessing or using our website, you
+            Welcome to El Dera's writes. By accessing or using our website, you
             agree to be bound by these Terms of Service. Please read them
             carefully.
           </p>
           <h2>1. Acceptance of Terms</h2>
           <p>
-            By accessing or using the El_Dera's writes website ("Site"), you
+            By accessing or using the El Dera's writes website ("Site"), you
             agree to be bound by these Terms of Service ("Terms"). If you do not
             agree to all of these Terms, you may not access or use the Site.
           </p>
@@ -72,11 +72,11 @@ export default function Terms() {
           <h2>6. Intellectual Property</h2>
           <p>
             The Site and its original content, features, and functionality are
-            and will remain the exclusive property of El_Dera's writes. The Site
+            and will remain the exclusive property of El Dera's writes. The Site
             is protected by copyright, trademark, and other laws of both the
             United States and foreign countries. Our trademarks and trade dress
             may not be used in connection with any product or service without
-            the prior written consent of El_Dera's writes.
+            the prior written consent of El Dera's writes.
           </p>
           <h2>7. Termination</h2>
           <p>
@@ -87,7 +87,7 @@ export default function Terms() {
           </p>
           <h2>8. Limitation of Liability</h2>
           <p>
-            In no event shall El_Dera's writes, nor its directors, employees,
+            In no event shall El Dera's writes, nor its directors, employees,
             partners, agents, suppliers, or affiliates, be liable for any
             indirect, incidental, special, consequential or punitive damages,
             including without limitation, loss of profits, data, use, goodwill,

@@ -25,7 +25,7 @@ export function ArticleForm({
   const [excerpt, setExcerpt] = useState(initialData?.excerpt || '');
   const [category, setCategory] = useState(initialData?.category?.name || '');
   const authorId = initialData?.author?.id || loggedInUser?.id || '';
-  const [readTime, setReadTime] = useState(initialData?.readTime || '5 min read');
+  const [readTime, setReadTime] = useState(initialData?.readTime || 5);
   const [mainImage, setMainImage] = useState<File | null>(null);
   const [mainImagePreview, setMainImagePreview] = useState(initialData?.image || '');
 
@@ -145,15 +145,15 @@ export function ArticleForm({
         </div>
         <div>
           <label htmlFor="readTime" className="block text-sm font-medium text-gray-700 mb-1">
-            Read Time
+            Read Time (minutes)
           </label>
           <input
             id="readTime"
-            type="text"
+            type="number"
             value={readTime}
-            onChange={(e) => setReadTime(e.target.value)}
+            onChange={(e) => setReadTime(parseInt(e.target.value) || 0)}
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
-            placeholder="e.g. 5 min read"
+            placeholder="5"
           />
         </div>
       </div>

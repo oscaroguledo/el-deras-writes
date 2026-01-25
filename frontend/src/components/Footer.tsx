@@ -52,17 +52,18 @@ export default function Footer() {
 
   return (
     <footer className="bg-gray-50 border-t border-gray-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-          <div>
-            <h3 className="text-lg font-serif font-medium text-gray-900 mb-4">
-              El_Dera's writes
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div className="grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Brand Section */}
+          <div className="col-span-1 sm:col-span-2 lg:col-span-1">
+            <h3 className="text-lg font-serif font-medium text-gray-900 mb-3 sm:mb-4">
+              El Dera's writes
             </h3>
-            <p className="text-gray-600 text-sm mb-4">
+            <p className="text-gray-600 text-sm mb-3 sm:mb-4 leading-relaxed">
               Curating thoughtful perspectives on technology, design, and the
               art of mindful living.
             </p>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-3 sm:gap-4">
               {contactInfo?.social_media_links &&
                 Object.entries(contactInfo.social_media_links).map(([platform, url]) => (
                   <a
@@ -70,7 +71,7 @@ export default function Footer() {
                     href={url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-gray-500 hover:text-gray-900"
+                    className="text-gray-500 hover:text-gray-900 transition-colors duration-200 p-1"
                     aria-label={platform}
                   >
                     {getSocialMediaIcon(platform)}
@@ -78,62 +79,71 @@ export default function Footer() {
                 ))}
             </div>
           </div>
-          <div>
-            <h3 className="text-sm font-medium text-gray-900 mb-4">
+
+          {/* Categories Section */}
+          <div className="col-span-1">
+            <h3 className="text-sm font-medium text-gray-900 mb-3 sm:mb-4">
               Categories
             </h3>
-            <ul className="space-y-2">
+            <ul className="space-y-1.5 sm:space-y-2">
               {topCategories.map(category => (
                 <li key={category.id}>
-                  <Link to={`/?category=${encodeURIComponent(category.name.trim())}`} className="text-sm text-gray-600 hover:text-gray-900">
+                  <Link 
+                    to={`/?category=${encodeURIComponent(category.name.trim())}`} 
+                    className="text-sm text-gray-600 hover:text-gray-900 transition-colors duration-200 block py-0.5"
+                  >
                     {category.name.trim()}
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
-          <div>
-            <h3 className="text-sm font-medium text-gray-900 mb-4">
+
+          {/* Information Section */}
+          <div className="col-span-1">
+            <h3 className="text-sm font-medium text-gray-900 mb-3 sm:mb-4">
               Information
             </h3>
-            <ul className="space-y-2">
+            <ul className="space-y-1.5 sm:space-y-2">
               <li>
-                <Link to="/about" className="text-sm text-gray-600 hover:text-gray-900">
+                <Link to="/about" className="text-sm text-gray-600 hover:text-gray-900 transition-colors duration-200 block py-0.5">
                   About
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className="text-sm text-gray-600 hover:text-gray-900">
+                <Link to="/contact" className="text-sm text-gray-600 hover:text-gray-900 transition-colors duration-200 block py-0.5">
                   Contact
                 </Link>
               </li>
               <li>
-                <Link to="/terms" className="text-sm text-gray-600 hover:text-gray-900">
+                <Link to="/terms" className="text-sm text-gray-600 hover:text-gray-900 transition-colors duration-200 block py-0.5">
                   Terms
                 </Link>
               </li>
               <li>
-                <Link to="/privacy" className="text-sm text-gray-600 hover:text-gray-900">
+                <Link to="/privacy" className="text-sm text-gray-600 hover:text-gray-900 transition-colors duration-200 block py-0.5">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link to="/admin" className="text-sm text-gray-600 hover:text-gray-900">
+                <Link to="/admin" className="text-sm text-gray-600 hover:text-gray-900 transition-colors duration-200 block py-0.5">
                   Admin Login
                 </Link>
               </li>
             </ul>
           </div>
-          <div>
-            <h3 className="text-sm font-medium text-gray-900 mb-4">
+
+          {/* Feedback Section */}
+          <div className="col-span-1 sm:col-span-2 lg:col-span-1">
+            <h3 className="text-sm font-medium text-gray-900 mb-3 sm:mb-4">
               Share Your Feedback
             </h3>
             <FeedbackForm />
           </div>
         </div>
-        <div className="mt-12 pt-8 border-t border-gray-100">
-          <p className="text-center text-sm text-gray-500">
-            © {new Date().getFullYear()} El_Dera's writes. All rights reserved.
+        <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-gray-100">
+          <p className="text-center text-xs sm:text-sm text-gray-500">
+            © {new Date().getFullYear()} El Dera's writes. All rights reserved.
           </p>
         </div>
       </div>

@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# El_Dera's Writes - Docker Setup Script
+# El Dera's Writes - Docker Setup Script
 # This script sets up the entire application with Docker
 
 set -e  # Exit on any error
 
-echo "🚀 Setting up El_Dera's Writes Blog with Docker"
+echo "🚀 Setting up El Dera's Writes Blog with Docker"
 echo "================================================"
 
 # Colors for output

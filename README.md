@@ -1,4 +1,4 @@
-# El_Dera's Writes - Modern Blog Platform
+# El Dera's Writes - Modern Blog Platform
 
 A production-ready blog application built with Django REST API backend and React frontend, optimized for PostgreSQL with UUID v7 primary keys and designed for scalable deployment.
 

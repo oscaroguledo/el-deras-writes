@@ -57,7 +57,7 @@ export function HeroPost({
                 month: 'long',
                 day: 'numeric'
               })}{' '}
-                · {post.readTime || '5 min read'}
+                · {post.formatted_read_time || '5 mins'}
               </p>
             </div>
           </div>

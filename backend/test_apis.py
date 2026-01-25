@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-API Testing Script for El_Dera's Writes Blog
+API Testing Script for El Dera's Writes Blog
 Tests all major API endpoints to ensure they're working correctly.
 Designed to work with Docker containers.
 """
@@ -45,7 +45,7 @@ def test_api_endpoints():
     """Test all API endpoints"""
     client = APIClient()
     
-    print("🚀 Testing El_Dera's Writes Blog APIs")
+    print("🚀 Testing El Dera's Writes Blog APIs")
     print("=" * 50)
     
     # Test UUID v7 functionality first

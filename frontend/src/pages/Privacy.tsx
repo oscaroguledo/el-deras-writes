@@ -7,7 +7,7 @@ export default function Privacy() {
         </h1>
         <div className="prose prose-lg max-w-none text-justify">
           <p>
-            At El_Dera's writes, we take your privacy seriously. This Privacy
+            At El Dera's writes, we take your privacy seriously. This Privacy
             Policy explains how we collect, use, disclose, and safeguard your
             information when you visit our website. Please read this policy
             carefully.

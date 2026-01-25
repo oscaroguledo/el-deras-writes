@@ -64,7 +64,14 @@ class CustomUser(models.Model):
         ]
 
     def __str__(self):
-        return self.username
+        if self.first_name and self.last_name:
+            return f"{self.first_name} {self.last_name}"
+        elif self.first_name:
+            return self.first_name
+        elif self.last_name:
+            return self.last_name
+        else:
+            return self.username
 
     def set_password(self, raw_password):
         self.password = make_password(raw_password)

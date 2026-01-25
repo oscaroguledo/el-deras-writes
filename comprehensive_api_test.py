@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Comprehensive API Test for El_Dera's Writes Blog
+Comprehensive API Test for El Dera's Writes Blog
 Tests all API endpoints to ensure they're working correctly.
 """
 
@@ -45,7 +45,7 @@ def test_endpoint(method, endpoint, data=None, expected_status=200):
         return False
 
 def main():
-    print("🚀 Comprehensive API Testing for El_Dera's Writes")
+    print("🚀 Comprehensive API Testing for El Dera's Writes")
     print("=" * 60)
     
     # Test health endpoint
