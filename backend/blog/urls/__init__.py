@@ -5,8 +5,8 @@ from .auth import auth_urlpatterns
 from .admin import admin_urlpatterns
 
 urlpatterns = [
-    # API endpoints
-    path('api/', include(api_urlpatterns)),
+    # API endpoints - prefix removed since it's handled at project level
+    path('', include(api_urlpatterns)),
     
     # Authentication endpoints
     path('auth/', include(auth_urlpatterns)),
