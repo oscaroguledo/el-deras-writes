@@ -204,7 +204,7 @@ class CategoryHierarchyOrganizationTest(HypothesisTestCase):
             )
             
             # Create API request
-            request = self.factory.get('/api/categories/')
+            request = self.factory.get(categories/')
             force_authenticate(request, user=self.test_user)
             
             # Get category through API
@@ -266,7 +266,7 @@ class CategoryHierarchyOrganizationTest(HypothesisTestCase):
                 children.append(child)
             
             # Create API request for hierarchy endpoint
-            request = self.factory.get('/api/categories/hierarchy/')
+            request = self.factory.get(categories/hierarchy/')
             force_authenticate(request, user=self.test_user)
             
             # Get hierarchy through API
@@ -370,7 +370,7 @@ class CategoryHierarchyOrganizationTest(HypothesisTestCase):
                 )
             
             # Property: API should return articles for the category
-            request = self.factory.get(f'/api/categories/{category.id}/articles/')
+            request = self.factory.get(fcategories/{category.id}/articles/')
             force_authenticate(request, user=self.test_user)
             
             view = CategoryViewSet.as_view({'get': 'articles'})
@@ -470,7 +470,7 @@ class CategoryHierarchyOrganizationTest(HypothesisTestCase):
         Category.objects.all().delete()
         
         # Create API request
-        request = self.factory.get('/api/categories/hierarchy/')
+        request = self.factory.get(categories/hierarchy/')
         force_authenticate(request, user=self.test_user)
         
         # Get hierarchy

@@ -17,7 +17,7 @@ class ArticleViewSet(BaseViewMixin, viewsets.ModelViewSet):
     permission_classes = [IsAdminOrReadOnly]
     pagination_class = ArticlePagination
     filter_backends = [filters.SearchFilter]
-    search_fields = ['title', 'content', 'author__username', 'category__name']
+    search_fields = ['title', 'content', 'excerpt', 'author__username', 'category__name']
 
     def get_queryset(self):
         """Get articles with basic filtering"""
@@ -57,7 +57,8 @@ class ArticleViewSet(BaseViewMixin, viewsets.ModelViewSet):
         else:
             queryset = queryset.order_by('-created_at')
         
-        return queryset
+        # Remove duplicates that might occur from joins
+        return queryset.distinct()
 
     def perform_create(self, serializer):
         """Create article"""

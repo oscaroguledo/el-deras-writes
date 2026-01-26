@@ -88,7 +88,7 @@ class AdminArticleCreationCompletenessTest(HypothesisTestCase):
         }
         
         # Create article via admin API
-        response = self.client.post('/api/admin/articles/', article_data, format='json')
+        response = self.client.post(admin/articles/', article_data, format='json')
         
         # Verify article was created successfully
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -120,7 +120,7 @@ class AdminArticleCreationCompletenessTest(HypothesisTestCase):
         self.assertEqual(created_article.author, self.admin_user)
         
         # Verify article is retrievable via API
-        get_response = self.client.get(f'/api/admin/articles/{article_id}/')
+        get_response = self.client.get(fadmin/articles/{article_id}/')
         self.assertEqual(get_response.status_code, status.HTTP_200_OK)
         
         # Verify all metadata is present in API response
@@ -160,7 +160,7 @@ class AdminArticleCreationCompletenessTest(HypothesisTestCase):
             'content': content
         }
         
-        response = self.client.post('/api/admin/articles/', article_data, format='json')
+        response = self.client.post(admin/articles/', article_data, format='json')
         
         # Verify article was created successfully
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -199,7 +199,7 @@ class AdminArticleCreationCompletenessTest(HypothesisTestCase):
             'content': 'Test content'
         }
         
-        response = self.client.post('/api/admin/articles/', article_data, format='json')
+        response = self.client.post(admin/articles/', article_data, format='json')
         
         # Verify access is denied
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -234,7 +234,7 @@ class AdminArticleCreationCompletenessTest(HypothesisTestCase):
             'scheduled_publish': scheduled_time.isoformat()
         }
         
-        response = self.client.post('/api/admin/articles/', article_data, format='json')
+        response = self.client.post(admin/articles/', article_data, format='json')
         
         # Verify article was created successfully
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)

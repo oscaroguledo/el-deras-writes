@@ -93,7 +93,7 @@ class APIIntegrationTest(TestCase):
     def test_authentication_flow(self):
         """Test complete authentication flow."""
         # Login
-        response = self.client.post('/api/token/', {
+        response = self.client.post(token/', {
             'username': 'apitest',
             'password': 'testpass123'
         })
@@ -105,7 +105,7 @@ class APIIntegrationTest(TestCase):
         
         # Use token for authenticated request
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
-        response = self.client.get('/api/users/me/')
+        response = self.client.get(users/me/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['username'], 'apitest')
     
@@ -123,24 +123,24 @@ class APIIntegrationTest(TestCase):
             'category': self.category.id,
             'status': 'published'
         }
-        response = self.client.post('/api/articles/', article_data)
+        response = self.client.post(articles/', article_data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         article_id = response.data['id']
         
         # Read article
-        response = self.client.get(f'/api/articles/{article_id}/')
+        response = self.client.get(farticles/{article_id}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['title'], 'Integration Test Article')
         
         # Update article
-        response = self.client.patch(f'/api/articles/{article_id}/', {
+        response = self.client.patch(farticles/{article_id}/', {
             'title': 'Updated Integration Test Article'
         })
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['title'], 'Updated Integration Test Article')
         
         # Delete article
-        response = self.client.delete(f'/api/articles/{article_id}/')
+        response = self.client.delete(farticles/{article_id}/')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
     
     def test_comment_workflow(self):
@@ -163,7 +163,7 @@ class APIIntegrationTest(TestCase):
             'article': article.id,
             'content': 'This is a test comment.'
         }
-        response = self.client.post('/api/comments/', comment_data)
+        response = self.client.post(comments/', comment_data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         comment_id = response.data['id']
         
@@ -174,7 +174,7 @@ class APIIntegrationTest(TestCase):
         
         # Admin moderates comment
         self.client.force_authenticate(user=self.admin)
-        response = self.client.patch(f'/api/comments/{comment_id}/', {
+        response = self.client.patch(fcomments/{comment_id}/', {
             'approved': True
         })
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -200,7 +200,7 @@ class APIIntegrationTest(TestCase):
         )
         
         # Search for Python
-        response = self.client.get('/api/articles/', {'search': 'Python'})
+        response = self.client.get(articles/', {'search': 'Python'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreater(len(response.data['results']), 0)
         self.assertIn('Python', response.data['results'][0]['title'])
@@ -219,14 +219,14 @@ class APIIntegrationTest(TestCase):
             )
         
         # Test first page
-        response = self.client.get('/api/articles/?page=1&page_size=10')
+        response = self.client.get(articles/?page=1&page_size=10')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['results']), 10)
         self.assertIn('count', response.data)
         self.assertIn('next', response.data)
         
         # Test second page
-        response = self.client.get('/api/articles/?page=2&page_size=10')
+        response = self.client.get(articles/?page=2&page_size=10')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreater(len(response.data['results']), 0)
 
@@ -274,11 +274,11 @@ class CachingIntegrationTest(TestCase):
         client = APIClient()
         
         # First request (cache miss)
-        response1 = client.get(f'/api/articles/{article.id}/')
+        response1 = client.get(farticles/{article.id}/')
         self.assertEqual(response1.status_code, status.HTTP_200_OK)
         
         # Second request (should be cached)
-        response2 = client.get(f'/api/articles/{article.id}/')
+        response2 = client.get(farticles/{article.id}/')
         self.assertEqual(response2.status_code, status.HTTP_200_OK)
         self.assertEqual(response1.data, response2.data)
 
@@ -296,7 +296,7 @@ class SecurityIntegrationTest(TestCase):
     
     def test_authentication_required(self):
         """Test that protected endpoints require authentication."""
-        response = self.client.get('/api/users/me/')
+        response = self.client.get(users/me/')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
     
     def test_password_hashing(self):
@@ -309,7 +309,7 @@ class SecurityIntegrationTest(TestCase):
         """Test SQL injection prevention."""
         # Attempt SQL injection in search
         malicious_query = "'; DROP TABLE blog_article; --"
-        response = self.client.get('/api/articles/', {'search': malicious_query})
+        response = self.client.get(articles/', {'search': malicious_query})
         
         # Should not cause error and table should still exist
         self.assertIn(response.status_code, [status.HTTP_200_OK, status.HTTP_400_BAD_REQUEST])
@@ -331,7 +331,7 @@ class SecurityIntegrationTest(TestCase):
         self.client.force_authenticate(user=self.user)
         
         # Test invalid email
-        response = self.client.patch('/api/users/me/', {
+        response = self.client.patch(users/me/', {
             'email': 'invalid-email'
         })
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -398,7 +398,7 @@ class AnalyticsIntegrationTest(TestCase):
         
         # Simulate article view
         client = APIClient()
-        response = client.get(f'/api/articles/{article.id}/')
+        response = client.get(farticles/{article.id}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
         # Verify analytics exist
@@ -453,13 +453,13 @@ class EndToEndWorkflowTest(TestCase):
             'category': self.category.id,
             'status': 'published'
         }
-        response = self.client.post('/api/articles/', article_data)
+        response = self.client.post(articles/', article_data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         article_id = response.data['id']
         
         # Reader views article (unauthenticated)
         self.client.force_authenticate(user=None)
-        response = self.client.get(f'/api/articles/{article_id}/')
+        response = self.client.get(farticles/{article_id}/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         
         # Reader authenticates and comments
@@ -468,13 +468,13 @@ class EndToEndWorkflowTest(TestCase):
             'article': article_id,
             'content': 'Great article!'
         }
-        response = self.client.post('/api/comments/', comment_data)
+        response = self.client.post(comments/', comment_data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         comment_id = response.data['id']
         
         # Admin moderates comment
         self.client.force_authenticate(user=self.admin)
-        response = self.client.patch(f'/api/comments/{comment_id}/', {
+        response = self.client.patch(fcomments/{comment_id}/', {
             'approved': True
         })
         self.assertEqual(response.status_code, status.HTTP_200_OK)

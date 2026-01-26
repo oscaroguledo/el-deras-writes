@@ -436,7 +436,7 @@ class ProfileUpdateValidationTest(HypothesisTestCase):
         }
         
         # Create API request
-        request = self.factory.patch(f'/api/users/{user.id}/', invalid_data, content_type='application/json')
+        request = self.factory.patch(fusers/{user.id}/', invalid_data, content_type='application/json')
         force_authenticate(request, user=self.admin_user)
         
         # Update through API

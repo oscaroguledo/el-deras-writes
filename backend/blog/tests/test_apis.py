@@ -28,7 +28,7 @@ def test_api_endpoints():
     # Test health endpoint
     print("\n1. Testing Health Check...")
     try:
-        response = client.get('/api/health/')
+        response = client.get(health/')
         print(f"   ✅ Health Check: {response.status_code} - {response.data}")
     except Exception as e:
         print(f"   ❌ Health Check failed: {e}")
@@ -38,35 +38,35 @@ def test_api_endpoints():
     
     # Articles
     try:
-        response = client.get('/api/articles/')
+        response = client.get(articles/')
         print(f"   ✅ Articles List: {response.status_code}")
     except Exception as e:
         print(f"   ❌ Articles List failed: {e}")
     
     # Categories
     try:
-        response = client.get('/api/categories/')
+        response = client.get(categories/')
         print(f"   ✅ Categories List: {response.status_code}")
     except Exception as e:
         print(f"   ❌ Categories List failed: {e}")
     
     # Tags
     try:
-        response = client.get('/api/tags/')
+        response = client.get(tags/')
         print(f"   ✅ Tags List: {response.status_code}")
     except Exception as e:
         print(f"   ❌ Tags List failed: {e}")
     
     # Contact Info
     try:
-        response = client.get('/api/contact/')
+        response = client.get(contact/')
         print(f"   ✅ Contact Info: {response.status_code}")
     except Exception as e:
         print(f"   ❌ Contact Info failed: {e}")
     
     # Visitor Count
     try:
-        response = client.get('/api/visitor-count/')
+        response = client.get(visitor-count/')
         print(f"   ✅ Visitor Count: {response.status_code}")
     except Exception as e:
         print(f"   ❌ Visitor Count failed: {e}")
@@ -78,7 +78,7 @@ def test_api_endpoints():
             'email': 'test@example.com',
             'message': 'This is a test feedback message.'
         }
-        response = client.post('/api/feedback/', feedback_data)
+        response = client.post(feedback/', feedback_data)
         print(f"   ✅ Feedback Submission: {response.status_code}")
     except Exception as e:
         print(f"   ❌ Feedback Submission failed: {e}")
@@ -87,7 +87,7 @@ def test_api_endpoints():
     
     # Test token endpoint (should fail without credentials)
     try:
-        response = client.post('/api/token/', {
+        response = client.post(token/', {
             'email': 'nonexistent@example.com',
             'password': 'wrongpassword'
         })

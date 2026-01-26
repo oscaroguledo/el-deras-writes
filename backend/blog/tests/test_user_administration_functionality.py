@@ -78,7 +78,7 @@ class UserAdministrationFunctionalityTest(HypothesisTestCase):
         }
         
         # Create user via admin API
-        response = self.client.post('/api/admin/users/', user_data, format='json')
+        response = self.client.post(admin/users/', user_data, format='json')
         
         # Verify user was created successfully
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -98,7 +98,7 @@ class UserAdministrationFunctionalityTest(HypothesisTestCase):
         self.assertEqual(created_user.is_active, is_active)
         
         # Verify user is retrievable via API
-        get_response = self.client.get(f'/api/admin/users/{user_id}/')
+        get_response = self.client.get(fadmin/users/{user_id}/')
         self.assertEqual(get_response.status_code, status.HTTP_200_OK)
         
         # Verify all data is present in API response
@@ -148,7 +148,7 @@ class UserAdministrationFunctionalityTest(HypothesisTestCase):
         }
         
         # Update user via admin API
-        response = self.client.patch(f'/api/admin/users/{test_user.id}/', update_data, format='json')
+        response = self.client.patch(fadmin/users/{test_user.id}/', update_data, format='json')
         
         # Verify update was successful
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -163,7 +163,7 @@ class UserAdministrationFunctionalityTest(HypothesisTestCase):
         self.assertEqual(test_user.is_active, new_is_active)
         
         # Verify changes are reflected in API response
-        get_response = self.client.get(f'/api/admin/users/{test_user.id}/')
+        get_response = self.client.get(fadmin/users/{test_user.id}/')
         self.assertEqual(get_response.status_code, status.HTTP_200_OK)
         
         response_data = get_response.data
@@ -197,7 +197,7 @@ class UserAdministrationFunctionalityTest(HypothesisTestCase):
         self.assertTrue(CustomUser.objects.filter(id=user_id).exists())
         
         # Delete user via admin API
-        response = self.client.delete(f'/api/admin/users/{user_id}/')
+        response = self.client.delete(fadmin/users/{user_id}/')
         
         # Verify deletion was successful
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -206,7 +206,7 @@ class UserAdministrationFunctionalityTest(HypothesisTestCase):
         self.assertFalse(CustomUser.objects.filter(id=user_id).exists())
         
         # Verify user is no longer accessible via API
-        get_response = self.client.get(f'/api/admin/users/{user_id}/')
+        get_response = self.client.get(fadmin/users/{user_id}/')
         self.assertEqual(get_response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_admin_user_list_management(self):
@@ -235,7 +235,7 @@ class UserAdministrationFunctionalityTest(HypothesisTestCase):
             test_users.append(user)
         
         # Get user list via admin API
-        response = self.client.get('/api/admin/users/')
+        response = self.client.get(admin/users/')
         
         # Verify list request was successful
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -278,20 +278,20 @@ class UserAdministrationFunctionalityTest(HypothesisTestCase):
             'user_type': 'normal'
         }
         
-        create_response = self.client.post('/api/admin/users/', user_data, format='json')
+        create_response = self.client.post(admin/users/', user_data, format='json')
         self.assertEqual(create_response.status_code, status.HTTP_403_FORBIDDEN)
         
         # Try to list users
-        list_response = self.client.get('/api/admin/users/')
+        list_response = self.client.get(admin/users/')
         self.assertEqual(list_response.status_code, status.HTTP_403_FORBIDDEN)
         
         # Try to update a user
-        update_response = self.client.patch(f'/api/admin/users/{self.admin_user.id}/', 
+        update_response = self.client.patch(fadmin/users/{self.admin_user.id}/', 
                                           {'first_name': 'Hacked'}, format='json')
         self.assertEqual(update_response.status_code, status.HTTP_403_FORBIDDEN)
         
         # Try to delete a user
-        delete_response = self.client.delete(f'/api/admin/users/{self.admin_user.id}/')
+        delete_response = self.client.delete(fadmin/users/{self.admin_user.id}/')
         self.assertEqual(delete_response.status_code, status.HTTP_403_FORBIDDEN)
 
     @given(
@@ -319,7 +319,7 @@ class UserAdministrationFunctionalityTest(HypothesisTestCase):
         )
         
         # Search for users via admin API
-        response = self.client.get(f'/api/admin/users/?search={search_term_clean}')
+        response = self.client.get(fadmin/users/?search={search_term_clean}')
         
         # Verify search request was successful
         self.assertEqual(response.status_code, status.HTTP_200_OK)

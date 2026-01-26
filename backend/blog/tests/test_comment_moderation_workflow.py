@@ -92,7 +92,7 @@ class CommentModerationWorkflowTest(HypothesisTestCase):
             'moderation_notes': moderation_notes
         }
         
-        response = self.client.patch(f'/api/admin/comments/{comment.id}/', approval_data, format='json')
+        response = self.client.patch(fadmin/comments/{comment.id}/', approval_data, format='json')
         
         # Verify approval was successful
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -107,7 +107,7 @@ class CommentModerationWorkflowTest(HypothesisTestCase):
         self.assertIsNotNone(comment.moderated_at)
         
         # Verify changes are reflected in API response
-        get_response = self.client.get(f'/api/admin/comments/{comment.id}/')
+        get_response = self.client.get(fadmin/comments/{comment.id}/')
         self.assertEqual(get_response.status_code, status.HTTP_200_OK)
         
         response_data = get_response.data
@@ -146,7 +146,7 @@ class CommentModerationWorkflowTest(HypothesisTestCase):
             'moderation_notes': flag_reason
         }
         
-        response = self.client.patch(f'/api/admin/comments/{comment.id}/', flag_data, format='json')
+        response = self.client.patch(fadmin/comments/{comment.id}/', flag_data, format='json')
         
         # Verify flagging was successful
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -161,7 +161,7 @@ class CommentModerationWorkflowTest(HypothesisTestCase):
         self.assertIsNotNone(comment.moderated_at)
         
         # Verify changes persist in subsequent queries
-        get_response = self.client.get(f'/api/admin/comments/{comment.id}/')
+        get_response = self.client.get(fadmin/comments/{comment.id}/')
         self.assertEqual(get_response.status_code, status.HTTP_200_OK)
         
         response_data = get_response.data
@@ -194,7 +194,7 @@ class CommentModerationWorkflowTest(HypothesisTestCase):
         self.assertTrue(Comment.objects.filter(id=comment_id).exists())
         
         # Delete comment via admin API
-        response = self.client.delete(f'/api/admin/comments/{comment_id}/')
+        response = self.client.delete(fadmin/comments/{comment_id}/')
         
         # Verify deletion was successful
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -203,7 +203,7 @@ class CommentModerationWorkflowTest(HypothesisTestCase):
         self.assertFalse(Comment.objects.filter(id=comment_id).exists())
         
         # Verify comment is no longer accessible via API
-        get_response = self.client.get(f'/api/admin/comments/{comment_id}/')
+        get_response = self.client.get(fadmin/comments/{comment_id}/')
         self.assertEqual(get_response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_comment_moderation_list_filtering(self):
@@ -243,15 +243,15 @@ class CommentModerationWorkflowTest(HypothesisTestCase):
         )
         
         # Test filtering by approved status
-        approved_response = self.client.get('/api/admin/comments/?approved=true')
+        approved_response = self.client.get(admin/comments/?approved=true')
         self.assertEqual(approved_response.status_code, status.HTTP_200_OK)
         
         # Test filtering by flagged status
-        flagged_response = self.client.get('/api/admin/comments/?is_flagged=true')
+        flagged_response = self.client.get(admin/comments/?is_flagged=true')
         self.assertEqual(flagged_response.status_code, status.HTTP_200_OK)
         
         # Test filtering by pending status (not approved and not flagged)
-        pending_response = self.client.get('/api/admin/comments/?approved=false&is_flagged=false')
+        pending_response = self.client.get(admin/comments/?approved=false&is_flagged=false')
         self.assertEqual(pending_response.status_code, status.HTTP_200_OK)
         
         # Verify filtering works correctly
@@ -283,16 +283,16 @@ class CommentModerationWorkflowTest(HypothesisTestCase):
         
         # Try to approve the comment
         approval_data = {'approved': True}
-        approve_response = self.client.patch(f'/api/admin/comments/{comment.id}/', approval_data, format='json')
+        approve_response = self.client.patch(fadmin/comments/{comment.id}/', approval_data, format='json')
         self.assertEqual(approve_response.status_code, status.HTTP_403_FORBIDDEN)
         
         # Try to flag the comment
         flag_data = {'is_flagged': True}
-        flag_response = self.client.patch(f'/api/admin/comments/{comment.id}/', flag_data, format='json')
+        flag_response = self.client.patch(fadmin/comments/{comment.id}/', flag_data, format='json')
         self.assertEqual(flag_response.status_code, status.HTTP_403_FORBIDDEN)
         
         # Try to delete the comment
-        delete_response = self.client.delete(f'/api/admin/comments/{comment.id}/')
+        delete_response = self.client.delete(fadmin/comments/{comment.id}/')
         self.assertEqual(delete_response.status_code, status.HTTP_403_FORBIDDEN)
         
         # Verify comment state hasn't changed
@@ -334,7 +334,7 @@ class CommentModerationWorkflowTest(HypothesisTestCase):
             'moderation_notes': f'State changed from approved={initial_approved}, flagged={initial_flagged} to approved={new_approved}, flagged={new_flagged}'
         }
         
-        response = self.client.patch(f'/api/admin/comments/{comment.id}/', update_data, format='json')
+        response = self.client.patch(fadmin/comments/{comment.id}/', update_data, format='json')
         
         # Verify update was successful
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -349,7 +349,7 @@ class CommentModerationWorkflowTest(HypothesisTestCase):
         self.assertIsNotNone(comment.moderated_at)
         
         # Verify the state persists in subsequent queries
-        get_response = self.client.get(f'/api/admin/comments/{comment.id}/')
+        get_response = self.client.get(fadmin/comments/{comment.id}/')
         self.assertEqual(get_response.status_code, status.HTTP_200_OK)
         
         response_data = get_response.data

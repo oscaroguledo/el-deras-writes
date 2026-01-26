@@ -188,7 +188,7 @@ class InputValidationSQLInjectionPreventionTest(HypothesisTestCase):
             'status': 'published'
         }
         
-        response = self.client.post('/api/articles/', article_data, format='json')
+        response = self.client.post(articles/', article_data, format='json')
         
         # Should either reject the input or sanitize it
         if response.status_code == 201:
@@ -208,7 +208,7 @@ class InputValidationSQLInjectionPreventionTest(HypothesisTestCase):
             'status': 'published'
         }
         
-        response = self.client.post('/api/articles/', article_data, format='json')
+        response = self.client.post(articles/', article_data, format='json')
         
         if response.status_code == 201:
             created_article = Article.objects.get(id=response.json()['id'])
@@ -230,7 +230,7 @@ class InputValidationSQLInjectionPreventionTest(HypothesisTestCase):
         }
         
         try:
-            response = self.client.post(f'/api/articles/{self.test_article.id}/comments/', 
+            response = self.client.post(farticles/{self.test_article.id}/comments/', 
                                       comment_data, format='json')
             
             if response.status_code == 201:
@@ -257,7 +257,7 @@ class InputValidationSQLInjectionPreventionTest(HypothesisTestCase):
         }
         
         try:
-            response = self.client.post('/api/categories/', category_data, format='json')
+            response = self.client.post(categories/', category_data, format='json')
             
             if response.status_code == 201:
                 created_category = Category.objects.get(id=response.json()['id'])
@@ -281,7 +281,7 @@ class InputValidationSQLInjectionPreventionTest(HypothesisTestCase):
         }
         
         try:
-            response = self.client.post('/api/tags/', tag_data, format='json')
+            response = self.client.post(tags/', tag_data, format='json')
             
             if response.status_code == 201:
                 created_tag = Tag.objects.get(id=response.json()['id'])
@@ -306,7 +306,7 @@ class InputValidationSQLInjectionPreventionTest(HypothesisTestCase):
             'password': 'testpassword123'
         }
         
-        response = self.client.post('/api/auth/register/', user_data, format='json')
+        response = self.client.post(auth/register/', user_data, format='json')
         
         if response.status_code == 201:
             created_user = CustomUser.objects.get(id=response.json()['id'])
@@ -316,7 +316,7 @@ class InputValidationSQLInjectionPreventionTest(HypothesisTestCase):
     def _test_search_input_validation(self, malicious_input):
         """Test search functionality with malicious input"""
         # Test article search
-        response = self.client.get('/api/articles/search/', {'q': malicious_input})
+        response = self.client.get(articles/search/', {'q': malicious_input})
         
         # Search should not fail catastrophically
         self.assertIn(response.status_code, [200, 400], 
@@ -335,7 +335,7 @@ class InputValidationSQLInjectionPreventionTest(HypothesisTestCase):
             'message': 'Test message'
         }
         
-        response = self.client.post('/api/feedback/', feedback_data, format='json')
+        response = self.client.post(feedback/', feedback_data, format='json')
         
         if response.status_code == 201:
             created_feedback = Feedback.objects.get(id=response.json()['id'])
@@ -355,7 +355,7 @@ class InputValidationSQLInjectionPreventionTest(HypothesisTestCase):
         ]
         
         for params in query_params:
-            response = self.client.get('/api/articles/', params)
+            response = self.client.get(articles/', params)
             
             # Should not cause server error
             self.assertIn(response.status_code, [200, 400], 
@@ -513,7 +513,7 @@ class InputValidationSQLInjectionPreventionTest(HypothesisTestCase):
         
         for malicious_query in malicious_queries:
             # Test article search
-            response = self.client.get('/api/articles/search/', {'q': malicious_query})
+            response = self.client.get(articles/search/', {'q': malicious_query})
             
             # Should not cause server error
             self.assertIn(response.status_code, [200, 400])
@@ -551,7 +551,7 @@ class InputValidationSQLInjectionPreventionTest(HypothesisTestCase):
             img_buffer.seek(0)
             img_buffer.name = malicious_filename
             
-            response = self.client.post('/api/upload/', {
+            response = self.client.post(upload/', {
                 'file': img_buffer,
                 'type': 'image'
             }, format='multipart')
@@ -590,7 +590,7 @@ class InputValidationSQLInjectionPreventionTest(HypothesisTestCase):
         }
         
         try:
-            response = self.client.post('/api/articles/', article_data, format='json')
+            response = self.client.post(articles/', article_data, format='json')
             
             if response.status_code == 201:
                 created_article = Article.objects.get(id=response.json()['id'])
@@ -637,7 +637,7 @@ class InputValidationSQLInjectionPreventionTest(HypothesisTestCase):
                 'password': 'testpassword123'
             }
             
-            response = self.client.post('/api/auth/login/', login_data, format='json')
+            response = self.client.post(auth/login/', login_data, format='json')
             
             # Should not cause server error
             self.assertIn(response.status_code, [400, 401], 
@@ -657,7 +657,7 @@ class InputValidationSQLInjectionPreventionTest(HypothesisTestCase):
                 'first_name': malicious_input
             }
             
-            response = self.client.post('/api/auth/register/', register_data, format='json')
+            response = self.client.post(auth/register/', register_data, format='json')
             
             if response.status_code == 201:
                 # If created, verify malicious content was sanitized
@@ -672,7 +672,7 @@ class InputValidationSQLInjectionPreventionTest(HypothesisTestCase):
         
         # Test admin search functionality
         for malicious_input in self.SQL_INJECTION_PATTERNS[:3]:
-            response = self.client.get('/api/admin/search/', {'q': malicious_input})
+            response = self.client.get(admin/search/', {'q': malicious_input})
             
             # Should not cause server error
             self.assertIn(response.status_code, [200, 400], 
@@ -682,7 +682,7 @@ class InputValidationSQLInjectionPreventionTest(HypothesisTestCase):
             self._verify_database_integrity()
         
         # Test admin analytics endpoints
-        response = self.client.get('/api/admin/analytics/timerange/', {
+        response = self.client.get(admin/analytics/timerange/', {
             'days': "'; DROP TABLE blog_analytics; --"
         })
         
@@ -702,7 +702,7 @@ class InputValidationSQLInjectionPreventionTest(HypothesisTestCase):
                 'email': 'contact@example.com'
             }
             
-            response = self.client.patch('/api/contact/', contact_data, format='json')
+            response = self.client.patch(contact/', contact_data, format='json')
             
             if response.status_code == 200:
                 # Verify malicious content was sanitized
@@ -731,7 +731,7 @@ class InputValidationSQLInjectionPreventionTest(HypothesisTestCase):
             'preferences': malicious_json_data
         }
         
-        response = self.client.post('/api/admin/users/', user_data, format='json')
+        response = self.client.post(admin/users/', user_data, format='json')
         
         if response.status_code == 201:
             created_user = CustomUser.objects.get(id=response.json()['id'])

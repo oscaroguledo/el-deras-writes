@@ -79,7 +79,7 @@ class JWTTokenValidityTest(HypothesisTestCase):
                 'password': password
             }
             
-            response = self.client.post('/api/auth/login/', login_data, format='json')
+            response = self.client.post(auth/login/', login_data, format='json')
             
             if response.status_code == 200:
                 response_data = response.json()
@@ -166,7 +166,7 @@ class JWTTokenValidityTest(HypothesisTestCase):
                 
                 # Verify token can be used for authenticated requests
                 self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
-                auth_response = self.client.get('/api/auth/validate/')
+                auth_response = self.client.get(auth/validate/')
                 
                 if auth_response.status_code == 200:
                     auth_data = auth_response.json()
@@ -199,7 +199,7 @@ class JWTTokenValidityTest(HypothesisTestCase):
             'password': 'testpassword123'
         }
         
-        response = self.client.post('/api/auth/login/', login_data, format='json')
+        response = self.client.post(auth/login/', login_data, format='json')
         self.assertEqual(response.status_code, 200)
         
         access_token = response.json()['access']
@@ -235,7 +235,7 @@ class JWTTokenValidityTest(HypothesisTestCase):
         
         # Try to use invalid token for authentication
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {invalid_token}')
-        response = self.client.get('/api/auth/validate/')
+        response = self.client.get(auth/validate/')
         
         # Invalid tokens should be rejected
         self.assertIn(
@@ -261,7 +261,7 @@ class JWTTokenValidityTest(HypothesisTestCase):
         expired_token_str = str(token)
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {expired_token_str}')
         
-        response = self.client.get('/api/auth/validate/')
+        response = self.client.get(auth/validate/')
         
         # Expired token should be rejected
         self.assertEqual(
@@ -280,7 +280,7 @@ class JWTTokenValidityTest(HypothesisTestCase):
             'password': 'testpassword123'
         }
         
-        response = self.client.post('/api/auth/login/', login_data, format='json')
+        response = self.client.post(auth/login/', login_data, format='json')
         self.assertEqual(response.status_code, 200)
         
         initial_tokens = response.json()
@@ -288,7 +288,7 @@ class JWTTokenValidityTest(HypothesisTestCase):
         
         # Use refresh token to get new access token
         refresh_data = {'refresh': refresh_token}
-        refresh_response = self.client.post('/api/auth/refresh/', refresh_data, format='json')
+        refresh_response = self.client.post(auth/refresh/', refresh_data, format='json')
         
         if refresh_response.status_code == 200:
             new_tokens = refresh_response.json()
@@ -317,7 +317,7 @@ class JWTTokenValidityTest(HypothesisTestCase):
             
             # Verify new token can be used for authentication
             self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {new_access_token}')
-            auth_response = self.client.get('/api/auth/validate/')
+            auth_response = self.client.get(auth/validate/')
             
             self.assertEqual(auth_response.status_code, 200)
             auth_data = auth_response.json()
@@ -333,7 +333,7 @@ class JWTTokenValidityTest(HypothesisTestCase):
             'password': 'testpassword123'
         }
         
-        response = self.client.post('/api/auth/login/', login_data, format='json')
+        response = self.client.post(auth/login/', login_data, format='json')
         self.assertEqual(response.status_code, 200)
         
         tokens = response.json()
@@ -401,7 +401,7 @@ class JWTTokenValidityTest(HypothesisTestCase):
         # Make multiple concurrent login requests
         responses = []
         for _ in range(5):
-            response = self.client.post('/api/auth/login/', login_data, format='json')
+            response = self.client.post(auth/login/', login_data, format='json')
             if response.status_code == 200:
                 responses.append(response.json())
         

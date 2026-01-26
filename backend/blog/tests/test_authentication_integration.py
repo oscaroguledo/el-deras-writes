@@ -106,7 +106,7 @@ class AuthenticationIntegrationTest(HypothesisTestCase):
                 'password': password
             }
             
-            response = self.client.post('/api/auth/login/', login_data, format='json')
+            response = self.client.post(auth/login/', login_data, format='json')
             
             if response.status_code == 200:
                 response_data = response.json()
@@ -116,7 +116,7 @@ class AuthenticationIntegrationTest(HypothesisTestCase):
                 self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
                 
                 # Test 1: Token validation endpoint should work
-                validation_response = self.client.get('/api/auth/validate/')
+                validation_response = self.client.get(auth/validate/')
                 if validation_response.status_code == 200:
                     validation_data = validation_response.json()
                     
@@ -139,7 +139,7 @@ class AuthenticationIntegrationTest(HypothesisTestCase):
                     )
                 
                 # Test 2: Authenticated endpoints should recognize the user
-                profile_response = self.client.get(f'/api/users/{user.id}/')
+                profile_response = self.client.get(fusers/{user.id}/')
                 if profile_response.status_code == 200:
                     profile_data = profile_response.json()
                     
@@ -162,7 +162,7 @@ class AuthenticationIntegrationTest(HypothesisTestCase):
                 }
                 
                 comment_response = self.client.post(
-                    f'/api/articles/{self.article.id}/comments/',
+                    farticles/{self.article.id}/comments/',
                     comment_data,
                     format='json'
                 )
@@ -179,7 +179,7 @@ class AuthenticationIntegrationTest(HypothesisTestCase):
                 
                 # Test 4: Token should work across multiple requests
                 for _ in range(3):
-                    articles_response = self.client.get('/api/articles/')
+                    articles_response = self.client.get(articles/')
                     self.assertIn(
                         articles_response.status_code,
                         [200, 404],  # 404 is acceptable if no articles exist
@@ -187,7 +187,7 @@ class AuthenticationIntegrationTest(HypothesisTestCase):
                     )
                 
                 # Test 5: User session info should be accessible
-                session_response = self.client.get('/api/auth/sessions/')
+                session_response = self.client.get(auth/sessions/')
                 if session_response.status_code == 200:
                     session_data = session_response.json()
                     
@@ -225,7 +225,7 @@ class AuthenticationIntegrationTest(HypothesisTestCase):
             'password': 'userpassword123'
         }
         
-        response = self.client.post('/api/auth/login/', login_data, format='json')
+        response = self.client.post(auth/login/', login_data, format='json')
         self.assertEqual(response.status_code, 200)
         
         access_token = response.json()['access']
@@ -233,8 +233,8 @@ class AuthenticationIntegrationTest(HypothesisTestCase):
         
         # Test multiple endpoints that should return consistent user context
         endpoints_to_test = [
-            '/api/auth/validate/',
-            '/api/auth/sessions/',
+            auth/validate/',
+            auth/sessions/',
         ]
         
         user_contexts = []
@@ -284,7 +284,7 @@ class AuthenticationIntegrationTest(HypothesisTestCase):
             'password': 'adminpassword123'
         }
         
-        response = self.client.post('/api/auth/login/', login_data, format='json')
+        response = self.client.post(auth/login/', login_data, format='json')
         self.assertEqual(response.status_code, 200)
         
         access_token = response.json()['access']
@@ -292,9 +292,9 @@ class AuthenticationIntegrationTest(HypothesisTestCase):
         
         # Test admin-specific endpoints
         admin_endpoints = [
-            '/api/admin/articles/',
-            '/api/admin/users/',
-            '/api/admin/analytics/',
+            admin/articles/',
+            admin/users/',
+            admin/analytics/',
         ]
         
         for endpoint in admin_endpoints:
@@ -308,7 +308,7 @@ class AuthenticationIntegrationTest(HypothesisTestCase):
             )
         
         # Verify admin user context in validation
-        validation_response = self.client.get('/api/auth/validate/')
+        validation_response = self.client.get(auth/validate/')
         self.assertEqual(validation_response.status_code, 200)
         
         validation_data = validation_response.json()
@@ -334,9 +334,9 @@ class AuthenticationIntegrationTest(HypothesisTestCase):
         
         # Test endpoints that should work without authentication
         public_endpoints = [
-            '/api/articles/',
-            '/api/categories/',
-            '/api/tags/',
+            articles/',
+            categories/',
+            tags/',
         ]
         
         for endpoint in public_endpoints:
@@ -351,9 +351,9 @@ class AuthenticationIntegrationTest(HypothesisTestCase):
         
         # Test endpoints that should require authentication
         protected_endpoints = [
-            '/api/auth/validate/',
-            '/api/auth/sessions/',
-            '/api/admin/users/',
+            auth/validate/',
+            auth/sessions/',
+            admin/users/',
         ]
         
         for endpoint in protected_endpoints:
@@ -376,7 +376,7 @@ class AuthenticationIntegrationTest(HypothesisTestCase):
             'password': 'userpassword123'
         }
         
-        response = self.client.post('/api/auth/login/', login_data, format='json')
+        response = self.client.post(auth/login/', login_data, format='json')
         self.assertEqual(response.status_code, 200)
         
         initial_tokens = response.json()
@@ -384,7 +384,7 @@ class AuthenticationIntegrationTest(HypothesisTestCase):
         
         # Use refresh token to get new access token
         refresh_data = {'refresh': refresh_token}
-        refresh_response = self.client.post('/api/auth/refresh/', refresh_data, format='json')
+        refresh_response = self.client.post(auth/refresh/', refresh_data, format='json')
         
         if refresh_response.status_code == 200:
             new_tokens = refresh_response.json()
@@ -394,7 +394,7 @@ class AuthenticationIntegrationTest(HypothesisTestCase):
             self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {new_access_token}')
             
             # Verify new token provides correct user context
-            validation_response = self.client.get('/api/auth/validate/')
+            validation_response = self.client.get(auth/validate/')
             self.assertEqual(validation_response.status_code, 200)
             
             validation_data = validation_response.json()
@@ -411,7 +411,7 @@ class AuthenticationIntegrationTest(HypothesisTestCase):
             )
             
             # Verify refreshed token works for API requests
-            articles_response = self.client.get('/api/articles/')
+            articles_response = self.client.get(articles/')
             self.assertIn(
                 articles_response.status_code,
                 [200, 404],
@@ -434,7 +434,7 @@ class AuthenticationIntegrationTest(HypothesisTestCase):
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {malformed_token}')
         
         # Test protected endpoint with malformed token
-        response = self.client.get('/api/auth/validate/')
+        response = self.client.get(auth/validate/')
         
         # Should be rejected with appropriate status
         self.assertEqual(
@@ -468,7 +468,7 @@ class AuthenticationIntegrationTest(HypothesisTestCase):
             'password': 'userpassword123'
         }
         
-        response = self.client.post('/api/auth/login/', login_data, format='json')
+        response = self.client.post(auth/login/', login_data, format='json')
         self.assertEqual(response.status_code, 200)
         
         access_token = response.json()['access']
@@ -483,7 +483,7 @@ class AuthenticationIntegrationTest(HypothesisTestCase):
         # Make concurrent validation requests
         responses = []
         for client in clients:
-            validation_response = client.get('/api/auth/validate/')
+            validation_response = client.get(auth/validate/')
             if validation_response.status_code == 200:
                 responses.append(validation_response.json())
         
@@ -508,7 +508,7 @@ class AuthenticationIntegrationTest(HypothesisTestCase):
             'password': 'userpassword123'
         }
         
-        response = self.client.post('/api/auth/login/', login_data, format='json')
+        response = self.client.post(auth/login/', login_data, format='json')
         self.assertEqual(response.status_code, 200)
         
         tokens = response.json()
@@ -517,17 +517,17 @@ class AuthenticationIntegrationTest(HypothesisTestCase):
         
         # Verify token works before logout
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
-        pre_logout_response = self.client.get('/api/auth/validate/')
+        pre_logout_response = self.client.get(auth/validate/')
         self.assertEqual(pre_logout_response.status_code, 200)
         
         # Perform logout
         logout_data = {'refresh_token': refresh_token}
-        logout_response = self.client.post('/api/auth/logout/', logout_data, format='json')
+        logout_response = self.client.post(auth/logout/', logout_data, format='json')
         
         if logout_response.status_code == 200:
             # Try to use refresh token after logout (should fail)
             refresh_data = {'refresh': refresh_token}
-            post_logout_refresh = self.client.post('/api/auth/refresh/', refresh_data, format='json')
+            post_logout_refresh = self.client.post(auth/refresh/', refresh_data, format='json')
             
             # Refresh should fail after logout
             self.assertEqual(

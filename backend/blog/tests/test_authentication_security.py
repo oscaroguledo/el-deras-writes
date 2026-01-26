@@ -118,7 +118,7 @@ class AuthenticationSecurityTest(HypothesisTestCase):
                 'password': password
             }
             
-            login_response = self.client.post('/api/auth/login/', login_data, format='json')
+            login_response = self.client.post(auth/login/', login_data, format='json')
             
             if login_response.status_code == 200:
                 tokens = login_response.json()
@@ -204,7 +204,7 @@ class AuthenticationSecurityTest(HypothesisTestCase):
                 # Test 5: Token Authentication Security
                 # Valid token should allow access
                 self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
-                auth_response = self.client.get('/api/auth/validate/')
+                auth_response = self.client.get(auth/validate/')
                 
                 if auth_response.status_code == 200:
                     auth_data = auth_response.json()
@@ -289,7 +289,7 @@ class AuthenticationSecurityTest(HypothesisTestCase):
                 'password': 'wrong_password'
             }
             
-            response = self.client.post('/api/auth/login/', login_data, format='json')
+            response = self.client.post(auth/login/', login_data, format='json')
             
             if response.status_code == 429:  # Rate limited
                 # Rate limiting is working
@@ -314,7 +314,7 @@ class AuthenticationSecurityTest(HypothesisTestCase):
         # Clear any rate limiting (in a real system, this would be time-based)
         cache.clear()
         
-        response = self.client.post('/api/auth/login/', correct_login_data, format='json')
+        response = self.client.post(auth/login/', correct_login_data, format='json')
         # Should eventually succeed (may need to wait for rate limit to reset)
         self.assertIn(response.status_code, [200, 429], "Legitimate login should work or be rate limited")
 
@@ -328,14 +328,14 @@ class AuthenticationSecurityTest(HypothesisTestCase):
             'password': 'testpassword123'
         }
         
-        response = self.client.post('/api/auth/login/', login_data, format='json')
+        response = self.client.post(auth/login/', login_data, format='json')
         self.assertEqual(response.status_code, 200)
         
         access_token = response.json()['access']
         
         # Test 1: Token should not be predictable
         # Get another token and verify they're different
-        response2 = self.client.post('/api/auth/login/', login_data, format='json')
+        response2 = self.client.post(auth/login/', login_data, format='json')
         if response2.status_code == 200:
             access_token2 = response2.json()['access']
             self.assertNotEqual(
@@ -349,7 +349,7 @@ class AuthenticationSecurityTest(HypothesisTestCase):
         tampered_token = access_token[:-5] + "XXXXX"
         
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {tampered_token}')
-        response = self.client.get('/api/auth/validate/')
+        response = self.client.get(auth/validate/')
         
         self.assertEqual(
             response.status_code, 
@@ -368,7 +368,7 @@ class AuthenticationSecurityTest(HypothesisTestCase):
         
         for malformed_token in malformed_tokens:
             self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {malformed_token}')
-            response = self.client.get('/api/auth/validate/')
+            response = self.client.get(auth/validate/')
             
             self.assertIn(
                 response.status_code, 
@@ -386,7 +386,7 @@ class AuthenticationSecurityTest(HypothesisTestCase):
             'password': 'testpassword123'
         }
         
-        response = self.client.post('/api/auth/login/', login_data, format='json')
+        response = self.client.post(auth/login/', login_data, format='json')
         self.assertEqual(response.status_code, 200)
         
         tokens = response.json()
@@ -397,7 +397,7 @@ class AuthenticationSecurityTest(HypothesisTestCase):
         
         # Make an authenticated request
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
-        self.client.get('/api/auth/validate/')
+        self.client.get(auth/validate/')
         
         # Refresh user from database
         self.test_user.refresh_from_db()
@@ -415,7 +415,7 @@ class AuthenticationSecurityTest(HypothesisTestCase):
         self.test_user.save()
         
         # Try to login with inactive user
-        response = self.client.post('/api/auth/login/', login_data, format='json')
+        response = self.client.post(auth/login/', login_data, format='json')
         self.assertNotEqual(
             response.status_code, 
             200,
@@ -489,7 +489,7 @@ class AuthenticationSecurityTest(HypothesisTestCase):
         
         # Measure time for invalid login
         start_time = time.time()
-        response1 = self.client.post('/api/auth/login/', invalid_login_data, format='json')
+        response1 = self.client.post(auth/login/', invalid_login_data, format='json')
         invalid_time = time.time() - start_time
         
         # Test login with non-existent user
@@ -499,7 +499,7 @@ class AuthenticationSecurityTest(HypothesisTestCase):
         }
         
         start_time = time.time()
-        response2 = self.client.post('/api/auth/login/', nonexistent_login_data, format='json')
+        response2 = self.client.post(auth/login/', nonexistent_login_data, format='json')
         nonexistent_time = time.time() - start_time
         
         # Both should fail

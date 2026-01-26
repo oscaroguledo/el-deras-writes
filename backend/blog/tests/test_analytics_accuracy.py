@@ -109,7 +109,7 @@ class AnalyticsAccuracyTest(HypothesisTestCase):
         self.client.force_authenticate(user=self.admin_user)
         
         # Get analytics data via API
-        response = self.client.get('/api/admin/analytics/')
+        response = self.client.get(admin/analytics/')
         
         # Verify analytics request was successful
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -187,7 +187,7 @@ class AnalyticsAccuracyTest(HypothesisTestCase):
         self.client.force_authenticate(user=self.admin_user)
         
         # Get comment analytics via API
-        response = self.client.get('/api/admin/analytics/comments/')
+        response = self.client.get(admin/analytics/comments/')
         
         # Verify analytics request was successful
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -238,7 +238,7 @@ class AnalyticsAccuracyTest(HypothesisTestCase):
         self.client.force_authenticate(user=self.admin_user)
         
         # Get user analytics via API
-        response = self.client.get('/api/admin/analytics/users/')
+        response = self.client.get(admin/analytics/users/')
         
         # Verify analytics request was successful
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -323,7 +323,7 @@ class AnalyticsAccuracyTest(HypothesisTestCase):
         self.client.force_authenticate(user=self.admin_user)
         
         # Get time-based analytics via API
-        response = self.client.get(f'/api/admin/analytics/timerange/?days={days_back}')
+        response = self.client.get(fadmin/analytics/timerange/?days={days_back}')
         
         # Verify analytics request was successful
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -361,10 +361,10 @@ class AnalyticsAccuracyTest(HypothesisTestCase):
         
         # Try to access various analytics endpoints
         analytics_endpoints = [
-            '/api/admin/analytics/',
-            '/api/admin/analytics/comments/',
-            '/api/admin/analytics/users/',
-            '/api/admin/analytics/timerange/?days=7'
+            admin/analytics/',
+            admin/analytics/comments/',
+            admin/analytics/users/',
+            admin/analytics/timerange/?days=7'
         ]
         
         for endpoint in analytics_endpoints:
@@ -403,9 +403,9 @@ class AnalyticsAccuracyTest(HypothesisTestCase):
         self.client.force_authenticate(user=self.admin_user)
         
         # Get data from different analytics endpoints
-        general_response = self.client.get('/api/admin/analytics/')
-        comment_response = self.client.get('/api/admin/analytics/comments/')
-        user_response = self.client.get('/api/admin/analytics/users/')
+        general_response = self.client.get(admin/analytics/')
+        comment_response = self.client.get(admin/analytics/comments/')
+        user_response = self.client.get(admin/analytics/users/')
         
         # Verify all requests were successful
         self.assertEqual(general_response.status_code, status.HTTP_200_OK)

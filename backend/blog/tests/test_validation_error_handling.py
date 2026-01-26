@@ -92,7 +92,7 @@ class ValidationErrorHandlingTest(HypothesisTestCase):
             'password': 'adminpassword123'
         }
         
-        response = self.client.post('/api/auth/login/', login_data, format='json')
+        response = self.client.post(auth/login/', login_data, format='json')
         if response.status_code != 200:
             return  # Skip if login fails
         
@@ -106,7 +106,7 @@ class ValidationErrorHandlingTest(HypothesisTestCase):
             'password': short_password
         }
         
-        response = self.client.post('/api/users/', invalid_user_data, format='json')
+        response = self.client.post(users/', invalid_user_data, format='json')
         
         # Should return validation error
         self.assertEqual(
@@ -177,7 +177,7 @@ class ValidationErrorHandlingTest(HypothesisTestCase):
             'password': 'adminpassword123'
         }
         
-        response = self.client.post('/api/auth/login/', login_data, format='json')
+        response = self.client.post(auth/login/', login_data, format='json')
         self.assertEqual(response.status_code, 200)
         
         access_token = response.json()['access']
@@ -191,7 +191,7 @@ class ValidationErrorHandlingTest(HypothesisTestCase):
             'scheduled_publish': '2020-01-01T00:00:00Z'  # Past date
         }
         
-        response = self.client.post('/api/articles/', invalid_article_data, format='json')
+        response = self.client.post(articles/', invalid_article_data, format='json')
         
         # Should return validation error
         self.assertEqual(
@@ -242,7 +242,7 @@ class ValidationErrorHandlingTest(HypothesisTestCase):
             'password': 'userpassword123'
         }
         
-        response = self.client.post('/api/auth/login/', login_data, format='json')
+        response = self.client.post(auth/login/', login_data, format='json')
         self.assertEqual(response.status_code, 200)
         
         access_token = response.json()['access']
@@ -255,7 +255,7 @@ class ValidationErrorHandlingTest(HypothesisTestCase):
         }
         
         response = self.client.post(
-            f'/api/articles/{article.id}/comments/',
+            farticles/{article.id}/comments/',
             invalid_comment_data,
             format='json'
         )
@@ -303,7 +303,7 @@ class ValidationErrorHandlingTest(HypothesisTestCase):
             'password': 'adminpassword123'
         }
         
-        response = self.client.post('/api/auth/login/', login_data, format='json')
+        response = self.client.post(auth/login/', login_data, format='json')
         if response.status_code != 200:
             return  # Skip if login fails
         
@@ -313,7 +313,7 @@ class ValidationErrorHandlingTest(HypothesisTestCase):
         # Test category creation with invalid name
         invalid_category_data = {'name': invalid_category_name}
         
-        category_response = self.client.post('/api/categories/', invalid_category_data, format='json')
+        category_response = self.client.post(categories/', invalid_category_data, format='json')
         
         if category_response.status_code == 400:
             error_data = category_response.json()
@@ -331,7 +331,7 @@ class ValidationErrorHandlingTest(HypothesisTestCase):
         # Test tag creation with invalid name
         invalid_tag_data = {'name': invalid_tag_name}
         
-        tag_response = self.client.post('/api/tags/', invalid_tag_data, format='json')
+        tag_response = self.client.post(tags/', invalid_tag_data, format='json')
         
         if tag_response.status_code == 400:
             error_data = tag_response.json()
@@ -356,7 +356,7 @@ class ValidationErrorHandlingTest(HypothesisTestCase):
             'password': 'wrongpassword'
         }
         
-        response = self.client.post('/api/auth/login/', invalid_login_data, format='json')
+        response = self.client.post(auth/login/', invalid_login_data, format='json')
         
         # Should return authentication error
         self.assertIn(
@@ -380,7 +380,7 @@ class ValidationErrorHandlingTest(HypothesisTestCase):
         # Test token refresh with invalid token
         invalid_refresh_data = {'refresh': 'invalid.token.here'}
         
-        refresh_response = self.client.post('/api/auth/refresh/', invalid_refresh_data, format='json')
+        refresh_response = self.client.post(auth/refresh/', invalid_refresh_data, format='json')
         
         # Should return validation error
         self.assertEqual(
@@ -405,14 +405,14 @@ class ValidationErrorHandlingTest(HypothesisTestCase):
             'password': 'userpassword123'
         }
         
-        response = self.client.post('/api/auth/login/', login_data, format='json')
+        response = self.client.post(auth/login/', login_data, format='json')
         self.assertEqual(response.status_code, 200)
         
         access_token = response.json()['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
         
         # Test file upload without file
-        response = self.client.post('/api/upload/', {}, format='multipart')
+        response = self.client.post(upload/', {}, format='multipart')
         
         # Should return validation error
         self.assertEqual(
@@ -454,7 +454,7 @@ class ValidationErrorHandlingTest(HypothesisTestCase):
         ]
         
         for params in invalid_params:
-            response = self.client.get('/api/articles/', params)
+            response = self.client.get(articles/', params)
             
             # Should handle invalid pagination gracefully
             # Either return 400 or default to valid pagination
@@ -488,7 +488,7 @@ class ValidationErrorHandlingTest(HypothesisTestCase):
         ]
         
         for query in malicious_queries:
-            response = self.client.get('/api/articles/search/', {'q': query})
+            response = self.client.get(articles/search/', {'q': query})
             
             # Should handle malicious queries safely
             self.assertIn(
@@ -531,7 +531,7 @@ class ValidationErrorHandlingTest(HypothesisTestCase):
         
         responses = []
         for _ in range(5):
-            response = self.client.post('/api/users/', invalid_user_data, format='json')
+            response = self.client.post(users/', invalid_user_data, format='json')
             if response.status_code == 400:
                 responses.append(response.json())
         
@@ -566,7 +566,7 @@ class ValidationErrorHandlingTest(HypothesisTestCase):
             'password': 'adminpassword123'
         }
         
-        response = self.client.post('/api/auth/login/', login_data, format='json')
+        response = self.client.post(auth/login/', login_data, format='json')
         self.assertEqual(response.status_code, 200)
         
         access_token = response.json()['access']
@@ -583,7 +583,7 @@ class ValidationErrorHandlingTest(HypothesisTestCase):
             ]
         }
         
-        response = self.client.post('/api/articles/', invalid_article_data, format='json')
+        response = self.client.post(articles/', invalid_article_data, format='json')
         
         # Should handle nested validation appropriately
         # Either create article with valid tags only, or return validation error

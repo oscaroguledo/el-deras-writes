@@ -75,7 +75,7 @@ class TokenRefreshSecurityTest(HypothesisTestCase):
                 'password': password
             }
             
-            login_response = self.client.post('/api/auth/login/', login_data, format='json')
+            login_response = self.client.post(auth/login/', login_data, format='json')
             
             if login_response.status_code == 200:
                 login_tokens = login_response.json()
@@ -84,7 +84,7 @@ class TokenRefreshSecurityTest(HypothesisTestCase):
                 
                 # Test 1: Valid refresh token should produce new access token
                 refresh_data = {'refresh': refresh_token}
-                refresh_response = self.client.post('/api/auth/refresh/', refresh_data, format='json')
+                refresh_response = self.client.post(auth/refresh/', refresh_data, format='json')
                 
                 if refresh_response.status_code == 200:
                     new_tokens = refresh_response.json()
@@ -142,7 +142,7 @@ class TokenRefreshSecurityTest(HypothesisTestCase):
                     
                     # Verify new token can be used for authenticated requests
                     self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {new_access_token}')
-                    auth_response = self.client.get('/api/auth/validate/')
+                    auth_response = self.client.get(auth/validate/')
                     
                     if auth_response.status_code == 200:
                         auth_data = auth_response.json()
@@ -184,7 +184,7 @@ class TokenRefreshSecurityTest(HypothesisTestCase):
         """
         # Test with completely invalid token
         invalid_refresh_data = {'refresh': 'invalid_token_string'}
-        response = self.client.post('/api/auth/refresh/', invalid_refresh_data, format='json')
+        response = self.client.post(auth/refresh/', invalid_refresh_data, format='json')
         
         # Should be rejected
         self.assertIn(
@@ -196,7 +196,7 @@ class TokenRefreshSecurityTest(HypothesisTestCase):
         # Test with malformed JWT
         malformed_jwt = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.invalid.signature'
         malformed_refresh_data = {'refresh': malformed_jwt}
-        response = self.client.post('/api/auth/refresh/', malformed_refresh_data, format='json')
+        response = self.client.post(auth/refresh/', malformed_refresh_data, format='json')
         
         # Should be rejected
         self.assertIn(
@@ -218,7 +218,7 @@ class TokenRefreshSecurityTest(HypothesisTestCase):
         
         # Try to use expired refresh token
         expired_refresh_data = {'refresh': str(refresh_token)}
-        response = self.client.post('/api/auth/refresh/', expired_refresh_data, format='json')
+        response = self.client.post(auth/refresh/', expired_refresh_data, format='json')
         
         # Should be rejected
         self.assertEqual(
@@ -237,7 +237,7 @@ class TokenRefreshSecurityTest(HypothesisTestCase):
             'password': 'testpassword123'
         }
         
-        login_response = self.client.post('/api/auth/login/', login_data, format='json')
+        login_response = self.client.post(auth/login/', login_data, format='json')
         self.assertEqual(login_response.status_code, 200)
         
         refresh_token = login_response.json()['refresh']
@@ -248,7 +248,7 @@ class TokenRefreshSecurityTest(HypothesisTestCase):
         
         # Try to refresh token with inactive user
         refresh_data = {'refresh': refresh_token}
-        response = self.client.post('/api/auth/refresh/', refresh_data, format='json')
+        response = self.client.post(auth/refresh/', refresh_data, format='json')
         
         # Should be rejected
         self.assertEqual(
@@ -271,7 +271,7 @@ class TokenRefreshSecurityTest(HypothesisTestCase):
             'password': 'testpassword123'
         }
         
-        login_response = self.client.post('/api/auth/login/', login_data, format='json')
+        login_response = self.client.post(auth/login/', login_data, format='json')
         self.assertEqual(login_response.status_code, 200)
         
         refresh_token = login_response.json()['refresh']
@@ -280,13 +280,13 @@ class TokenRefreshSecurityTest(HypothesisTestCase):
         refresh_data = {'refresh': refresh_token}
         
         # First refresh should work
-        first_response = self.client.post('/api/auth/refresh/', refresh_data, format='json')
+        first_response = self.client.post(auth/refresh/', refresh_data, format='json')
         
         if first_response.status_code == 200:
             first_access_token = first_response.json()['access']
             
             # Second refresh with same token should also work (unless rotation is enabled)
-            second_response = self.client.post('/api/auth/refresh/', refresh_data, format='json')
+            second_response = self.client.post(auth/refresh/', refresh_data, format='json')
             
             if second_response.status_code == 200:
                 second_access_token = second_response.json()['access']
@@ -308,7 +308,7 @@ class TokenRefreshSecurityTest(HypothesisTestCase):
             'password': 'testpassword123'
         }
         
-        login_response = self.client.post('/api/auth/login/', login_data, format='json')
+        login_response = self.client.post(auth/login/', login_data, format='json')
         self.assertEqual(login_response.status_code, 200)
         
         tokens = login_response.json()
@@ -321,7 +321,7 @@ class TokenRefreshSecurityTest(HypothesisTestCase):
         
         # Refresh to get new access token
         refresh_data = {'refresh': refresh_token}
-        refresh_response = self.client.post('/api/auth/refresh/', refresh_data, format='json')
+        refresh_response = self.client.post(auth/refresh/', refresh_data, format='json')
         
         if refresh_response.status_code == 200:
             new_access_token = refresh_response.json()['access']
@@ -365,7 +365,7 @@ class TokenRefreshSecurityTest(HypothesisTestCase):
             'password': 'testpassword123'
         }
         
-        login_response = self.client.post('/api/auth/login/', login_data, format='json')
+        login_response = self.client.post(auth/login/', login_data, format='json')
         self.assertEqual(login_response.status_code, 200)
         
         refresh_token = login_response.json()['refresh']
@@ -374,7 +374,7 @@ class TokenRefreshSecurityTest(HypothesisTestCase):
         # Make multiple concurrent refresh requests
         responses = []
         for _ in range(3):
-            response = self.client.post('/api/auth/refresh/', refresh_data, format='json')
+            response = self.client.post(auth/refresh/', refresh_data, format='json')
             if response.status_code == 200:
                 responses.append(response.json())
         
@@ -418,7 +418,7 @@ class TokenRefreshSecurityTest(HypothesisTestCase):
         
         # Try to use malformed token for refresh
         refresh_data = {'refresh': malformed_token}
-        response = self.client.post('/api/auth/refresh/', refresh_data, format='json')
+        response = self.client.post(auth/refresh/', refresh_data, format='json')
         
         # Malformed tokens should be rejected
         self.assertIn(
@@ -432,7 +432,7 @@ class TokenRefreshSecurityTest(HypothesisTestCase):
         Property: Refresh requests without token parameter should be properly rejected.
         """
         # Test with missing refresh parameter
-        response = self.client.post('/api/auth/refresh/', {}, format='json')
+        response = self.client.post(auth/refresh/', {}, format='json')
         
         self.assertEqual(
             response.status_code, 
@@ -441,7 +441,7 @@ class TokenRefreshSecurityTest(HypothesisTestCase):
         )
         
         # Test with empty refresh parameter
-        response = self.client.post('/api/auth/refresh/', {'refresh': ''}, format='json')
+        response = self.client.post(auth/refresh/', {'refresh': ''}, format='json')
         
         self.assertIn(
             response.status_code, 
@@ -459,14 +459,14 @@ class TokenRefreshSecurityTest(HypothesisTestCase):
             'password': 'testpassword123'
         }
         
-        login_response = self.client.post('/api/auth/login/', login_data, format='json')
+        login_response = self.client.post(auth/login/', login_data, format='json')
         self.assertEqual(login_response.status_code, 200)
         
         refresh_token = login_response.json()['refresh']
         
         # Refresh token
         refresh_data = {'refresh': refresh_token}
-        response = self.client.post('/api/auth/refresh/', refresh_data, format='json')
+        response = self.client.post(auth/refresh/', refresh_data, format='json')
         
         if response.status_code == 200:
             # Check for security headers (added by middleware)

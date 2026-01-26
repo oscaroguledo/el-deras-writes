@@ -86,7 +86,7 @@ class CachingEffectivenessPropertyTest(TestCase):
         
         # Measure time for first request (cache miss)
         start_time = time.time()
-        response1 = self.client.get(f'/api/articles/{article.id}/')
+        response1 = self.client.get(farticles/{article.id}/')
         first_request_time = time.time() - start_time
         
         self.assertEqual(response1.status_code, status.HTTP_200_OK)
@@ -99,7 +99,7 @@ class CachingEffectivenessPropertyTest(TestCase):
         cached_request_times = []
         for _ in range(num_requests):
             start_time = time.time()
-            response = self.client.get(f'/api/articles/{article.id}/')
+            response = self.client.get(farticles/{article.id}/')
             cached_request_time = time.time() - start_time
             cached_request_times.append(cached_request_time)
             
@@ -122,7 +122,7 @@ class CachingEffectivenessPropertyTest(TestCase):
         
         # At minimum, cached responses should be consistent
         for i in range(1, len(cached_request_times)):
-            response_i = self.client.get(f'/api/articles/{article.id}/')
+            response_i = self.client.get(farticles/{article.id}/')
             self.assertEqual(response_i.data, response1.data)
     
     @given(
@@ -156,7 +156,7 @@ class CachingEffectivenessPropertyTest(TestCase):
         
         # First request - should hit database
         with self.assertNumQueries(lambda n: n > 0):  # Expect some database queries
-            response1 = self.client.get(f'/api/articles/?page_size={page_size}')
+            response1 = self.client.get(farticles/?page_size={page_size}')
             first_query_count = len(response1.wsgi_request._queries) if hasattr(response1, 'wsgi_request') else 0
         
         self.assertEqual(response1.status_code, status.HTTP_200_OK)
@@ -171,7 +171,7 @@ class CachingEffectivenessPropertyTest(TestCase):
         
         # Second request - should use cache and have fewer queries
         with self.assertNumQueries(lambda n: n >= 0):  # Allow any number of queries
-            response2 = self.client.get(f'/api/articles/?page_size={page_size}')
+            response2 = self.client.get(farticles/?page_size={page_size}')
             second_query_count = len(response2.wsgi_request._queries) if hasattr(response2.wsgi_request, '_queries') else 0
         
         self.assertEqual(response2.status_code, status.HTTP_200_OK)
@@ -471,11 +471,11 @@ class CacheIntegrationTest(DjangoTestCase):
         )
         
         # First request - should populate cache
-        response1 = self.client.get('/api/articles/')
+        response1 = self.client.get(articles/')
         self.assertEqual(response1.status_code, status.HTTP_200_OK)
         
         # Second request - should use cache
-        response2 = self.client.get('/api/articles/')
+        response2 = self.client.get(articles/')
         self.assertEqual(response2.status_code, status.HTTP_200_OK)
         
         # Responses should be identical
@@ -486,7 +486,7 @@ class CacheIntegrationTest(DjangoTestCase):
         article.save()
         
         # Third request - should get updated data
-        response3 = self.client.get('/api/articles/')
+        response3 = self.client.get(articles/')
         self.assertEqual(response3.status_code, status.HTTP_200_OK)
         
         # Should contain updated title

@@ -84,7 +84,7 @@ class ConflictResolutionTest(HypothesisTestCase):
             'password': 'userpassword123'
         }
         
-        response = self.client.post('/api/auth/login/', login_data, format='json')
+        response = self.client.post(auth/login/', login_data, format='json')
         if response.status_code != 200:
             return  # Skip if login fails
         
@@ -96,13 +96,13 @@ class ConflictResolutionTest(HypothesisTestCase):
         comment_data2 = {'content': content2}
         
         response1 = self.client.post(
-            f'/api/articles/{self.article.id}/comments/',
+            farticles/{self.article.id}/comments/',
             comment_data1,
             format='json'
         )
         
         response2 = self.client.post(
-            f'/api/articles/{self.article.id}/comments/',
+            farticles/{self.article.id}/comments/',
             comment_data2,
             format='json'
         )
@@ -124,7 +124,7 @@ class ConflictResolutionTest(HypothesisTestCase):
         
         # Verify conflict resolution mechanisms are in place
         if response1.status_code in [200, 201] and response2.status_code in [200, 201]:
-            comments_response = self.client.get(f'/api/articles/{self.article.id}/comments/')
+            comments_response = self.client.get(farticles/{self.article.id}/comments/')
             
             if comments_response.status_code == 200:
                 comments = comments_response.json()
@@ -146,7 +146,7 @@ class ConflictResolutionTest(HypothesisTestCase):
             'password': 'adminpassword123'
         }
         
-        response = self.client.post('/api/auth/login/', login_data, format='json')
+        response = self.client.post(auth/login/', login_data, format='json')
         self.assertEqual(response.status_code, 200)
         
         access_token = response.json()['access']
@@ -157,10 +157,10 @@ class ConflictResolutionTest(HypothesisTestCase):
         category_data = {'name': category_name}
         
         # First creation
-        response1 = self.client.post('/api/categories/', category_data, format='json')
+        response1 = self.client.post(categories/', category_data, format='json')
         
         # Second creation with same name
-        response2 = self.client.post('/api/categories/', category_data, format='json')
+        response2 = self.client.post(categories/', category_data, format='json')
         
         # System should handle duplicates appropriately
         self.assertIn(
@@ -186,7 +186,7 @@ class ConflictResolutionTest(HypothesisTestCase):
             'password': 'adminpassword123'
         }
         
-        response = self.client.post('/api/auth/login/', login_data, format='json')
+        response = self.client.post(auth/login/', login_data, format='json')
         self.assertEqual(response.status_code, 200)
         
         access_token = response.json()['access']
@@ -199,7 +199,7 @@ class ConflictResolutionTest(HypothesisTestCase):
             'category_name': self.category.name
         }
         
-        response = self.client.post('/api/articles/', invalid_article_data, format='json')
+        response = self.client.post(articles/', invalid_article_data, format='json')
         
         # Invalid data should be rejected
         self.assertEqual(
@@ -223,7 +223,7 @@ class ConflictResolutionTest(HypothesisTestCase):
             'password': 'userpassword123'
         }
         
-        response = self.client.post('/api/auth/login/', login_data, format='json')
+        response = self.client.post(auth/login/', login_data, format='json')
         self.assertEqual(response.status_code, 200)
         
         access_token = response.json()['access']
@@ -235,13 +235,13 @@ class ConflictResolutionTest(HypothesisTestCase):
         for content in comment_contents:
             comment_data = {'content': content}
             self.client.post(
-                f'/api/articles/{self.article.id}/comments/',
+                farticles/{self.article.id}/comments/',
                 comment_data,
                 format='json'
             )
         
         # Verify state consistency
-        comments_response = self.client.get(f'/api/articles/{self.article.id}/comments/')
+        comments_response = self.client.get(farticles/{self.article.id}/comments/')
         
         if comments_response.status_code == 200:
             comments = comments_response.json()

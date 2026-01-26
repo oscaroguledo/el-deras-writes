@@ -271,7 +271,7 @@ class SettingsPersistenceTest(HypothesisTestCase):
             )
             
             # Create API request
-            request = self.factory.get('/api/contact-info/')
+            request = self.factory.get(contact-info/')
             
             # Get settings through API
             view = ContactInfoView.as_view()
@@ -337,7 +337,7 @@ class SettingsPersistenceTest(HypothesisTestCase):
             
             # Create API request
             request = self.factory.patch(
-                '/api/contact-info/',
+                contact-info/',
                 data=json.dumps(update_data),
                 content_type='application/json'
             )
@@ -467,7 +467,7 @@ class SettingsPersistenceTest(HypothesisTestCase):
         self.assertEqual(ContactInfo.objects.count(), 0)
         
         # Create API request
-        request = self.factory.get('/api/contact-info/')
+        request = self.factory.get(contact-info/')
         
         # Get settings through API
         view = ContactInfoView.as_view()

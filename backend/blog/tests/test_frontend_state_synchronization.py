@@ -90,7 +90,7 @@ class FrontendStateSynchronizationTest(HypothesisTestCase):
             'page_size': page_size
         }
         
-        response = self.client.get('/api/articles/', params)
+        response = self.client.get(articles/', params)
         
         if response.status_code == 200:
             data = response.json()
@@ -195,14 +195,14 @@ class FrontendStateSynchronizationTest(HypothesisTestCase):
             'password': 'userpassword123'
         }
         
-        response = self.client.post('/api/auth/login/', login_data, format='json')
+        response = self.client.post(auth/login/', login_data, format='json')
         self.assertEqual(response.status_code, 200)
         
         access_token = response.json()['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
         
         # Test user profile endpoint
-        response = self.client.get(f'/api/users/{self.normal_user.id}/')
+        response = self.client.get(fusers/{self.normal_user.id}/')
         
         if response.status_code == 200:
             user_data = response.json()
@@ -236,7 +236,7 @@ class FrontendStateSynchronizationTest(HypothesisTestCase):
             'password': 'userpassword123'
         }
         
-        response = self.client.post('/api/auth/login/', login_data, format='json')
+        response = self.client.post(auth/login/', login_data, format='json')
         
         if response.status_code == 200:
             auth_data = response.json()
@@ -268,7 +268,7 @@ class FrontendStateSynchronizationTest(HypothesisTestCase):
             access_token = auth_data['access']
             self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
             
-            validation_response = self.client.get('/api/auth/validate/')
+            validation_response = self.client.get(auth/validate/')
             
             if validation_response.status_code == 200:
                 validation_data = validation_response.json()
@@ -293,7 +293,7 @@ class FrontendStateSynchronizationTest(HypothesisTestCase):
             'password': 'userpassword123'
         }
         
-        response = self.client.post('/api/auth/login/', login_data, format='json')
+        response = self.client.post(auth/login/', login_data, format='json')
         self.assertEqual(response.status_code, 200)
         
         access_token = response.json()['access']
@@ -305,7 +305,7 @@ class FrontendStateSynchronizationTest(HypothesisTestCase):
         }
         
         response = self.client.post(
-            f'/api/articles/{self.article.id}/comments/',
+            farticles/{self.article.id}/comments/',
             comment_data,
             format='json'
         )
@@ -338,7 +338,7 @@ class FrontendStateSynchronizationTest(HypothesisTestCase):
                     )
         
         # Test comment list endpoint
-        comments_response = self.client.get(f'/api/articles/{self.article.id}/comments/')
+        comments_response = self.client.get(farticles/{self.article.id}/comments/')
         
         if comments_response.status_code == 200:
             comments_data = comments_response.json()
@@ -361,7 +361,7 @@ class FrontendStateSynchronizationTest(HypothesisTestCase):
         Property: Category and tag endpoints should provide complete hierarchical data for frontend.
         """
         # Test categories endpoint
-        response = self.client.get('/api/categories/')
+        response = self.client.get(categories/')
         
         if response.status_code == 200:
             categories_data = response.json()
@@ -390,7 +390,7 @@ class FrontendStateSynchronizationTest(HypothesisTestCase):
                 )
         
         # Test tags endpoint
-        response = self.client.get('/api/tags/')
+        response = self.client.get(tags/')
         
         if response.status_code == 200:
             tags_data = response.json()
@@ -417,7 +417,7 @@ class FrontendStateSynchronizationTest(HypothesisTestCase):
         """
         # Test search endpoint
         search_params = {'q': 'test'}
-        response = self.client.get('/api/articles/search/', search_params)
+        response = self.client.get(articles/search/', search_params)
         
         if response.status_code == 200:
             search_data = response.json()
@@ -460,14 +460,14 @@ class FrontendStateSynchronizationTest(HypothesisTestCase):
             'password': 'adminpassword123'
         }
         
-        response = self.client.post('/api/auth/login/', login_data, format='json')
+        response = self.client.post(auth/login/', login_data, format='json')
         self.assertEqual(response.status_code, 200)
         
         access_token = response.json()['access']
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {access_token}')
         
         # Test admin dashboard endpoint
-        response = self.client.get('/api/admin/')
+        response = self.client.get(admin/')
         
         if response.status_code == 200:
             dashboard_data = response.json()
@@ -503,11 +503,11 @@ class FrontendStateSynchronizationTest(HypothesisTestCase):
         # Test various error scenarios
         error_scenarios = [
             # Unauthenticated access to protected endpoint
-            {'method': 'get', 'url': '/api/admin/', 'expected_status': 401},
+            {'method': 'get', 'url': admin/', 'expected_status': 401},
             # Invalid article ID
-            {'method': 'get', 'url': '/api/articles/invalid-id/', 'expected_status': 404},
+            {'method': 'get', 'url': articles/invalid-id/', 'expected_status': 404},
             # Invalid pagination (should handle gracefully)
-            {'method': 'get', 'url': '/api/articles/?page=invalid', 'expected_status': [200, 400, 404]},
+            {'method': 'get', 'url': articles/?page=invalid', 'expected_status': [200, 400, 404]},
         ]
         
         for scenario in error_scenarios:
@@ -552,7 +552,7 @@ class FrontendStateSynchronizationTest(HypothesisTestCase):
         responses = []
         
         for _ in range(5):
-            response = self.client.get('/api/articles/')
+            response = self.client.get(articles/')
             if response.status_code == 200:
                 responses.append(response.json())
         

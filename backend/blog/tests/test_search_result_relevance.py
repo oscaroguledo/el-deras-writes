@@ -87,7 +87,7 @@ class SearchResultRelevanceTest(HypothesisTestCase):
                 status='published'
             )
         
-        search_url = reverse('article-list') # Assuming '/api/articles/' is the base for article list
+        search_url = reverse('article-list') # Assuming articles/' is the base for article list
         response = self.client.get(f"{search_url}?search={keyword}", format='json')
         self.assertEqual(response.status_code, 200)
         
