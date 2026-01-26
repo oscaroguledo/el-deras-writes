@@ -130,13 +130,31 @@ export default function Footer() {
                 )}
               </div>
 
+              {/* Admin Login - Always visible on mobile */}
+              <div className="mb-6">
+                <Link 
+                  to="/admin" 
+                  className="w-full flex items-center justify-center py-3 px-4 bg-gray-900 dark:bg-gray-700 text-white rounded-lg shadow-sm hover:bg-gray-800 dark:hover:bg-gray-600 transition-colors duration-200 text-sm font-medium"
+                >
+                  Admin Login
+                </Link>
+              </div>
+
+              {/* Feedback Form - Always visible on mobile */}
+              <div className="mb-6 p-4 bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 shadow-sm">
+                <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">
+                  Share Your Feedback
+                </h4>
+                <FeedbackForm />
+              </div>
+
               {/* Expandable Sections Button */}
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
                 className="w-full flex items-center justify-between py-3 px-4 bg-white dark:bg-gray-700 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 mb-4"
               >
                 <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                  {isExpanded ? 'Hide' : 'Show'} More Options
+                  {isExpanded ? 'Hide' : 'Show'} Categories & Links
                 </span>
                 <ChevronUp className={`h-4 w-4 text-gray-500 dark:text-gray-400 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
               </button>
@@ -192,14 +210,6 @@ export default function Footer() {
                       </li>
                     </ul>
                   </div>
-                </div>
-
-                {/* Feedback Form - Mobile */}
-                <div className="mt-6 p-4 bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
-                  <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">
-                    Share Your Feedback
-                  </h4>
-                  <FeedbackForm />
                 </div>
               </div>
             </div>
