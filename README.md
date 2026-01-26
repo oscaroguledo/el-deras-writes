@@ -1,5 +1,7 @@
 # El Dera's Writes - Modern Blog Platform
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/da951703-7aad-4942-9d57-f187f2132311/deploy-status)](https://app.netlify.com/projects/superlative-kitsune-f19d67/deploys)
+
 A production-ready blog application built with Django REST API backend and React frontend, optimized for PostgreSQL with UUID v7 primary keys and designed for scalable deployment.
 
 ## 🚀 Features
