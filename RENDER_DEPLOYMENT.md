@@ -97,9 +97,9 @@ This guide explains how to deploy the El Deras Writes Django backend to Render u
 ## 📍 Access Points
 
 After deployment, your backend will be available at:
-- **API Base**: `https://your-app-name.onrender.com/api/`
+- **API Base**: `https://your-app-name.onrender.com/`
 - **Admin Panel**: `https://your-app-name.onrender.com/admin/`
-- **Health Check**: `https://your-app-name.onrender.com/api/health/`
+- **Health Check**: `https://your-app-name.onrender.com/health/`
 
 ## 🔐 Admin Access
 

@@ -44,7 +44,7 @@ In Netlify dashboard, ensure these variables are set:
 
 | Variable | Value | Status |
 |----------|-------|--------|
-| `VITE_API_URL` | `https://el-deras-writes-backend.onrender.com/api` | ⚠️ **Required** |
+| `VITE_API_URL` | `https://el-deras-writes-backend.onrender.com/` | ⚠️ **Required** |
 | `NODE_VERSION` | `18` | ✅ Set in netlify.toml |
 | `NPM_VERSION` | `9` | ✅ Set in netlify.toml |
 
