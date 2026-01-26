@@ -178,7 +178,7 @@ export default function AdminDashboardOverview() {
       color: 'bg-cyan-500',
     },
     {
-      title: 'Avg Comments/Article',
+      title: 'Avg Comms/Art',
       value: dashboardData.avg_comments_per_article ? dashboardData.avg_comments_per_article.toFixed(2) : 'N/A',
       icon: <List className="h-full w-full text-white" />,
       color: 'bg-lime-500',

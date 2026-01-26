@@ -156,34 +156,34 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8">
+    <div className="p-3 sm:p-4 md:p-6 lg:p-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 space-y-4 sm:space-y-0">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6 space-y-3 sm:space-y-0">
         <div className="flex items-center space-x-3">
           <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
-            <Users className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+            <Users className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600 dark:text-blue-400" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-serif font-medium text-gray-900 dark:text-white">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-serif font-medium text-gray-900 dark:text-white">
             Manage Users
           </h1>
         </div>
         <button 
           onClick={handleCreateUser} 
-          className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800 transition-colors duration-200 w-full sm:w-auto"
+          className="inline-flex items-center justify-center px-3 sm:px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800 transition-colors duration-200 w-full sm:w-auto"
         >
           <PlusIcon className="h-4 w-4 mr-2" /> 
           <span className="hidden sm:inline">Add User</span>
-          <span className="sm:hidden">Add</span>
+          <span className="sm:hidden">Add User</span>
         </button>
       </div>
 
       {/* Search Bar */}
-      <div className="mb-6">
+      <div className="mb-4 sm:mb-6">
         <div className="relative">
           <input
             type="text"
             placeholder="Search users by name, email, or username..."
-            className="w-full bg-white dark:bg-gray-800 rounded-lg py-3 pl-4 pr-12 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors duration-200"
+            className="w-full bg-white dark:bg-gray-800 rounded-lg py-2.5 sm:py-3 pl-4 pr-12 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors duration-200 text-sm sm:text-base"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => {
@@ -197,7 +197,7 @@ export default function AdminUsersPage() {
             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-200"
             aria-label="Search"
           >
-            <Search size={20} />
+            <Search size={18} className="sm:w-5 sm:h-5" />
           </button>
         </div>
       </div>
