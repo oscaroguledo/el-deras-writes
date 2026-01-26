@@ -1,6 +1,7 @@
 import React, { useEffect, lazy } from 'react';
 import { Route, createRoutesFromElements } from 'react-router-dom';
 import { incrementVisitorCount } from './utils/api';
+import { startKeepAliveIfProduction } from './utils/keepAlive';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AdminLayout from './pages/admin/AdminLayout';
@@ -66,7 +67,18 @@ export const routes = createRoutesFromElements(
 
 export function App({ children }: { children: React.ReactNode }) {
   useEffect(() => {
+    // Increment visitor count
     incrementVisitorCount().catch(error => console.error("Failed to increment visitor count:", error));
+    
+    // Start backend keep-alive service
+    const stopKeepAlive = startKeepAliveIfProduction();
+    
+    // Cleanup function
+    return () => {
+      if (stopKeepAlive) {
+        stopKeepAlive();
+      }
+    };
   }, []);
 
   return (

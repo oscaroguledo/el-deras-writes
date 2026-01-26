@@ -8,8 +8,8 @@ import { ContactInfo } from '../types/ContactInfo';
 import { VisitorCount } from '../types/VisitorCount';
 import { AdminDashboardData, SearchResult } from '../types/Admin';
 import { Feedback } from '../types/Feedback'; // Import Feedback type
-const API_URL = import.meta.env.VITE_API_URL || 'https://el-deras-writes-backend.onrender.com/api';
-const BASE_URL = API_URL.replace('/api', ''); // Remove /api suffix for admin endpoints
+const API_URL = import.meta.env.VITE_API_URL || 'https://el-deras-writes-backend.onrender.com';
+const BASE_URL = API_URL; // Base URL is the same now since we removed /api
 
 
 interface PaginatedResponse<T> {
