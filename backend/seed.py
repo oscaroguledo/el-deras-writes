@@ -12,6 +12,27 @@ def seed_data():
     from blog.models import Article, Category, CustomUser, ContactInfo, Comment # Import Comment
     import random
 
+    # Create admin user first
+    admin_user, created = CustomUser.objects.get_or_create(
+        username='admin',
+        email='admin@gmail.com',
+        defaults={
+            'first_name': 'Admin',
+            'last_name': 'User',
+            'user_type': 'admin',
+            'is_staff': True,
+            'is_superuser': True,
+            'is_active': True,
+        }
+    )
+    
+    if created:
+        admin_user.set_password('admin')
+        admin_user.save()
+        print("Admin user created successfully! Username: admin, Password: admin")
+    else:
+        print("Admin user already exists.")
+
     # Seed ContactInfo
     if not ContactInfo.objects.exists():
         ContactInfo.objects.create(

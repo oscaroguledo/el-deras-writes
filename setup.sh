@@ -7,7 +7,7 @@ set -e  # Exit on any error
 
 echo "🚀 El Dera's Writes - Complete Setup"
 echo "===================================="
-echo "Modern Blog Platform with UUID v7 and Docker"
+echo "Modern Blog Platform with Neon Database"
 echo ""
 
 # Colors for output
@@ -43,134 +43,103 @@ print_header() {
 # Check prerequisites
 print_header "Checking Prerequisites"
 
-# Check if Docker is installed
-if ! command -v docker &> /dev/null; then
-    print_error "Docker is not installed. Please install Docker first."
-    echo "Visit: https://docs.docker.com/get-docker/"
+# Check if Python is installed
+if ! command -v python3 &> /dev/null; then
+    print_error "Python 3 is not installed. Please install Python 3 first."
     exit 1
 fi
 
-# Check if Docker Compose is installed
-if ! command -v docker-compose &> /dev/null; then
-    print_error "Docker Compose is not installed. Please install Docker Compose first."
-    echo "Visit: https://docs.docker.com/compose/install/"
+# Check if Node.js is installed
+if ! command -v node &> /dev/null; then
+    print_error "Node.js is not installed. Please install Node.js first."
     exit 1
 fi
+
+# Check if npm is installed
+if ! command -v npm &> /dev/null; then
+    print_error "npm is not installed. Please install npm first."
+    exit 1
+fi
+
+print_status "All prerequisites are installed"
 
 # Setup environment
 print_header "Setting Up Environment"
 
 if [ ! -f ".env" ]; then
-    print_info "Creating .env file from template..."
-    if [ -f "config/.env.example" ]; then
-        cp config/.env.example .env
-        print_status "Created .env file"
-        
-        # Generate secure keys
-        print_info "Generating secure keys..."
-        SECRET_KEY=$(python3 -c "import secrets; print(secrets.token_urlsafe(50))")
-        JWT_SECRET_KEY=$(python3 -c "import secrets; print(secrets.token_urlsafe(50))")
-        DB_PASSWORD=$(python3 -c "import secrets; print(secrets.token_urlsafe(16))")
-        
-        # Update .env file with generated keys
-        sed -i.bak "s/your-super-secret-key-here-make-it-long-and-random-at-least-50-characters/$SECRET_KEY/g" .env
-        sed -i.bak "s/your-jwt-secret-key-different-from-django-secret-key/$JWT_SECRET_KEY/g" .env
-        sed -i.bak "s/your_secure_password/$DB_PASSWORD/g" .env
-        rm .env.bak
-        
-        print_status "Generated secure keys and updated .env file"
-    else
-        print_error "config/.env.example not found"
-        exit 1
-    fi
+    print_info "Creating .env file..."
+    cat > .env << 'EOF'
+# Database Configuration - Using Neon PostgreSQL
+DATABASE_URL=postgresql://neondb_owner:npg_kY3JEwGm6ABt@ep-snowy-shape-ah59xj71-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+POSTGRES_DB=neondb
+POSTGRES_USER=neondb_owner
+POSTGRES_PASSWORD=npg_kY3JEwGm6ABt
+
+# Django Configuration
+SECRET_KEY=5zKIF8PwlAyB4Q0XvIHolT1Xj4c5gtylhdzobFOtLQ2pr_PjvySA7YVexVtPGICaF1U
+DEBUG=1
+ALLOWED_HOSTS=localhost,127.0.0.1,yourdomain.com
+
+# CORS Configuration (for separate frontend hosting)
+CORS_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173,https://yourdomain.com
+
+# JWT Configuration
+JWT_SECRET_KEY=4773aovasrr-uZUEeum5MlmX72O8lg5R4xja9Fc15nETCQy2EGEw_3w0rastH49GjZ0
+
+# Cache Configuration (optional)
+CACHE_KEY_PREFIX=blog_cache_dev
+EOF
+    print_status "Created .env file with Neon database configuration"
 else
     print_status ".env file already exists"
 fi
 
-# Docker setup
-print_header "Setting Up Docker Environment"
+# Backend setup
+print_header "Setting Up Backend"
 
-print_info "Stopping any existing containers..."
-docker-compose -f config/docker-compose.yml down 2>/dev/null || true
+cd backend
 
-print_info "Building and starting Docker containers..."
-docker-compose -f config/docker-compose.yml up -d --build
-
-print_info "Waiting for services to be ready..."
-sleep 15
-
-# Check container status
-if docker-compose -f config/docker-compose.yml ps | grep -q "Up"; then
-    print_status "Docker containers are running"
-else
-    print_error "Some containers failed to start"
-    docker-compose -f config/docker-compose.yml logs
-    exit 1
+# Create virtual environment if it doesn't exist
+if [ ! -d "venv" ]; then
+    print_info "Creating Python virtual environment..."
+    python3 -m venv venv
+    print_status "Virtual environment created"
 fi
+
+# Activate virtual environment and install dependencies
+print_info "Installing Python dependencies..."
+source venv/bin/activate
+pip install -r requirements.txt
+print_status "Python dependencies installed"
 
 # Database setup
 print_header "Setting Up Database"
 
 print_info "Running database migrations..."
-if docker-compose -f config/docker-compose.yml exec -T backend python manage.py migrate; then
-    print_status "Database migrations completed successfully"
-else
-    print_error "Database migrations failed"
-    exit 1
-fi
+python manage.py migrate
+print_status "Database migrations completed"
 
-# Test the application
-print_header "Testing Application"
+print_info "Loading sample data and creating admin user..."
+python seed.py
+print_status "Sample data loaded and admin user created"
 
-print_info "Running API tests..."
-docker-compose -f config/docker-compose.yml exec -T backend python test_apis.py
+cd ..
 
-# Create superuser
-print_header "User Setup"
+# Frontend setup
+print_header "Setting Up Frontend"
 
-echo ""
-print_info "Would you like to create a superuser account now? (y/n)"
-read -r create_superuser
-if [[ $create_superuser =~ ^[Yy]$ ]]; then
-    print_info "Creating superuser account..."
-    docker-compose -f config/docker-compose.yml exec backend python manage.py createsuperuser
-    print_status "Superuser created successfully"
-fi
+cd frontend
 
-# Load sample data
-echo ""
-print_info "Would you like to load sample data? (y/n)"
-read -r load_sample
-if [[ $load_sample =~ ^[Yy]$ ]]; then
-    if [ -f "backend/seed.py" ]; then
-        print_info "Loading sample data..."
-        docker-compose -f config/docker-compose.yml exec -T backend python seed.py
-        print_status "Sample data loaded successfully"
-    else
-        print_warning "Sample data script not found, skipping..."
-    fi
-fi
+print_info "Installing Node.js dependencies..."
+npm install
+print_status "Node.js dependencies installed"
 
-# Git setup removed - not needed
+cd ..
 
 # Final verification
 print_header "Final Verification"
 
-print_info "Verifying services..."
-
-# Check backend
-if curl -s http://localhost:8000/api/health/ > /dev/null; then
-    print_status "Backend API is responding"
-else
-    print_warning "Backend API may not be ready yet"
-fi
-
-# Check frontend
-if curl -s http://localhost:3000 > /dev/null; then
-    print_status "Frontend is responding"
-else
-    print_warning "Frontend may not be ready yet"
-fi
+print_info "Setup completed successfully!"
 
 # Success message
 echo ""
@@ -179,43 +148,39 @@ echo "=================="
 echo ""
 print_status "Your El Dera's Writes blog is ready!"
 echo ""
-echo "📍 Access Points:"
+echo "🔐 Admin Credentials:"
+echo "  📧 Email:    admin@gmail.com"
+echo "  🔑 Password: admin"
+echo ""
+echo "🚀 To start the application:"
+echo "  📍 Backend:  cd backend && source venv/bin/activate && python manage.py runserver"
+echo "  📍 Frontend: cd frontend && npm run dev"
+echo ""
+echo "📍 Access Points (after starting):"
 echo "  🌐 Frontend:     http://localhost:3000"
 echo "  🔧 Backend API:  http://localhost:8000/api/"
 echo "  👨‍💼 Admin Panel:  http://localhost:8000/admin/"
 echo "  ❤️  Health Check: http://localhost:8000/api/health/"
 echo ""
-echo "🛠️  Management Commands:"
-echo "  📊 View logs:    docker-compose -f config/docker-compose.yml logs"
-echo "  🔄 Restart:      docker-compose -f config/docker-compose.yml restart"
-echo "  🛑 Stop:         docker-compose -f config/docker-compose.yml down"
-echo "  🐚 Backend shell: docker-compose -f config/docker-compose.yml exec backend bash"
-echo "  🐚 Frontend shell: docker-compose -f config/docker-compose.yml exec frontend sh"
-echo ""
 echo "📚 Key Features:"
 echo "  ✨ UUID v7 primary keys for better performance"
-echo "  🐘 PostgreSQL with optimized schema"
+echo "  🐘 Neon PostgreSQL database"
 echo "  🔐 JWT authentication with refresh tokens"
 echo "  📝 Admin dashboard for content management"
 echo "  💬 Comment system with moderation"
 echo "  🏷️  Categories and tags"
-echo "  🚀 Docker containerization"
 echo "  📱 Responsive React frontend"
-echo ""
-echo "📖 Documentation:"
-echo "  📄 README.md - Complete setup and usage guide"
-echo "  🔧 API endpoints documented in README"
-echo "  🧪 Test with: docker-compose -f config/docker-compose.yml exec backend python test_apis.py"
+echo "  🖼️  GitHub image storage with jsDelivr CDN"
 echo ""
 print_status "Happy blogging! 🎉"
 
 # Show next steps
 echo ""
 print_info "Next Steps:"
-echo "  1. Visit http://localhost:8000/admin/ to start creating content"
-echo "  2. Visit http://localhost:3000 to see your blog"
-echo "  3. Customize the frontend in the frontend/src directory"
-echo "  4. Add your content and configure settings"
-echo "  5. Deploy to production when ready"
+echo "  1. Start the backend: cd backend && source venv/bin/activate && python manage.py runserver"
+echo "  2. Start the frontend: cd frontend && npm run dev"
+echo "  3. Visit http://localhost:3000 to see your blog"
+echo "  4. Visit http://localhost:8000/admin/ to manage content"
+echo "  5. Login with admin@gmail.com / admin"
 echo ""
 print_info "Need help? Check the README.md file for detailed documentation!"
