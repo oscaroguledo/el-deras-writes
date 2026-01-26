@@ -6,6 +6,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { Article } from '../types/Article';
 import { CustomUser } from '../types/CustomUser';
+import { uploadSingleFile } from '../utils/gitHub';
 
 interface ArticleFormProps {
   initialData?: Article;
@@ -62,20 +63,35 @@ export function ArticleForm({
       toast.error('Please upload a main image');
       return;
     }
+
     try {
+      let imageUrl = mainImagePreview;
+      
+      // If there's a new image file, upload it to GitHub
+      if (mainImage) {
+        toast.info('Uploading image...');
+        const uploadResult = await uploadSingleFile(mainImage, 'articles');
+        imageUrl = uploadResult.cdnUrl;
+        toast.success('Image uploaded successfully!');
+      }
+
       const articleData: Partial<Article> = {
         title,
         content,
         excerpt,
         category_name: category, // Send category as category_name
         readTime,
-        image: mainImagePreview,
+        image: imageUrl,
       };
       await onSubmit(articleData);
     } catch (error: any) {
       console.error('Error submitting form:', error);
       let errorMessage = 'Failed to save article';
-      if (error.response && error.response.data) {
+      
+      // Handle GitHub upload errors
+      if (error.message && error.message.includes('GitHub')) {
+        errorMessage = 'Failed to upload image. Please try again.';
+      } else if (error.response && error.response.data) {
         if (typeof error.response.data === 'string') {
           errorMessage = error.response.data;
         } else if (error.response.data.detail) {
