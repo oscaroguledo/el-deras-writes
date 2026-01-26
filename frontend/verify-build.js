@@ -62,5 +62,5 @@ console.log('\n⚠️  Next Steps:');
 console.log('1. Set VITE_API_URL environment variable in Netlify dashboard');
 console.log('2. Ensure backend allows your Netlify domain in CORS settings');
 console.log('3. Test the deployed site functionality');
-console.log('\n🌐 Your Netlify site: https://superlative-kitsune-f19d67.netlify.app');
-console.log('🔧 Admin dashboard: https://app.netlify.com/projects/superlative-kitsune-f19d67');
+console.log('\n🌐 Your Netlify site: https://elderawrites.netlify.app');
+console.log('🔧 Admin dashboard: https://app.netlify.com/projects/elderawrites');

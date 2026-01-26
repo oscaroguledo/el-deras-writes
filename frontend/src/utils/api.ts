@@ -8,7 +8,7 @@ import { ContactInfo } from '../types/ContactInfo';
 import { VisitorCount } from '../types/VisitorCount';
 import { AdminDashboardData, SearchResult } from '../types/Admin';
 import { Feedback } from '../types/Feedback'; // Import Feedback type
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'https://el-deras-writes-backend.onrender.com/api';
 const BASE_URL = API_URL.replace('/api', ''); // Remove /api suffix for admin endpoints
 
 

@@ -69,7 +69,7 @@ CORS_ALLOWED_ORIGINS=https://elderawrites.netlify.app
 1. Go to [Netlify Dashboard](https://app.netlify.com)
 2. Select your site: `elderawrites`
 3. Go to Site settings → Environment variables
-4. Update `VITE_API_URL` to: `https://your-render-app-name.onrender.com/api`
+4. Update `VITE_API_URL` to: `https://el-deras-writes-backend.onrender.com/api`
 
 #### 2. Trigger Deployment
 - Push changes to trigger auto-deployment
@@ -115,7 +115,7 @@ services:
 - `CORS_ALLOWED_ORIGINS=https://elderawrites.netlify.app`
 
 **Netlify (Frontend):**
-- `VITE_API_URL=https://your-render-app.onrender.com/api`
+- `VITE_API_URL=https://el-deras-writes-backend.onrender.com/api`
 
 ## 🎯 Post-Deployment Tasks
 

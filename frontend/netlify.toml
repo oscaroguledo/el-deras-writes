@@ -40,4 +40,4 @@
     Cache-Control = "public, max-age=31536000, immutable"
 
 # Environment variables (these will be set in Netlify dashboard)
-# VITE_API_URL = "https://your-render-app-name.onrender.com/api"
+# VITE_API_URL = "https://el-deras-writes-backend.onrender.com/api"

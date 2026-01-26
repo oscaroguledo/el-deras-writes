@@ -44,7 +44,7 @@ In Netlify dashboard, ensure these variables are set:
 
 | Variable | Value | Status |
 |----------|-------|--------|
-| `VITE_API_URL` | `https://your-backend-url.com/api` | ⚠️ **Required** |
+| `VITE_API_URL` | `https://el-deras-writes-backend.onrender.com/api` | ⚠️ **Required** |
 | `NODE_VERSION` | `18` | ✅ Set in netlify.toml |
 | `NPM_VERSION` | `9` | ✅ Set in netlify.toml |
 
@@ -98,7 +98,7 @@ If you need to set up from scratch:
 In Netlify dashboard, go to Site settings > Environment variables and add:
 
 ```
-VITE_API_URL=https://your-backend-url.com/api
+VITE_API_URL=https://el-deras-writes-backend.onrender.com/api
 ```
 
 Replace `your-backend-url.com` with your actual backend URL.
