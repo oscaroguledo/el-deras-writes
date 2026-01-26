@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-4=r#=3)9z+sxmn=)*^p%ujw4!%%s)im7rka!w8mu**r(pwa&8r'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-4=r#=3)9z+sxmn=)*^p%ujw4!%%s)im7rka!w8mu**r(pwa&8r')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
@@ -36,7 +36,8 @@ ALLOWED_HOSTS = ['127.0.0.1', '0.0.0.0', 'localhost', 'backend', '.netlify.app',
 
 # Add allowed hosts from environment
 if os.environ.get('ALLOWED_HOSTS'):
-    ALLOWED_HOSTS.extend(os.environ.get('ALLOWED_HOSTS').split(','))
+    additional_hosts = [host.strip() for host in os.environ.get('ALLOWED_HOSTS').split(',')]
+    ALLOWED_HOSTS.extend(additional_hosts)
 
 AUTHENTICATION_BACKENDS = [
     'blog.auth_backends.CustomUserBackend',
@@ -125,7 +126,13 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5174",
     "http://192.168.0.221:5173",
     "https://el-deras-writes.onrender.com",
+    "https://elderawrites.netlify.app",
 ]
+
+# Add CORS origins from environment
+if os.environ.get('CORS_ALLOWED_ORIGINS'):
+    additional_origins = [origin.strip() for origin in os.environ.get('CORS_ALLOWED_ORIGINS').split(',')]
+    CORS_ALLOWED_ORIGINS.extend(additional_origins)
 
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https:\/\/.*\.onrender\.com$",

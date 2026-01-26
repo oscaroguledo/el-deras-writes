@@ -9,6 +9,7 @@ import { VisitorCount } from '../types/VisitorCount';
 import { AdminDashboardData, SearchResult } from '../types/Admin';
 import { Feedback } from '../types/Feedback'; // Import Feedback type
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+const BASE_URL = API_URL.replace('/api', ''); // Remove /api suffix for admin endpoints
 
 
 interface PaginatedResponse<T> {
@@ -67,30 +68,30 @@ export async function submitFeedback(feedback: {
 }
 
 export async function getFeedback(params: { page?: number; pageSize?: number; search?: string } = {}): Promise<PaginatedResponse<Feedback>> {
-  const response = await axios.get(`http://localhost:8000/api/admin-api/feedback/`, { params: { page: params.page, page_size: params.pageSize, search: params.search } });
+  const response = await axios.get(`${BASE_URL}/api/admin-api/feedback/`, { params: { page: params.page, page_size: params.pageSize, search: params.search } });
   return response.data;
 }
 
 export async function deleteFeedback(id: string): Promise<void> {
-  await axios.delete(`http://localhost:8000/api/admin-api/feedback/${id}/`);
+  await axios.delete(`${BASE_URL}/api/admin-api/feedback/${id}/`);
 }
 
 export async function approveComment(id: string): Promise<Comment> {
-  const response = await axios.post(`http://localhost:8000/api/admin-api/comments/${id}/approve_comment/`);
+  const response = await axios.post(`${BASE_URL}/api/admin-api/comments/${id}/approve_comment/`);
   return response.data;
 }
 
 export async function deleteComment(id: string): Promise<void> {
-  await axios.delete(`http://localhost:8000/api/admin-api/comments/${id}/delete_comment/`);
+  await axios.delete(`${BASE_URL}/api/admin-api/comments/${id}/delete_comment/`);
 }
 
 export async function flagComment(id: string): Promise<Comment> {
-  const response = await axios.post(`http://localhost:8000/api/admin-api/comments/${id}/flag_comment/`);
+  const response = await axios.post(`${BASE_URL}/api/admin-api/comments/${id}/flag_comment/`);
   return response.data;
 }
 
 export async function getComments(params: { page?: number; pageSize?: number; search?: string } = {}): Promise<PaginatedResponse<Comment>> {
-  const response = await axios.get(`http://localhost:8000/api/admin-api/comments/`, { params: { page: params.page, page_size: params.pageSize, search: params.search } });
+  const response = await axios.get(`${BASE_URL}/api/admin-api/comments/`, { params: { page: params.page, page_size: params.pageSize, search: params.search } });
   return response.data;
 }
 
@@ -129,22 +130,22 @@ export interface GetUsersParams {
 }
 
 export async function getUsers(params: GetUsersParams = {}): Promise<PaginatedResponse<CustomUser>> {
-  const response = await axios.get(`http://localhost:8000/api/admin-api/users/`, { params });
+  const response = await axios.get(`${BASE_URL}/api/admin-api/users/`, { params });
   return response.data;
 }
 
 export async function createUser(userData: Partial<CustomUser>): Promise<CustomUser> { // Updated type
-  const response = await axios.post(`http://localhost:8000/api/admin-api/users/`, userData);
+  const response = await axios.post(`${BASE_URL}/api/admin-api/users/`, userData);
   return response.data;
 }
 
 export async function updateUser(id: string, userData: Partial<CustomUser>): Promise<CustomUser> { // Updated type
-  const response = await axios.patch(`http://localhost:8000/api/admin-api/users/${id}/`, userData);
+  const response = await axios.patch(`${BASE_URL}/api/admin-api/users/${id}/`, userData);
   return response.data;
 }
 
 export async function deleteUser(id: string): Promise<void> {
-  await axios.delete(`http://localhost:8000/api/admin-api/users/${id}/`);
+  await axios.delete(`${BASE_URL}/api/admin-api/users/${id}/`);
 }
 
 export async function createCategory(categoryData: { name: string }): Promise<Category> {
@@ -176,7 +177,7 @@ export async function deleteTag(id: string): Promise<void> {
 }
 
 export async function getAdminDashboardData(): Promise<AdminDashboardData> { // Updated type
-  const response = await axios.get(`http://localhost:8000/api/admin-api/dashboard/`);
+  const response = await axios.get(`${BASE_URL}/api/admin-api/dashboard/`);
   return response.data;
 }
 

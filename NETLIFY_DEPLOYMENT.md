@@ -6,8 +6,8 @@ This guide explains how to deploy the El Deras Writes frontend to Netlify.
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/da951703-7aad-4942-9d57-f187f2132311/deploy-status)](https://app.netlify.com/projects/superlative-kitsune-f19d67/deploys)
 
-**Site URL**: https://superlative-kitsune-f19d67.netlify.app  
-**Admin Dashboard**: https://app.netlify.com/projects/superlative-kitsune-f19d67
+**Site URL**: https://elderawrites.netlify.app  
+**Admin Dashboard**: https://app.netlify.com/sites/elderawrites
 
 ## Prerequisites
 
@@ -50,7 +50,7 @@ In Netlify dashboard, ensure these variables are set:
 
 ### 4. Domain Configuration
 
-**Current Domain**: `superlative-kitsune-f19d67.netlify.app`
+**Current Domain**: `elderawrites.netlify.app`
 
 To set up a custom domain:
 1. Go to Site settings > Domain management
@@ -138,7 +138,7 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
 Update your backend `.env` file:
 
 ```env
-CORS_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173,https://superlative-kitsune-f19d67.netlify.app
+CORS_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173,https://elderawrites.netlify.app
 ```
 
 ## 📊 Performance Features
