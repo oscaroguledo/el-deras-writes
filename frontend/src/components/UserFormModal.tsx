@@ -61,13 +61,26 @@ export function UserFormModal({ show, onClose, user, onSubmit }: UserFormModalPr
     setErrors({});
 
     try {
+      // Prepare data for submission
+      const submitData = { ...formData };
+      
+      // For updates, remove password field if it's empty
+      if (user && (!submitData.password || submitData.password.trim() === '')) {
+        delete submitData.password;
+      }
+
       if (user) {
         // Update user
-        await updateUser(user.id, formData);
+        await updateUser(user.id, submitData);
         toast.success('User updated successfully!');
       } else {
-        // Create user
-        await createUser(formData);
+        // Create user - password is required
+        if (!submitData.password || submitData.password.trim() === '') {
+          toast.error('Password is required for new users');
+          setLoading(false);
+          return;
+        }
+        await createUser(submitData);
         toast.success('User created successfully!');
       }
       onSubmit();
@@ -198,17 +211,28 @@ export function UserFormModal({ show, onClose, user, onSubmit }: UserFormModalPr
           </div>
           <div>
             <label htmlFor="password" className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">
-              Password: {user ? '(Leave blank to keep current)' : ''}
+              Password:
             </label>
+            {user && (
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                Leave blank to keep current password, or enter a new password to change it.
+              </p>
+            )}
             <input
               type="password"
               id="password"
               name="password"
               value={formData.password || ''}
               onChange={handleChange}
+              placeholder={user ? "Enter new password (optional)" : "Enter password"}
               className="shadow appearance-none border border-gray-300 dark:border-gray-600 rounded w-full py-2 px-3 text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500 dark:focus:border-blue-400 transition-colors duration-200"
               {...(!user && { required: true })} // Required only for new users
             />
+            {!user && (
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                Password is required for new users.
+              </p>
+            )}
             {errors.password && <p className="text-red-500 dark:text-red-400 text-xs italic">{errors.password}</p>}
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0 sm:space-x-2 pt-4">
