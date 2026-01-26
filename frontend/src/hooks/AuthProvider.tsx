@@ -88,20 +88,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string) => {
     const response = await axios.post(`${API_URL}/token/`, { email, password });
-    const { access, refresh } = response.data;
+    const { access, refresh, user } = response.data;
 
     localStorage.setItem(ACCESS_TOKEN_KEY, access);
     localStorage.setItem(REFRESH_TOKEN_KEY, refresh);
 
-    const decodedUser: any = jwtDecode(access);
+    // Use the user data from the response instead of decoding from JWT
     const loggedInUser: CustomUser = {
-      id: decodedUser.user_id,
-      username: decodedUser.username,
-      email: decodedUser.email,
-      user_type: decodedUser.user_type,
-      first_name: decodedUser.first_name,
-      last_name: decodedUser.last_name,
-      bio: decodedUser.bio,
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      user_type: user.user_type,
+      first_name: user.first_name || '',
+      last_name: user.last_name || '',
+      bio: user.bio || '',
+      date_joined: user.date_joined,
     };
 
     localStorage.setItem(USER_KEY, JSON.stringify(loggedInUser));

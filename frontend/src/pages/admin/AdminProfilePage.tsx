@@ -18,6 +18,7 @@ export default function AdminProfilePage() {
 
   useEffect(() => {
     console.log('AdminProfilePage - Current user:', user);
+    console.log('AdminProfilePage - User keys:', user ? Object.keys(user) : 'No user');
     if (user) {
       setFormData({
         first_name: user.first_name || '',
@@ -49,7 +50,8 @@ export default function AdminProfilePage() {
     }
   };
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | undefined) => {
+    if (!dateString) return 'Unknown';
     try {
       return new Date(dateString).toLocaleDateString('en-US', {
         year: 'numeric',
@@ -183,7 +185,7 @@ export default function AdminProfilePage() {
               
               <div className="flex items-center justify-center sm:justify-start space-x-2 text-sm text-gray-600 dark:text-gray-400">
                 <Calendar className="h-4 w-4 text-gray-500" />
-                <span>Joined {formatDate(user.date_joined || '')}</span>
+                <span>Joined {formatDate(user.date_joined)}</span>
               </div>
             </div>
 

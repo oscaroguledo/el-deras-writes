@@ -202,8 +202,8 @@ export default function AdminUsersPage() {
         </div>
       </div>
 
-      {/* Table Container */}
-      <div className="bg-white dark:bg-gray-800 shadow-lg overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
+      {/* Table Container - Desktop */}
+      <div className="hidden md:block bg-white dark:bg-gray-800 shadow-lg overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead className="bg-gray-50 dark:bg-gray-700">
@@ -214,7 +214,7 @@ export default function AdminUsersPage() {
                 <th scope="col" className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   User
                 </th>
-                <th scope="col" className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden md:table-cell">
+                <th scope="col" className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                   Email
                 </th>
                 <th scope="col" className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider hidden lg:table-cell">
@@ -257,12 +257,8 @@ export default function AdminUsersPage() {
                     <div className="text-sm text-gray-500 dark:text-gray-400">
                       @{user.username}
                     </div>
-                    {/* Show email on mobile */}
-                    <div className="text-xs text-gray-500 dark:text-gray-400 md:hidden mt-1">
-                      {user.email}
-                    </div>
                   </td>
-                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 hidden md:table-cell">
+                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     {user.email}
                   </td>
                   <td className="px-3 sm:px-6 py-4 whitespace-nowrap hidden lg:table-cell">
@@ -291,7 +287,7 @@ export default function AdminUsersPage() {
                         <TrashIcon className="h-4 w-4 sm:h-5 sm:w-5" />
                       </button>
                     </div>
-                    {/* Show role on mobile */}
+                    {/* Show role on medium screens */}
                     <div className="lg:hidden mt-1">
                       <span className={`inline-flex px-2 py-1 text-xs leading-4 font-semibold rounded-full ${
                         user.user_type === 'admin' 
@@ -329,6 +325,100 @@ export default function AdminUsersPage() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Mobile Card Layout */}
+      <div className="md:hidden space-y-3">
+        {users.length > 0 ? users.map(user => (
+          <div key={user.id} className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-4 border border-gray-200 dark:border-gray-700">
+            <div className="flex items-start space-x-3">
+              {/* Avatar */}
+              <div className="flex-shrink-0">
+                <img 
+                  className="h-12 w-12 rounded-full border-2 border-gray-200 dark:border-gray-600" 
+                  src={getUserAvatarUrl(user, 48)} 
+                  alt={`${getUserDisplayName(user)} Avatar`} 
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    const parent = target.parentElement;
+                    if (parent && !parent.querySelector('.initials-fallback')) {
+                      const initials = user.first_name?.charAt(0) || user.last_name?.charAt(0) || user.username?.charAt(0) || 'U';
+                      const fallback = document.createElement('div');
+                      fallback.className = 'initials-fallback h-12 w-12 rounded-full bg-gray-500 dark:bg-gray-400 flex items-center justify-center text-white font-medium text-sm';
+                      fallback.textContent = initials.toUpperCase();
+                      parent.appendChild(fallback);
+                    }
+                  }}
+                />
+              </div>
+
+              {/* User Info */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                      {getUserDisplayName(user)}
+                    </h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                      @{user.username}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-1">
+                      {user.email}
+                    </p>
+                  </div>
+                  
+                  {/* Actions */}
+                  <div className="flex space-x-2 ml-2">
+                    <button 
+                      onClick={() => handleEditUser(user)} 
+                      className="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 p-1.5 rounded transition-colors duration-200"
+                      title="Edit user"
+                    >
+                      <EditIcon className="h-4 w-4" />
+                    </button>
+                    <button 
+                      onClick={() => handleDeleteUser(user.id)} 
+                      className="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 p-1.5 rounded transition-colors duration-200"
+                      title="Delete user"
+                    >
+                      <TrashIcon className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+                
+                {/* Role Badge */}
+                <div className="mt-2">
+                  <span className={`inline-flex px-2 py-1 text-xs leading-4 font-semibold rounded-full ${
+                    user.user_type === 'admin' 
+                      ? 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200' 
+                      : 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'
+                  }`}>
+                    {user.user_type}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )) : (
+          <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-8 text-center border border-gray-200 dark:border-gray-700">
+            <Users className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-3" />
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              {searchQuery ? 'No users found matching your search.' : 'No users found.'}
+            </div>
+            {searchQuery && (
+              <button
+                onClick={() => {
+                  setSearchQuery('');
+                  fetchUsers(1, '');
+                }}
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm mt-2"
+              >
+                Clear search
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Pagination Controls */}
