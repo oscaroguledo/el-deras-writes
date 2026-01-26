@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../hooks/useAuth.ts';
 import { updateUser } from '../../utils/api';
@@ -39,9 +39,28 @@ export default function AdminProfilePage() {
     try {
       setLoading(true);
       console.log('Updating user profile with data:', formData);
-      await updateUser(user.id, formData);
+      
+      // Update the user profile
+      const updatedUser = await updateUser(user.id, formData);
+      console.log('Profile updated successfully:', updatedUser);
+      
+      // Update the user data in localStorage to reflect the changes
+      const currentStoredUser = localStorage.getItem('el_dera_blog_user');
+      if (currentStoredUser) {
+        const parsedUser = JSON.parse(currentStoredUser);
+        const updatedStoredUser = {
+          ...parsedUser,
+          first_name: updatedUser.first_name,
+          last_name: updatedUser.last_name,
+          bio: updatedUser.bio,
+        };
+        localStorage.setItem('el_dera_blog_user', JSON.stringify(updatedStoredUser));
+      }
+      
       toast.success('Profile updated successfully!');
-      await checkAuthStatus(); // Refresh user data
+      
+      // Refresh user data in the auth context
+      await checkAuthStatus();
     } catch (error) {
       console.error('Profile update error:', error);
       toast.error('Failed to update profile.');

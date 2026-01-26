@@ -136,10 +136,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const currentTime = Date.now() / 1000;
 
         if (decodedToken.exp > currentTime) {
-          // Access token is valid
+          // Access token is valid, get fresh user data from localStorage
           const storedUser = localStorage.getItem(USER_KEY);
           if (storedUser) {
-            setUser(JSON.parse(storedUser));
+            const parsedUser = JSON.parse(storedUser);
+            setUser(parsedUser);
           }
           setIsAuthenticated(true);
           axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
@@ -158,18 +159,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const newAccessToken = response.data.access;
         localStorage.setItem(ACCESS_TOKEN_KEY, newAccessToken);
 
-        const decodedUser: any = jwtDecode(newAccessToken);
-        const refreshedUser: CustomUser = {
-          id: decodedUser.user_id,
-          username: decodedUser.username,
-          email: decodedUser.email,
-          user_type: decodedUser.user_type,
-          first_name: decodedUser.first_name,
-          last_name: decodedUser.last_name,
-          bio: decodedUser.bio,
-        };
-        localStorage.setItem(USER_KEY, JSON.stringify(refreshedUser));
-        setUser(refreshedUser);
+        // Keep the existing user data from localStorage instead of decoding from JWT
+        const storedUser = localStorage.getItem(USER_KEY);
+        if (storedUser) {
+          const parsedUser = JSON.parse(storedUser);
+          setUser(parsedUser);
+        } else {
+          // Fallback: decode from JWT if no stored user data
+          const decodedUser: any = jwtDecode(newAccessToken);
+          const refreshedUser: CustomUser = {
+            id: decodedUser.user_id,
+            username: decodedUser.username,
+            email: decodedUser.email,
+            user_type: decodedUser.user_type,
+            first_name: decodedUser.first_name || '',
+            last_name: decodedUser.last_name || '',
+            bio: decodedUser.bio || '',
+            date_joined: decodedUser.date_joined,
+          };
+          localStorage.setItem(USER_KEY, JSON.stringify(refreshedUser));
+          setUser(refreshedUser);
+        }
+        
         setIsAuthenticated(true);
         axios.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
         return true;

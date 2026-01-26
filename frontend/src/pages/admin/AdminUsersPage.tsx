@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { PlusIcon, EditIcon, TrashIcon, ChevronLeft, ChevronRight, Search, Users } from 'lucide-react';
 import { CustomUser } from '../../types/CustomUser';
@@ -328,15 +328,15 @@ export default function AdminUsersPage() {
       </div>
 
       {/* Mobile Card Layout */}
-      <div className="md:hidden space-y-3">
+      <div className="lg:hidden space-y-4">
         {users.length > 0 ? users.map(user => (
-          <div key={user.id} className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-4 border border-gray-200 dark:border-gray-700">
-            <div className="flex items-start space-x-3">
+          <div key={user.id} className="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-2.5 border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center space-x-2.5">
               {/* Avatar */}
               <div className="flex-shrink-0">
                 <img 
-                  className="h-12 w-12 rounded-full border-2 border-gray-200 dark:border-gray-600" 
-                  src={getUserAvatarUrl(user, 48)} 
+                  className="h-8 w-8 rounded-full border border-gray-200 dark:border-gray-600" 
+                  src={getUserAvatarUrl(user, 32)} 
                   alt={`${getUserDisplayName(user)} Avatar`} 
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
@@ -345,7 +345,7 @@ export default function AdminUsersPage() {
                     if (parent && !parent.querySelector('.initials-fallback')) {
                       const initials = user.first_name?.charAt(0) || user.last_name?.charAt(0) || user.username?.charAt(0) || 'U';
                       const fallback = document.createElement('div');
-                      fallback.className = 'initials-fallback h-12 w-12 rounded-full bg-gray-500 dark:bg-gray-400 flex items-center justify-center text-white font-medium text-sm';
+                      fallback.className = 'initials-fallback h-8 w-8 rounded-full bg-gray-500 dark:bg-gray-400 flex items-center justify-center text-white font-medium text-xs';
                       fallback.textContent = initials.toUpperCase();
                       parent.appendChild(fallback);
                     }
@@ -356,53 +356,51 @@ export default function AdminUsersPage() {
               {/* User Info */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between">
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                      {getUserDisplayName(user)}
-                    </h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                  <div className="flex-1 min-w-0 pr-1.5">
+                    <div className="flex items-center space-x-1.5 mb-0.5">
+                      <h3 className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                        {getUserDisplayName(user)}
+                      </h3>
+                      <span className={`inline-flex px-1.5 py-0.5 text-xs font-medium rounded-full flex-shrink-0 ${
+                        user.user_type === 'admin' 
+                          ? 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200' 
+                          : 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-200'
+                      }`}>
+                        {user.user_type}
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate leading-tight">
                       @{user.username}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-1">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate leading-tight">
                       {user.email}
                     </p>
                   </div>
                   
                   {/* Actions */}
-                  <div className="flex space-x-2 ml-2">
+                  <div className="flex space-x-0.5 flex-shrink-0">
                     <button 
                       onClick={() => handleEditUser(user)} 
                       className="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 p-1.5 rounded transition-colors duration-200"
                       title="Edit user"
                     >
-                      <EditIcon className="h-4 w-4" />
+                      <EditIcon className="h-3.5 w-3.5" />
                     </button>
                     <button 
                       onClick={() => handleDeleteUser(user.id)} 
                       className="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 p-1.5 rounded transition-colors duration-200"
                       title="Delete user"
                     >
-                      <TrashIcon className="h-4 w-4" />
+                      <TrashIcon className="h-3.5 w-3.5" />
                     </button>
                   </div>
-                </div>
-                
-                {/* Role Badge */}
-                <div className="mt-2">
-                  <span className={`inline-flex px-2 py-1 text-xs leading-4 font-semibold rounded-full ${
-                    user.user_type === 'admin' 
-                      ? 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200' 
-                      : 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'
-                  }`}>
-                    {user.user_type}
-                  </span>
                 </div>
               </div>
             </div>
           </div>
         )) : (
-          <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-8 text-center border border-gray-200 dark:border-gray-700">
-            <Users className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-3" />
+          <div className="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-6 text-center border border-gray-200 dark:border-gray-700">
+            <Users className="h-10 w-10 text-gray-400 dark:text-gray-500 mx-auto mb-2" />
             <div className="text-sm text-gray-500 dark:text-gray-400">
               {searchQuery ? 'No users found matching your search.' : 'No users found.'}
             </div>
