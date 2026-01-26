@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { HeroPost } from '../components/HeroPost';
-import { LazyBlogPostList } from '../components/LazyBlogPostList';
+import { BlogPostList } from '../components/BlogPostList';
 import { LazyContent } from '../components/LazyContent';
 import { getArticles } from '../utils/api'; // Removed getTopFiveCategories
 import { Article } from '../types/Article';
@@ -64,6 +64,11 @@ export default function Home() {
     };
     fetchData();
   }, [searchQuery, categoryFilter, currentPage]);
+
+  // Reset page when search or category changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, categoryFilter]);
 
   const handlePreviousPage = () => {
     setCurrentPage(prev => Math.max(1, prev - 1));
@@ -136,13 +141,12 @@ export default function Home() {
             threshold={0.1}
             rootMargin="100px"
           >
-            <LazyBlogPostList
+            <BlogPostList
               posts={articles}
               currentPage={currentPage}
               totalPages={totalPages}
               onPreviousPage={handlePreviousPage}
               onNextPage={handleNextPage}
-              loading={loading}
             />
           </LazyContent>
           {articles.length === 0 && (
