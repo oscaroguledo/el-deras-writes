@@ -4,7 +4,7 @@ import { AuthContext } from './AuthContext';
 import { CustomUser } from '../types/CustomUser';
 import { jwtDecode } from 'jwt-decode';
 
-const API_URL = 'http://localhost:8000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 const ACCESS_TOKEN_KEY = 'el_dera_blog_access_token';
 const REFRESH_TOKEN_KEY = 'el_dera_blog_refresh_token';
 const USER_KEY = 'el_dera_blog_user';

@@ -1,7 +1,7 @@
-admin@example.com
-adminpassword
+Email: admin@gmail.com
+Password: admin
 
-curl -X POST -H "Content-Type: application/json" -d '{"email": "admin@example.com", "username":      
-     "admin", "password": "adminpassword"}' https://el-deras-writes.onrender.com/api/create-superuser/
+curl -X POST -H "Content-Type: application/json" -d '{"email": "admin@gmail.com", "username":      
+     "admin", "password": "admin"}' https://el-deras-writes.onrender.com/api/create-superuser/
 {"id":"05a603d4-5872-4249-a6af-a3c935bb5aa9","username":"admin","email":"admin@example.com","first_name":"","last_name":"","title":null,"bio":null,"user_type":"admin","is_active":true,"is_staff":true,"is_superuser":true,"date_joined":"2025-11-17T04:37:56.927528Z"}%                                                              
 oscaroguledo@Oscars-Air elderasblog % 
