@@ -2,7 +2,6 @@
 """
 API Testing Script for El Dera's Writes Blog
 Tests all major API endpoints to ensure they're working correctly.
-Designed to work with Docker containers.
 """
 
 import os
@@ -210,12 +209,12 @@ def test_api_endpoints():
     
     print("\n" + "=" * 50)
     print("🎉 API Testing Complete!")
-    print("\nNext steps for Docker setup:")
-    print("1. Run: docker-compose -f config/docker-compose.yml exec backend python manage.py migrate")
-    print("2. Run: docker-compose -f config/docker-compose.yml exec backend python manage.py createsuperuser")
+    print("\nNext steps for local development:")
+    print("1. Run: python manage.py migrate")
+    print("2. Run: python manage.py createsuperuser")
     print("3. Access APIs at: http://localhost:8000/")
     print("4. Access Admin at: http://localhost:8000/admin/")
-    print("5. Access Frontend at: http://localhost:3000/")
+    print("5. Access Frontend at: http://localhost:3000/ or http://localhost:5173/")
 
 def test_database_connection():
     """Test database connection"""

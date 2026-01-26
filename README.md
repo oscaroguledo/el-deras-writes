@@ -2,7 +2,7 @@
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/da951703-7aad-4942-9d57-f187f2132311/deploy-status)](https://app.netlify.com/projects/superlative-kitsune-f19d67/deploys)
 
-A production-ready blog application built with Django REST API backend and React frontend, optimized for PostgreSQL with UUID v7 primary keys and designed for scalable deployment.
+A production-ready blog application built with Django REST API backend and React frontend, optimized for PostgreSQL with UUID v7 primary keys. Currently deployed with frontend on Netlify and backend on Render.
 
 ## 🚀 Features
 
@@ -14,16 +14,12 @@ A production-ready blog application built with Django REST API backend and React
 - **Comment System**: Moderated comment system with approval workflow
 - **Content Management**: Categories, tags, featured articles, and SEO-friendly slugs
 - **Performance Optimized**: Database indexes, caching, and lazy loading
-- **Docker Ready**: Complete Docker setup for development and production
 - **Production Ready**: Logging, monitoring, and health checks
 
 ## 📁 Project Structure
 
 ```
 el-deras-writes/
-├── config/                     # Configuration files
-│   ├── .env.example           # Environment variables template
-│   └── docker-compose.yml     # Docker setup
 ├── backend/                   # Django REST API
 │   ├── blog/
 │   │   ├── models/            # Database models (organized)
@@ -32,11 +28,11 @@ el-deras-writes/
 │   │   ├── permissions/       # Custom permissions
 │   │   ├── urls/              # URL routing (organized)
 │   │   ├── utils/             # Utility functions (UUID v7, etc.)
-│   │   ├── migrations/        # Simplified PostgreSQL migrations
+│   │   ├── migrations/        # PostgreSQL migrations
 │   │   └── tests/             # Comprehensive test suite
 │   ├── blog_project/          # Django project settings
 │   ├── requirements.txt       # Python dependencies
-│   ├── Dockerfile            # Backend Docker configuration
+│   ├── build.sh              # Render deployment script
 │   └── manage.py
 ├── frontend/                  # React TypeScript application
 │   ├── src/
@@ -46,20 +42,20 @@ el-deras-writes/
 │   │   ├── types/             # TypeScript type definitions
 │   │   └── utils/             # Utility functions
 │   ├── package.json
-│   ├── Dockerfile            # Frontend Docker configuration
+│   ├── netlify.toml          # Netlify deployment config
 │   └── vite.config.ts
+├── render.yaml               # Render deployment config
 └── README.md
 ```
 
 ## 🛠 Prerequisites
 
-- **Docker & Docker Compose** (recommended)
-- **Python 3.8+** (for local development)
-- **Node.js 18+** (for local development)
-- **PostgreSQL 12+** (for local development)
+- **Python 3.8+**
+- **Node.js 18+**
+- **PostgreSQL 12+** (or use managed database like Neon)
 - **Git**
 
-## 🚀 Quick Start with Docker (Recommended)
+## 🚀 Quick Start
 
 ### 1. Clone and Setup
 
@@ -70,23 +66,16 @@ cd el-deras-writes
 
 ### 2. Environment Configuration
 
-```bash
-cp config/.env.example .env
-```
-
-Edit `.env` with your settings:
+Create a `.env` file in the root directory:
 
 ```env
-# Database Configuration
-DATABASE_URL=postgresql://bloguser:your_secure_password@db:5432/elderasblog
-POSTGRES_DB=elderasblog
-POSTGRES_USER=bloguser
-POSTGRES_PASSWORD=your_secure_password
+# Database Configuration (use your PostgreSQL database URL)
+DATABASE_URL=postgresql://username:password@host:port/database
 
 # Django Configuration
 SECRET_KEY=your-super-secret-key-here-make-it-long-and-random-at-least-50-characters
 DEBUG=1
-ALLOWED_HOSTS=localhost,127.0.0.1,backend,yourdomain.com
+ALLOWED_HOSTS=localhost,127.0.0.1,yourdomain.com
 
 # CORS Configuration
 CORS_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173,https://yourdomain.com
@@ -95,35 +84,53 @@ CORS_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173,https://yourdom
 JWT_SECRET_KEY=your-jwt-secret-key-different-from-django-secret-key
 ```
 
-### 3. Start with Docker
+### 3. Backend Setup
 
 ```bash
-# Build and start all services
-docker-compose -f config/docker-compose.yml up -d --build
+cd backend
 
-# Check if services are running
-docker-compose -f config/docker-compose.yml ps
-```
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-### 4. Initialize Database
+# Install dependencies
+pip install -r requirements.txt
 
-```bash
-# Run migrations with UUID v7 support
-docker-compose -f config/docker-compose.yml exec backend python manage.py migrate
+# Run migrations
+python manage.py migrate
 
 # Create superuser
-docker-compose -f config/docker-compose.yml exec backend python manage.py createsuperuser
+python manage.py createsuperuser
 
 # Load sample data (optional)
-docker-compose -f config/docker-compose.yml exec backend python seed.py
+python seed.py
+
+# Start development server
+python manage.py runserver
+```
+
+### 4. Frontend Setup
+
+```bash
+cd frontend
+
+# Install dependencies
+npm install
+
+# Create environment file
+cp .env.example .env
+# Edit .env with your backend URL
+
+# Start development server
+npm run dev
 ```
 
 ### 5. Access the Application
 
 - **Backend API**: http://localhost:8000/
 - **Admin Panel**: http://localhost:8000/admin/
-- **Frontend**: http://localhost:3000
-- **API Documentation**: http://localhost:8000/health/
+- **Frontend**: http://localhost:3000 (or http://localhost:5173 with Vite)
+- **API Health Check**: http://localhost:8000/health/
 
 ### 6. Test APIs
 
@@ -138,48 +145,6 @@ curl http://localhost:8000/articles/
 curl -X POST http://localhost:8000/token/ \
   -H "Content-Type: application/json" \
   -d '{"email": "your-email@example.com", "password": "your-password"}'
-```
-
-## 🔧 Manual Setup (Alternative)
-
-### Backend Setup
-
-```bash
-cd backend
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Set up PostgreSQL database
-createdb elderasblog
-createuser bloguser --pwprompt
-
-# Configure environment
-cp ../config/.env.example ../.env
-# Edit .env with your database settings
-
-# Run migrations
-python manage.py migrate
-python manage.py createsuperuser
-
-# Start development server
-python manage.py runserver
-```
-
-### Frontend Setup
-
-```bash
-cd frontend
-
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
 ```
 
 ## 📊 Database Schema with UUID v7
@@ -247,29 +212,27 @@ GET    /admin-api/feedback/              # List feedback
 
 ## 🧪 Testing
 
-### Docker Testing
+### Backend Testing
 
 ```bash
-# Run backend tests in Docker
-docker-compose -f config/docker-compose.yml exec backend python manage.py test
-
-# Run specific test modules
-docker-compose -f config/docker-compose.yml exec backend python manage.py test blog.tests.test_api_response_consistency
-
-# Run with coverage
-docker-compose -f config/docker-compose.yml exec backend coverage run --source='.' manage.py test
-docker-compose -f config/docker-compose.yml exec backend coverage report
-```
-
-### Local Testing
-
-```bash
-# Backend tests
 cd backend
 source venv/bin/activate
+
+# Run all tests
 python manage.py test
 
-# Frontend tests
+# Run specific test modules
+python manage.py test blog.tests.test_api_response_consistency
+
+# Run with coverage
+pip install coverage
+coverage run --source='.' manage.py test
+coverage report
+```
+
+### Frontend Testing
+
+```bash
 cd frontend
 npm test
 ```
@@ -278,14 +241,21 @@ npm test
 
 ```bash
 # Run the built-in API test script
-docker-compose -f config/docker-compose.yml exec backend python test_apis.py
+cd backend
+python test_apis.py
 ```
 
 ## 🚀 Production Deployment
 
+### Current Deployment
+
+- **Frontend**: Deployed on Netlify at [https://elderawrites.netlify.app](https://elderawrites.netlify.app)
+- **Backend**: Deployed on Render at [https://el-deras-writes-backend.onrender.com](https://el-deras-writes-backend.onrender.com)
+- **Database**: Neon PostgreSQL (managed database)
+
 ### Netlify Frontend Deployment
 
-The frontend can be easily deployed to Netlify with automatic builds from GitHub:
+The frontend is deployed to Netlify with automatic builds from GitHub:
 
 1. **Connect Repository**: Link your GitHub repository to Netlify
 2. **Build Settings**: 
@@ -297,15 +267,25 @@ The frontend can be easily deployed to Netlify with automatic builds from GitHub
 
 📖 **Detailed Guide**: See [NETLIFY_DEPLOYMENT.md](./NETLIFY_DEPLOYMENT.md) for complete instructions.
 
-### Backend Deployment Options
+### Render Backend Deployment
+
+The backend is deployed to Render using the `render.yaml` configuration:
+
+1. **Connect Repository**: Link your GitHub repository to Render
+2. **Environment Variables**: Configure database URL and other settings
+3. **Build Script**: Uses `backend/build.sh` for deployment
+4. **Deploy**: Automatic deployment on every push to main branch
+
+📖 **Detailed Guide**: See [RENDER_DEPLOYMENT.md](./RENDER_DEPLOYMENT.md) for complete instructions.
+
+### Other Deployment Options
 
 - **Railway**: Easy PostgreSQL + Django deployment
-- **Render**: Free tier with PostgreSQL
 - **Heroku**: Classic platform-as-a-service
 - **DigitalOcean App Platform**: Scalable container deployment
 - **AWS/GCP/Azure**: Full cloud infrastructure
 
-### Environment Setup
+### Production Environment Variables
 
 ```env
 # Production environment variables
@@ -314,37 +294,6 @@ SECRET_KEY=your-production-secret-key-very-long-and-secure
 DATABASE_URL=postgresql://user:password@host:port/database
 ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
 CORS_ALLOWED_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
-```
-
-### Docker Production Deployment
-
-```bash
-# Build production images
-docker-compose -f config/docker-compose.yml build --no-cache
-
-# Start production services
-docker-compose -f config/docker-compose.yml up -d
-
-# Run production migrations
-docker-compose -f config/docker-compose.yml exec backend python manage.py migrate
-
-# Collect static files
-docker-compose -f config/docker-compose.yml exec backend python manage.py collectstatic --noinput
-
-# Create superuser
-docker-compose -f config/docker-compose.yml exec backend python manage.py createsuperuser
-```
-
-### Health Monitoring
-
-```bash
-# Check service health
-curl http://localhost:8000/health/
-
-# View logs
-docker-compose -f config/docker-compose.yml logs backend
-docker-compose -f config/docker-compose.yml logs frontend
-docker-compose -f config/docker-compose.yml logs db
 ```
 
 ## 🔧 Development
@@ -360,27 +309,35 @@ docker-compose -f config/docker-compose.yml logs db
 
 ```bash
 # Backend changes
-docker-compose -f config/docker-compose.yml exec backend python manage.py makemigrations
-docker-compose -f config/docker-compose.yml exec backend python manage.py migrate
+cd backend
+source venv/bin/activate
+
+# Create and apply migrations
+python manage.py makemigrations
+python manage.py migrate
 
 # Frontend changes
-docker-compose -f config/docker-compose.yml exec frontend npm run build
+cd frontend
+npm run build
 ```
 
 ### Database Migrations
 
 ```bash
+cd backend
+source venv/bin/activate
+
 # Create new migration
-docker-compose -f config/docker-compose.yml exec backend python manage.py makemigrations
+python manage.py makemigrations
 
 # Apply migrations
-docker-compose -f config/docker-compose.yml exec backend python manage.py migrate
+python manage.py migrate
 
 # Reset migrations (development only)
-docker-compose -f config/docker-compose.yml exec backend python manage.py migrate blog zero
-docker-compose -f config/docker-compose.yml exec backend rm blog/migrations/0*.py
-docker-compose -f config/docker-compose.yml exec backend python manage.py makemigrations blog
-docker-compose -f config/docker-compose.yml exec backend python manage.py migrate
+python manage.py migrate blog zero
+rm blog/migrations/0*.py
+python manage.py makemigrations blog
+python manage.py migrate
 ```
 
 ## 🔍 Monitoring & Logging
@@ -388,7 +345,7 @@ docker-compose -f config/docker-compose.yml exec backend python manage.py migrat
 ### Application Logs
 - **Location**: `backend/logs/django.log`
 - **Levels**: DEBUG, INFO, WARNING, ERROR, CRITICAL
-- **Docker**: `docker-compose -f config/docker-compose.yml logs backend`
+- **Local Development**: Check console output and log files
 
 ### Health Checks
 - **Endpoint**: `GET /health/`
@@ -407,40 +364,59 @@ docker-compose -f config/docker-compose.yml exec backend python manage.py migrat
 
 **Database Connection Error:**
 ```bash
-# Check if PostgreSQL container is running
-docker-compose -f config/docker-compose.yml ps
+# Check if PostgreSQL is running
+# For local PostgreSQL:
+sudo service postgresql status
 
-# Check database logs
-docker-compose -f config/docker-compose.yml logs db
-
-# Reset database (development only)
-docker-compose -f config/docker-compose.yml down -v
-docker-compose -f config/docker-compose.yml up -d
+# Check database connection in Django
+cd backend
+python manage.py dbshell
 ```
 
 **Migration Issues:**
 ```bash
+cd backend
+source venv/bin/activate
+
 # Check migration status
-docker-compose -f config/docker-compose.yml exec backend python manage.py showmigrations
+python manage.py showmigrations
 
 # Reset migrations (development only)
-docker-compose -f config/docker-compose.yml exec backend python manage.py migrate blog zero
-docker-compose -f config/docker-compose.yml exec backend rm blog/migrations/0*.py
-docker-compose -f config/docker-compose.yml exec backend python manage.py makemigrations blog
-docker-compose -f config/docker-compose.yml exec backend python manage.py migrate
+python manage.py migrate blog zero
+rm blog/migrations/0*.py
+python manage.py makemigrations blog
+python manage.py migrate
 ```
 
 **Frontend Build Issues:**
 ```bash
+cd frontend
+
 # Clear node modules and reinstall
-docker-compose -f config/docker-compose.yml exec frontend rm -rf node_modules package-lock.json
-docker-compose -f config/docker-compose.yml exec frontend npm install
+rm -rf node_modules package-lock.json
+npm install
+
+# Clear build cache
+rm -rf dist
+npm run build
 ```
 
 **Permission Issues:**
 ```bash
 # Fix file permissions
 sudo chown -R $USER:$USER .
+```
+
+**Environment Variables:**
+```bash
+# Check if .env file exists and has correct values
+cat .env
+
+# Verify environment variables are loaded
+cd backend
+python manage.py shell
+>>> import os
+>>> print(os.environ.get('DATABASE_URL'))
 ```
 
 ## 📚 API Documentation
@@ -480,7 +456,7 @@ Authorization: Bearer <your-jwt-token>
 - **Caching**: Multi-level caching strategy (database, API, template)
 - **Frontend**: Lazy loading, code splitting, and image optimization
 - **API**: Pagination, filtering, and response compression
-- **Docker**: Multi-stage builds and optimized images
+- **Keep-alive**: Frontend pings backend every 10 minutes to prevent sleeping on free hosting
 
 ## 📈 Roadmap
 
@@ -504,8 +480,10 @@ Authorization: Bearer <your-jwt-token>
    ```
 3. **Make changes and test:**
    ```bash
-   docker-compose -f config/docker-compose.yml exec backend python manage.py test
-   docker-compose -f config/docker-compose.yml exec frontend npm test
+   cd backend
+   python manage.py test
+   cd ../frontend
+   npm test
    ```
 4. **Commit changes:**
    ```bash
@@ -529,4 +507,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Built with ❤️ for modern, scalable blogging with UUID v7 and Docker**
+**Built with ❤️ for modern, scalable blogging with UUID v7 and cloud deployment**

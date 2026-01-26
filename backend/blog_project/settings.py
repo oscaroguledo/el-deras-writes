@@ -172,7 +172,7 @@ import dj_database_url
 # PostgreSQL configuration with connection pooling
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL', 'postgresql://postgres:postgres@db:5432/elderasblog'),
+        default=os.environ.get('DATABASE_URL', 'postgresql://postgres:postgres@localhost:5432/elderasblog'),
         conn_max_age=600,  # Connection pooling - keep connections alive for 10 minutes
         conn_health_checks=True,  # Enable connection health checks
     )
@@ -185,18 +185,6 @@ if not os.environ.get('DATABASE_URL'):
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
-else:
-    # For Docker/Production, ensure we're using the correct database URL
-    database_url = os.environ.get('DATABASE_URL')
-    if 'db:5432' in database_url:
-        # Docker environment - use as is
-        pass
-    elif 'localhost:5432' in database_url:
-        # Local development with PostgreSQL
-        pass
-    else:
-        # Production or other environments
-        pass
 
 # Enhanced database connection pooling settings
 DATABASE_CONNECTION_POOLING = {
