@@ -2,6 +2,7 @@
 # exit on error
 set -o errexit
 
+# Updated: 2025-01-26 - API URLs changed from /api/ to /
 # Install dependencies
 pip install -r requirements.txt
 
