@@ -3,12 +3,11 @@ import { toast } from 'react-toastify';
 import { getContactInfo, updateContactInfo } from '../../utils/api';
 import { ContactInfo } from '../../types/ContactInfo';
 import SkeletonLoader from '../../components/SkeletonLoader';
-import { MapPin, Phone, Mail, Plus, X, Instagram, Facebook, Twitter, Youtube, Globe } from 'lucide-react';
+import { Phone, Mail, Plus, X, Instagram, Facebook, Twitter, Youtube, Globe } from 'lucide-react';
 import { FaTiktok, FaWhatsapp, FaLinkedinIn, FaGithub } from 'react-icons/fa';
 
 export default function AdminContactInfoPage() {
   const [contactInfo, setContactInfo] = useState<ContactInfo>({
-    address: '',
     phone: '',
     email: '',
     social_media_links: {},
@@ -22,7 +21,6 @@ export default function AdminContactInfoPage() {
         setLoading(true);
         const info = await getContactInfo();
         setContactInfo({
-          address: info.address || '',
           phone: info.phone || '',
           email: info.email || '',
           social_media_links: info.social_media_links || {},
@@ -153,8 +151,7 @@ export default function AdminContactInfoPage() {
 
         <div className="bg-white dark:bg-gray-800 shadow-lg overflow-hidden rounded-xl p-4 md:p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Address, Phone, Email Skeletons */}
-            <SkeletonLoader className="h-16 w-full" />
+            {/* Phone, Email Skeletons */}
             <SkeletonLoader className="h-16 w-full" />
             <SkeletonLoader className="h-16 w-full" />
 
@@ -190,24 +187,6 @@ export default function AdminContactInfoPage() {
       <div className="bg-white dark:bg-gray-800 shadow-lg overflow-hidden rounded-xl p-4 md:p-6 transition-colors duration-200">
         {isEditing ? (
           <form onSubmit={handleSave} className="space-y-6">
-            <div>
-              <label htmlFor="address" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Address
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <MapPin className="text-gray-400 dark:text-gray-500" />
-                </div>
-                <input
-                  type="text"
-                  id="address"
-                  value={contactInfo.address}
-                  onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-indigo-500 dark:focus:border-indigo-400 transition-colors duration-200"
-                  placeholder="Address"
-                />
-              </div>
-            </div>
             <div>
               <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Phone
@@ -307,7 +286,6 @@ export default function AdminContactInfoPage() {
           </form>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {renderInfoField('Address', contactInfo.address, <MapPin className="text-blue-500 dark:text-blue-400" />)}
             {renderInfoField('Phone', contactInfo.phone, <Phone className="text-green-500 dark:text-green-400" />)}
             {renderInfoField('Email', contactInfo.email, <Mail className="text-red-500 dark:text-red-400" />)}
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { MailIcon, PhoneIcon, MapPinIcon, SendIcon, Instagram, Facebook, Twitter, Youtube, Globe } from 'lucide-react';
+import { MailIcon, PhoneIcon, SendIcon, Instagram, Facebook, Twitter, Youtube, Globe } from 'lucide-react';
 import { FaTiktok, FaWhatsapp, FaLinkedinIn, FaGithub } from 'react-icons/fa';
 import { getContactInfo } from '@/utils/api';
 import { ContactInfo } from '../types/ContactInfo'; // Import ContactInfo type
@@ -84,13 +84,12 @@ export default function Contact() {
           Contact Us
         </h1>
         {loadingContactInfo ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            <SkeletonLoader className="h-32 w-full" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
             <SkeletonLoader className="h-32 w-full" />
             <SkeletonLoader className="h-32 w-full" />
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
               <div className="flex items-center mb-4">
                 <div className="bg-gray-100 dark:bg-gray-700 p-3 rounded-full mr-4">
@@ -115,17 +114,6 @@ export default function Contact() {
                 <a href={`tel:${contactInfo?.phone || '+1 (234) 567-890'}`} className="hover:text-gray-900 dark:hover:text-gray-100">
                   {contactInfo?.phone || '+1 (234) 567-890'}
                 </a>
-              </p>
-            </div>
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
-              <div className="flex items-center mb-4">
-                <div className="bg-gray-100 dark:bg-gray-700 p-3 rounded-full mr-4">
-                  <MapPinIcon className="h-6 w-6 text-gray-700 dark:text-gray-300" />
-                </div>
-                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">Location</h3>
-              </div>
-              <p className="text-gray-600 dark:text-gray-300 text-justify">
-                {contactInfo?.address || '123 Content Street\nBlogville, BL 90210'}
               </p>
             </div>
           </div>

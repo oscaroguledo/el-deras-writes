@@ -36,7 +36,6 @@ def seed_data():
     # Seed ContactInfo
     if not ContactInfo.objects.exists():
         ContactInfo.objects.create(
-            address="123 Main St, Anytown, USA",
             phone="+1 (555) 123-4567",
             email="info@el-deras-writes.com",
             social_media_links={

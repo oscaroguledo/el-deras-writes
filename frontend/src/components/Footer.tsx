@@ -4,7 +4,7 @@ import { FeedbackForm } from './FeedbackForm';
 import { getContactInfo, getCategories } from '../utils/api';
 import { ContactInfo } from '../types/ContactInfo';
 import { Category } from '../types/Category';
-import { Globe, Mail, Phone, MapPin, ChevronUp } from 'lucide-react';
+import { Globe, Mail, Phone, ChevronUp } from 'lucide-react';
 import { FaTiktok, FaWhatsapp, FaLinkedinIn, FaGithub, FaInstagram, FaFacebook, FaTwitter, FaYoutube } from 'react-icons/fa';
 
 export default function Footer() {
@@ -118,12 +118,6 @@ export default function Footer() {
                         <a href={`tel:${contactInfo.phone}`} className="hover:text-gray-900 dark:hover:text-gray-100">
                           {contactInfo.phone}
                         </a>
-                      </div>
-                    )}
-                    {contactInfo.address && (
-                      <div className="flex items-start text-sm text-gray-600 dark:text-gray-300">
-                        <MapPin className="h-4 w-4 mr-3 mt-0.5 text-gray-400 dark:text-gray-500 flex-shrink-0" />
-                        <span>{contactInfo.address}</span>
                       </div>
                     )}
                   </div>
@@ -260,12 +254,6 @@ export default function Footer() {
                         <a href={`tel:${contactInfo.phone}`} className="hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
                           {contactInfo.phone}
                         </a>
-                      </div>
-                    )}
-                    {contactInfo.address && (
-                      <div className="flex items-start text-sm text-gray-600 dark:text-gray-300">
-                        <MapPin className="h-4 w-4 mr-3 mt-0.5 text-gray-400 dark:text-gray-500 flex-shrink-0" />
-                        <span>{contactInfo.address}</span>
                       </div>
                     )}
                   </div>

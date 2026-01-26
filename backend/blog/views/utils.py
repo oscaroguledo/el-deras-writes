@@ -18,7 +18,6 @@ class ContactInfoView(APIView):
         contact_info = ContactInfo.objects.first()
         if not contact_info:
             contact_info = ContactInfo.objects.create(
-                address="123 Main St, Anytown, USA",
                 phone="+1234567890",
                 email="info@example.com",
                 social_media_links={
