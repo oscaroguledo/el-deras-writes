@@ -52,9 +52,9 @@ CORS_ALLOWED_ORIGINS=https://elderawrites.netlify.app
 - [ ] API endpoints respond correctly
 
 **Test URLs:**
-- Health Check: `https://your-app-name.onrender.com/api/health/`
+- Health Check: `https://your-app-name.onrender.com/health/`
 - Admin Panel: `https://your-app-name.onrender.com/admin/`
-- API Root: `https://your-app-name.onrender.com/api/`
+- API Root: `https://your-app-name.onrender.com/`
 
 ## Frontend Deployment to Netlify
 

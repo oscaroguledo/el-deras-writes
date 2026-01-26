@@ -50,29 +50,29 @@ def main():
     
     # Test health endpoint
     print("\n1. Health Check:")
-    test_endpoint("GET", "/api/health/")
+    test_endpoint("GET", "/health/")
     
     # Test article endpoints
     print("\n2. Article Endpoints:")
-    test_endpoint("GET", "/api/articles/")
-    test_endpoint("GET", "/api/articles/?status=published")
-    test_endpoint("GET", "/api/articles/?featured=true")
+    test_endpoint("GET", "/articles/")
+    test_endpoint("GET", "/articles/?status=published")
+    test_endpoint("GET", "/articles/?featured=true")
     
     # Test category endpoints
     print("\n3. Category Endpoints:")
-    test_endpoint("GET", "/api/categories/")
+    test_endpoint("GET", "/categories/")
     
     # Test tag endpoints
     print("\n4. Tag Endpoints:")
-    test_endpoint("GET", "/api/tags/")
+    test_endpoint("GET", "/tags/")
     
     # Test contact info
     print("\n5. Contact Info:")
-    test_endpoint("GET", "/api/contact/")
+    test_endpoint("GET", "/contact/")
     
     # Test visitor count (POST only)
     print("\n6. Visitor Count:")
-    test_endpoint("POST", "/api/visitor-count/")
+    test_endpoint("POST", "/visitor-count/")
     
     # Test feedback submission
     print("\n7. Feedback:")
@@ -81,11 +81,11 @@ def main():
         "email": "test@example.com",
         "message": "This is a test feedback message."
     }
-    test_endpoint("POST", "/api/feedback/", feedback_data)
+    test_endpoint("POST", "/feedback/", feedback_data)
     
     # Test authentication endpoints
     print("\n8. Authentication:")
-    test_endpoint("POST", "/api/token/", {
+    test_endpoint("POST", "/token/", {
         "email": "nonexistent@example.com",
         "password": "wrongpassword"
     }, expected_status=401)
@@ -116,9 +116,9 @@ def main():
     print("🎉 Comprehensive API Testing Complete!")
     print("\n📍 Access Points:")
     print("  🌐 Frontend:     http://localhost:3000")
-    print("  🔧 Backend API:  http://localhost:8000/api/")
+    print("  🔧 Backend API:  http://localhost:8000/")
     print("  👨‍💼 Admin Panel:  http://localhost:8000/admin/")
-    print("  ❤️  Health Check: http://localhost:8000/api/health/")
+    print("  ❤️  Health Check: http://localhost:8000/health/")
 
 if __name__ == "__main__":
     main()

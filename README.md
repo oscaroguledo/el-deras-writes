@@ -120,22 +120,22 @@ docker-compose -f config/docker-compose.yml exec backend python seed.py
 
 ### 5. Access the Application
 
-- **Backend API**: http://localhost:8000/api/
+- **Backend API**: http://localhost:8000/
 - **Admin Panel**: http://localhost:8000/admin/
 - **Frontend**: http://localhost:3000
-- **API Documentation**: http://localhost:8000/api/health/
+- **API Documentation**: http://localhost:8000/health/
 
 ### 6. Test APIs
 
 ```bash
 # Test health endpoint
-curl http://localhost:8000/api/health/
+curl http://localhost:8000/health/
 
 # Test articles endpoint
-curl http://localhost:8000/api/articles/
+curl http://localhost:8000/articles/
 
 # Test authentication
-curl -X POST http://localhost:8000/api/token/ \
+curl -X POST http://localhost:8000/token/ \
   -H "Content-Type: application/json" \
   -d '{"email": "your-email@example.com", "password": "your-password"}'
 ```
@@ -214,23 +214,23 @@ npm run dev
 
 ### Public API
 ```
-GET    /api/articles/                    # List published articles
-GET    /api/articles/{id}/               # Get article details
-GET    /api/articles/{id}/comments/      # Get article comments
-POST   /api/articles/{id}/comments/      # Add comment (auth required)
-GET    /api/categories/                  # List categories
-GET    /api/tags/                        # List tags
-GET    /api/contact/                     # Get contact info
-POST   /api/feedback/                    # Submit feedback
-GET    /api/visitor-count/               # Get visitor count
-GET    /api/health/                      # Health check
+GET    /articles/                    # List published articles
+GET    /articles/{id}/               # Get article details
+GET    /articles/{id}/comments/      # Get article comments
+POST   /articles/{id}/comments/      # Add comment (auth required)
+GET    /categories/                  # List categories
+GET    /tags/                        # List tags
+GET    /contact/                     # Get contact info
+POST   /feedback/                    # Submit feedback
+GET    /visitor-count/               # Get visitor count
+GET    /health/                      # Health check
 ```
 
 ### Authentication API
 ```
-POST   /api/token/                       # Get JWT token
-POST   /api/token/refresh/               # Refresh JWT token
-POST   /api/create-superuser/            # Create superuser (dev only)
+POST   /token/                       # Get JWT token
+POST   /token/refresh/               # Refresh JWT token
+POST   /create-superuser/            # Create superuser (dev only)
 ```
 
 ### Admin API (Authentication Required)
@@ -339,7 +339,7 @@ docker-compose -f config/docker-compose.yml exec backend python manage.py create
 
 ```bash
 # Check service health
-curl http://localhost:8000/api/health/
+curl http://localhost:8000/health/
 
 # View logs
 docker-compose -f config/docker-compose.yml logs backend
@@ -391,7 +391,7 @@ docker-compose -f config/docker-compose.yml exec backend python manage.py migrat
 - **Docker**: `docker-compose -f config/docker-compose.yml logs backend`
 
 ### Health Checks
-- **Endpoint**: `GET /api/health/`
+- **Endpoint**: `GET /health/`
 - **Database**: Connection and query performance
 - **Cache**: Cache system status
 - **Memory**: Application memory usage

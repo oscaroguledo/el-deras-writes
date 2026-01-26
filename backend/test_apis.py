@@ -54,7 +54,7 @@ def test_api_endpoints():
     # Test health endpoint
     print("\n1. Testing Health Check...")
     try:
-        response = client.get('/api/health/')
+        response = client.get('/health/')
         if response.status_code == 200:
             print(f"   ✅ Health Check: {response.status_code}")
             if hasattr(response, 'data'):
@@ -69,7 +69,7 @@ def test_api_endpoints():
     
     # Articles
     try:
-        response = client.get('/api/articles/')
+        response = client.get('/articles/')
         if response.status_code in [200, 404]:  # 404 is OK if no articles exist
             print(f"   ✅ Articles List: {response.status_code}")
         else:
@@ -79,7 +79,7 @@ def test_api_endpoints():
     
     # Categories
     try:
-        response = client.get('/api/categories/')
+        response = client.get('/categories/')
         if response.status_code in [200, 404]:
             print(f"   ✅ Categories List: {response.status_code}")
         else:
@@ -89,7 +89,7 @@ def test_api_endpoints():
     
     # Tags
     try:
-        response = client.get('/api/tags/')
+        response = client.get('/tags/')
         if response.status_code in [200, 404]:
             print(f"   ✅ Tags List: {response.status_code}")
         else:
@@ -99,7 +99,7 @@ def test_api_endpoints():
     
     # Contact Info
     try:
-        response = client.get('/api/contact/')
+        response = client.get('/contact/')
         if response.status_code in [200, 404]:
             print(f"   ✅ Contact Info: {response.status_code}")
         else:
@@ -109,7 +109,7 @@ def test_api_endpoints():
     
     # Visitor Count
     try:
-        response = client.get('/api/visitor-count/')
+        response = client.get('/visitor-count/')
         if response.status_code in [200, 404]:
             print(f"   ✅ Visitor Count: {response.status_code}")
         else:
@@ -124,7 +124,7 @@ def test_api_endpoints():
             'email': 'test@example.com',
             'message': 'This is a test feedback message.'
         }
-        response = client.post('/api/feedback/', feedback_data)
+        response = client.post('/feedback/', feedback_data)
         if response.status_code in [200, 201, 404]:  # 404 if endpoint not found
             print(f"   ✅ Feedback Submission: {response.status_code}")
         else:
@@ -136,7 +136,7 @@ def test_api_endpoints():
     
     # Test token endpoint (should fail without valid credentials)
     try:
-        response = client.post('/api/token/', {
+        response = client.post('/token/', {
             'email': 'nonexistent@example.com',
             'password': 'wrongpassword'
         })
@@ -213,7 +213,7 @@ def test_api_endpoints():
     print("\nNext steps for Docker setup:")
     print("1. Run: docker-compose -f config/docker-compose.yml exec backend python manage.py migrate")
     print("2. Run: docker-compose -f config/docker-compose.yml exec backend python manage.py createsuperuser")
-    print("3. Access APIs at: http://localhost:8000/api/")
+    print("3. Access APIs at: http://localhost:8000/")
     print("4. Access Admin at: http://localhost:8000/admin/")
     print("5. Access Frontend at: http://localhost:3000/")
 
