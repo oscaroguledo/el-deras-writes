@@ -281,6 +281,28 @@ docker-compose -f config/docker-compose.yml exec backend python test_apis.py
 
 ## 🚀 Production Deployment
 
+### Netlify Frontend Deployment
+
+The frontend can be easily deployed to Netlify with automatic builds from GitHub:
+
+1. **Connect Repository**: Link your GitHub repository to Netlify
+2. **Build Settings**: 
+   - Base directory: `frontend`
+   - Build command: `npm run build`
+   - Publish directory: `frontend/dist`
+3. **Environment Variables**: Set `VITE_API_URL` to your backend URL
+4. **Deploy**: Automatic deployment on every push to main branch
+
+📖 **Detailed Guide**: See [NETLIFY_DEPLOYMENT.md](./NETLIFY_DEPLOYMENT.md) for complete instructions.
+
+### Backend Deployment Options
+
+- **Railway**: Easy PostgreSQL + Django deployment
+- **Render**: Free tier with PostgreSQL
+- **Heroku**: Classic platform-as-a-service
+- **DigitalOcean App Platform**: Scalable container deployment
+- **AWS/GCP/Azure**: Full cloud infrastructure
+
 ### Environment Setup
 
 ```env
