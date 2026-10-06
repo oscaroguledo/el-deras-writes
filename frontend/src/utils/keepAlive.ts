@@ -2,7 +2,7 @@
  * Keep-alive utility to prevent backend from sleeping on free hosting services
  */
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://el-deras-writes-backend.onrender.com';
+import { API_URL } from '../config';
 
 /**
  * Ping the backend to keep it awake
@@ -10,7 +10,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'https://el-deras-writes-backend
 export const pingBackend = async (): Promise<boolean> => {
   try {
     // Use a lightweight endpoint to ping the backend
-    const response = await fetch(`${API_URL}/categories/`, {
+    const response = await fetch(`${API_URL}/health/`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

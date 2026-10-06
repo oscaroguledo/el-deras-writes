@@ -1,15 +1,15 @@
 import axios from 'axios';
-import { Article, GetArticlesParams } from '../types/Article';
+import { Article, ArticleInput, GetArticlesParams } from '../types/Article';
 import { Comment } from '../types/Comment';
 import { Category } from '../types/Category';
 import { Tag } from '../types/Tag';
 import { CustomUser } from '../types/CustomUser';
 import { ContactInfo } from '../types/ContactInfo';
 import { VisitorCount } from '../types/VisitorCount';
-import { AdminDashboardData, SearchResult } from '../types/Admin';
+import { AdminDashboardData } from '../types/Admin';
 import { Feedback } from '../types/Feedback'; // Import Feedback type
-const API_URL = import.meta.env.VITE_API_URL || 'https://el-deras-writes-backend.onrender.com';
-const BASE_URL = API_URL; // Base URL is the same now since we removed /api
+import { API_URL } from '../config';
+const BASE_URL = API_URL;
 
 
 interface PaginatedResponse<T> {
@@ -20,39 +20,29 @@ interface PaginatedResponse<T> {
 }
 
 
+function toArticle(raw: any): Article {
+  return { ...raw, createdAt: raw.created_at, updatedAt: raw.updated_at };
+}
+
 export async function getArticles(params: GetArticlesParams): Promise<PaginatedResponse<Article>> {
   const response = await axios.get(`${API_URL}/articles/`, { params });
-  const articles = response.data.results.map((article: any) => ({
-    ...article,
-    _id: article.id,
-    createdAt: article.created_at,
-    updatedAt: article.updated_at,
-  }));
-  return {
-    ...response.data,
-    results: articles,
-  };
+  return { ...response.data, results: response.data.results.map(toArticle) };
 }
 
+/** Accepts an article id or slug. */
 export async function getArticleById(id: string): Promise<Article> {
   const response = await axios.get(`${API_URL}/articles/${id}/`);
-  const article = response.data;
-  return {
-    ...article,
-    _id: article.id,
-    createdAt: article.created_at,
-    updatedAt: article.updated_at,
-  };
+  return toArticle(response.data);
 }
 
-export async function createArticle(articleData: Partial<Article>): Promise<Article> {
+export async function createArticle(articleData: ArticleInput): Promise<Article> {
   const response = await axios.post(`${API_URL}/articles/`, articleData);
-  return response.data;
+  return toArticle(response.data);
 }
 
-export async function updateArticle(id: string, articleData: Partial<Article>): Promise<Article> {
-  const response = await axios.put(`${API_URL}/articles/${id}/`, articleData);
-  return response.data;
+export async function updateArticle(id: string, articleData: Partial<ArticleInput>): Promise<Article> {
+  const response = await axios.patch(`${API_URL}/articles/${id}/`, articleData);
+  return toArticle(response.data);
 }
 
 export async function deleteArticle(id: string): Promise<void> {
@@ -77,16 +67,16 @@ export async function deleteFeedback(id: string): Promise<void> {
 }
 
 export async function approveComment(id: string): Promise<Comment> {
-  const response = await axios.post(`${BASE_URL}/admin-api/comments/${id}/approve_comment/`);
+  const response = await axios.post(`${BASE_URL}/admin-api/comments/${id}/approve/`);
   return response.data;
 }
 
 export async function deleteComment(id: string): Promise<void> {
-  await axios.delete(`${BASE_URL}/admin-api/comments/${id}/delete_comment/`);
+  await axios.delete(`${BASE_URL}/admin-api/comments/${id}/`);
 }
 
 export async function flagComment(id: string): Promise<Comment> {
-  const response = await axios.post(`${BASE_URL}/admin-api/comments/${id}/flag_comment/`);
+  const response = await axios.post(`${BASE_URL}/admin-api/comments/${id}/flag/`);
   return response.data;
 }
 
@@ -111,8 +101,15 @@ export async function createComment(
   return response.data;
 }
 
-export async function getCategories(params: { search?: string } = {}): Promise<Category[]> {
+/** Flat list of every category (sections and sub-sections). */
+export async function getCategories(params: { search?: string; parent?: string; top_level?: boolean } = {}): Promise<Category[]> {
   const response = await axios.get(`${API_URL}/categories/`, { params });
+  return response.data;
+}
+
+/** Sections with their sub-sections nested under `children`. */
+export async function getCategoryTree(): Promise<Category[]> {
+  const response = await axios.get(`${API_URL}/categories/tree/`);
   return response.data;
 }
 
@@ -148,12 +145,19 @@ export async function deleteUser(id: string): Promise<void> {
   await axios.delete(`${BASE_URL}/admin-api/users/${id}/`);
 }
 
-export async function createCategory(categoryData: { name: string }): Promise<Category> {
+export interface CategoryInput {
+  name: string;
+  description?: string;
+  /** Parent section's slug or id; '' makes it a top-level section. */
+  parent?: string | null;
+}
+
+export async function createCategory(categoryData: CategoryInput): Promise<Category> {
   const response = await axios.post(`${API_URL}/categories/`, categoryData);
   return response.data;
 }
 
-export async function updateCategory(id: string, categoryData: { name: string }): Promise<Category> {
+export async function updateCategory(id: string, categoryData: Partial<CategoryInput>): Promise<Category> {
   const response = await axios.patch(`${API_URL}/categories/${id}/`, categoryData);
   return response.data;
 }

@@ -1,10 +1,10 @@
-import React, { useState, useEffect, ReactNode } from 'react';
+import { useState, useEffect, ReactNode } from 'react';
 import axios from 'axios';
 import { AuthContext } from './AuthContext';
 import { CustomUser } from '../types/CustomUser';
 import { jwtDecode } from 'jwt-decode';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+import { API_URL } from '../config';
 const ACCESS_TOKEN_KEY = 'el_dera_blog_access_token';
 const REFRESH_TOKEN_KEY = 'el_dera_blog_refresh_token';
 const USER_KEY = 'el_dera_blog_user';
@@ -22,7 +22,7 @@ axios.interceptors.request.use(
         const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
         if (refreshToken) {
           try {
-            const response = await axios.post(`${API_URL}/token/refresh/`, { refresh: refreshToken });
+            const response = await axios.post(`${API_URL}/auth/token/refresh/`, { refresh: refreshToken });
             const newAccessToken = response.data.access;
             localStorage.setItem(ACCESS_TOKEN_KEY, newAccessToken);
             config.headers.Authorization = `Bearer ${newAccessToken}`;
@@ -87,7 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string) => {
-    const response = await axios.post(`${API_URL}/token/`, { email, password });
+    const response = await axios.post(`${API_URL}/auth/token/`, { email, password });
     const { access, refresh, user } = response.data;
 
     localStorage.setItem(ACCESS_TOKEN_KEY, access);
@@ -155,7 +155,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Access token expired or invalid, try to refresh
     if (refreshToken) {
       try {
-        const response = await axios.post(`${API_URL}/token/refresh/`, { refresh: refreshToken });
+        const response = await axios.post(`${API_URL}/auth/token/refresh/`, { refresh: refreshToken });
         const newAccessToken = response.data.access;
         localStorage.setItem(ACCESS_TOKEN_KEY, newAccessToken);
 

@@ -1,4 +1,11 @@
-import { CommentUser } from '../types/Comment';
+/** Locally stored identity used when commenting without an account. */
+export interface CommentUser {
+  id: string;
+  name: string;
+  email: string;
+  createdAt: string;
+}
+
 const USER_KEY = 'el_deras_comment_user';
 const USERS_STORE_KEY = 'el_deras_comment_users';
 // Simple password generation based on name and email

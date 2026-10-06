@@ -1,5 +1,3 @@
-import { Article } from './Article';
-
 export interface CommentAuthor {
   id: string;
   username: string;
@@ -8,14 +6,20 @@ export interface CommentAuthor {
   user_type: string;
 }
 
+export interface CommentArticle {
+  id: string;
+  title: string;
+  slug: string;
+}
+
 export interface Comment {
   id: string;
-  article?: Article;
-  author: CommentAuthor | null; // Author can be null for anonymous comments
+  article?: CommentArticle;
+  author: CommentAuthor | null; // null for anonymous comments
   content: string;
   created_at: string;
   updated_at: string;
-  parent?: string;
+  parent?: string | null;
   replies?: Comment[];
   approved: boolean;
   is_flagged: boolean;
