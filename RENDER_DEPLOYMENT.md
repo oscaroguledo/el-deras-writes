@@ -1,6 +1,6 @@
 # Render Deployment Guide
 
-This guide explains how to deploy the El Deras Writes Django backend to Render using your existing Neon PostgreSQL database.
+This guide explains how to deploy the El Deras Writes FastAPI backend to Render using your existing Neon PostgreSQL database.
 
 ## 🚀 Quick Deploy
 
@@ -26,7 +26,7 @@ This guide explains how to deploy the El Deras Writes Django backend to Render u
    Name: el-deras-writes-backend
    Environment: Python 3
    Build Command: cd backend && pip install -r requirements.txt
-   Start Command: cd backend && gunicorn blog_project.wsgi:application
+   Start Command: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
    ```
 
 3. **Set Environment Variables**:
@@ -49,7 +49,7 @@ This guide explains how to deploy the El Deras Writes Django backend to Render u
 - **User**: `neondb_owner`
 - **SSL**: Required with channel binding
 
-**No additional database setup needed!** Your Django app will connect to the same Neon database you're already using.
+**No additional database setup needed!** Your FastAPI app will connect to the same Neon database you're already using.
 
 ## 🔧 Configuration Files Created
 
@@ -70,7 +70,7 @@ This guide explains how to deploy the El Deras Writes Django backend to Render u
 |----------|-------|-------------|
 | `PYTHON_VERSION` | `3.11.0` | Python version |
 | `DEBUG` | `False` | Production mode |
-| `SECRET_KEY` | Auto-generated | Django secret key |
+| `SECRET_KEY` | Auto-generated | JWT signing key |
 | `DATABASE_URL` | Neon connection string | Your existing Neon database |
 | `ALLOWED_HOSTS` | Your Render domain | Allowed hostnames |
 | `CORS_ALLOWED_ORIGINS` | Your frontend URLs | CORS configuration |
@@ -174,4 +174,4 @@ Render automatically monitors your service health at `/` endpoint.
 
 ---
 
-**Ready to deploy!** 🚀 Your Django backend is configured for Render deployment.
+**Ready to deploy!** 🚀 Your FastAPI backend is configured for Render deployment.

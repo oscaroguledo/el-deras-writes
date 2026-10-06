@@ -32,7 +32,7 @@ git push origin main
 2. Create Web Service:
    - Name: `el-deras-writes-backend`
    - Build Command: `cd backend && pip install -r requirements.txt`
-   - Start Command: `cd backend && gunicorn blog_project.wsgi:application`
+   - Start Command: `cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT`
 
 #### 3. Set Environment Variables
 ```
@@ -92,7 +92,7 @@ services:
     name: el-deras-writes-backend
     env: python
     buildCommand: "cd backend && pip install -r requirements.txt"
-    startCommand: "cd backend && gunicorn blog_project.wsgi:application"
+    startCommand: "cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT"
 ```
 
 ### Frontend (Netlify)

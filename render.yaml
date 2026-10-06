@@ -1,19 +1,24 @@
 services:
   - type: web
     name: el-deras-writes
-    env: python
-    buildCommand: "cd backend && pip install -r requirements.txt"
-    startCommand: "cd backend && gunicorn blog_project.wsgi:application"
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    preDeployCommand: alembic upgrade head
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips="*"
+    healthCheckPath: /health/
     envVars:
       - key: PYTHON_VERSION
-        value: 3.11.0
+        value: 3.12.8
+      - key: ENVIRONMENT
+        value: production
       - key: DATABASE_URL
-        value: "postgresql://neondb_owner:npg_kY3JEwGm6ABt@ep-snowy-shape-ah59xj71-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
-      - key: DEBUG
-        value: "False"
+        sync: false # set in the Render dashboard
       - key: SECRET_KEY
         generateValue: true
-      - key: ALLOWED_HOSTS
-        value: "el-deras-writes-backend.onrender.com,.onrender.com"
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
       - key: CORS_ALLOWED_ORIGINS
-        value: "https://elderawrites.netlify.app,http://localhost:3000,http://localhost:5173"
+        value: "https://elderawrites.netlify.app,http://localhost:5173"
