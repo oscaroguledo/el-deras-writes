@@ -43,7 +43,9 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex-shrink-0">
-            <Link to="/" className="text-2xl font-serif font-medium tracking-tight text-gray-900 dark:text-gray-100">
+            <Link to="/" className="flex items-center gap-2 text-2xl font-serif font-medium tracking-tight text-gray-900 dark:text-gray-100">
+              <img src="/brand/mark-black.png" alt="" className="h-9 w-9 dark:hidden" />
+              <img src="/brand/mark-white.png" alt="" className="hidden h-9 w-9 dark:block" />
               El Dera's writes
             </Link>
           </div>

@@ -7,19 +7,25 @@
   "theme_color": "#000000",
   "icons": [
     {
-      "src": "/favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
+      "src": "/brand/favicon.ico",
+      "sizes": "48x48 32x32 16x16",
       "type": "image/x-icon"
     },
     {
-      "src": "/logo192.webp",
-      "type": "image/webp",
+      "src": "/brand/favicon-192.png",
+      "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "/logo512.webp",
-      "type": "image/webp",
+      "src": "/brand/favicon-512.png",
+      "type": "image/png",
       "sizes": "512x512"
+    },
+    {
+      "src": "/brand/app-icon-black.png",
+      "type": "image/png",
+      "sizes": "1024x1024",
+      "purpose": "any"
     }
   ]
 }
