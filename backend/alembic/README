@@ -1,0 +1,8 @@
+Migrations. Run from backend/:
+
+    alembic upgrade head
+    alembic revision --autogenerate -m "describe change"
+
+The database URL comes from DATABASE_URL (see core/config.py).
+Revision 0001 only creates tables that are missing, so it is safe on a database the old
+Django backend already created; revision 0002 then upgrades `categories`.
