@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getArticleById } from '../utils/api';
 import { Article } from '../types/Article';
@@ -87,7 +87,7 @@ export default function ArticleDetail() {
         title={article.title}
         description={article.excerpt || article.title}
         image={article.image || undefined}
-        url={`${window.location.origin}/article/${article._id}`}
+        url={`${window.location.origin}/article/${article.id}`}
       />
       <article className="py-8">
         <Link to="/" className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 mb-6 transition-colors">
@@ -102,16 +102,16 @@ export default function ArticleDetail() {
               {article.authorImage ? (
                 <LazyImage 
                   src={article.authorImage} 
-                  alt={typeof article.author === 'string' ? article.author : article.author.username} 
+                  alt={article.author} 
                   className="h-8 w-8 rounded-full mr-2"
                   fallbackType="avatar"
                 />
               ) : (
                 <div className="h-8 w-8 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-300 mr-2">
-                  {typeof article.author === 'string' ? article.author.charAt(0).toUpperCase() : article.author?.username?.charAt(0).toUpperCase()}
+                  {article.author.charAt(0).toUpperCase()}
                 </div>
               )}
-              <span className="text-gray-800 dark:text-gray-200">{typeof article.author === 'string' ? article.author : `${article.author.first_name} ${article.author.last_name}`}</span>
+              <span className="text-gray-800 dark:text-gray-200">{article.author}</span>
             </div>
             <div className="flex items-center">
               <CalendarIcon className="h-4 w-4 mr-1 text-gray-500 dark:text-gray-400" />
@@ -129,7 +129,7 @@ export default function ArticleDetail() {
             </div>
             {article.category && <div className="flex items-center">
                 <TagIcon className="h-4 w-4 mr-1 text-gray-500 dark:text-gray-400" />
-                <Link to={`/?category=${encodeURIComponent(article.category)}`} className="hover:underline text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
+                <Link to={`/?category=${encodeURIComponent(article.category_slug)}`} className="hover:underline text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">
                   {article.category}
                 </Link>
               </div>}
@@ -162,7 +162,7 @@ export default function ArticleDetail() {
             __html: article.content
           }} />
         </LazyContent>
-        <LazyCommentSection articleId={article._id} />
+        <LazyCommentSection articleId={article.id} />
       </article>
     </>
   );

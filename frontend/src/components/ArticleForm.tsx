@@ -4,13 +4,14 @@ import { toast } from 'react-toastify';
 import { XIcon } from 'lucide-react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { Article } from '../types/Article';
+import { Article, ArticleInput } from '../types/Article';
+import { useCategories } from '../hooks/CategoryProvider';
 import { CustomUser } from '../types/CustomUser';
 import { uploadSingleFile } from '../utils/gitHub';
 
 interface ArticleFormProps {
   initialData?: Article;
-  onSubmit: (formData: Partial<Article>) => Promise<void>;
+  onSubmit: (formData: ArticleInput) => Promise<void>;
   isSubmitting: boolean;
   loggedInUser?: CustomUser;
 }
@@ -24,8 +25,11 @@ export function ArticleForm({
   const [title, setTitle] = useState(initialData?.title || '');
   const [content, setContent] = useState(initialData?.content || '');
   const [excerpt, setExcerpt] = useState(initialData?.excerpt || '');
-  const [category, setCategory] = useState(initialData?.category?.name || '');
-  const authorId = initialData?.author?.id || loggedInUser?.id || '';
+  const { sections } = useCategories();
+  const [category, setCategory] = useState(initialData?.category_slug || '');
+  const [status, setStatus] = useState<'draft' | 'published'>(initialData?.status || 'published');
+  const [tags, setTags] = useState((initialData?.tags || []).join(', '));
+  const authorName = initialData?.author || (loggedInUser ? `${loggedInUser.first_name} ${loggedInUser.last_name}`.trim() || loggedInUser.username : '');
   const [readTime, setReadTime] = useState(initialData?.readTime || 5);
   const [mainImage, setMainImage] = useState<File | null>(null);
   const [mainImagePreview, setMainImagePreview] = useState(initialData?.image || '');
@@ -55,7 +59,7 @@ export function ArticleForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title || !content || !excerpt || !category || !authorId) {
+    if (!title || !content || !excerpt || !category) {
       toast.error('Please fill in all required fields');
       return;
     }
@@ -75,11 +79,13 @@ export function ArticleForm({
         toast.success('Image uploaded successfully!');
       }
 
-      const articleData: Partial<Article> = {
+      const articleData: ArticleInput = {
         title,
         content,
         excerpt,
-        category_name: category, // Send category as category_name
+        category, // slug; the backend also accepts a name or id
+        tags: tags.split(',').map(t => t.trim()).filter(Boolean),
+        status,
         readTime,
         image: imageUrl,
       };
@@ -106,8 +112,6 @@ export function ArticleForm({
       toast.error(errorMessage);
     }
   };
-
-  const categories = ['Technology', 'Design', 'Photography', 'Architecture', 'Fashion', 'Lifestyle', 'Culinary Arts', 'Travel', 'Business', 'Health'];
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
@@ -152,10 +156,15 @@ export function ArticleForm({
             required
           >
             <option value="">Select a category</option>
-            {categories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
+            {sections.map((section) => (
+              <optgroup key={section.id} label={section.name}>
+                <option value={section.slug}>{section.name} (general)</option>
+                {section.children.map((child) => (
+                  <option key={child.id} value={child.slug}>
+                    {child.name}
+                  </option>
+                ))}
+              </optgroup>
             ))}
           </select>
         </div>
@@ -175,17 +184,44 @@ export function ArticleForm({
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
+          <label htmlFor="tags" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Tags (comma separated)
+          </label>
+          <input
+            id="tags"
+            type="text"
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-500 dark:focus:ring-gray-400"
+            placeholder="faith, family"
+          />
+        </div>
+        <div>
+          <label htmlFor="status" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Status
+          </label>
+          <select
+            id="status"
+            value={status}
+            onChange={(e) => setStatus(e.target.value as 'draft' | 'published')}
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-500 dark:focus:ring-gray-400"
+          >
+            <option value="published">Published</option>
+            <option value="draft">Draft</option>
+          </select>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
           <label htmlFor="author" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Author * {loggedInUser ? `(Logged in as: ${loggedInUser.first_name} ${loggedInUser.last_name})` : ''}
+            Author
           </label>
           <input
             id="author"
             type="text"
-            value={initialData?.author?.id || loggedInUser?.id || ''}
+            value={authorName}
             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-500 dark:focus:ring-gray-400 focus:border-gray-500 dark:focus:border-gray-400"
-            placeholder="Author Id"
             readOnly
-            required
           />
         </div>
       </div>

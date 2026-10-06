@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { getArticles, deleteArticle } from '../../utils/api';
 import { Article } from '../../types/Article';
@@ -18,7 +18,7 @@ export default function AdminArticlesPage() {
   const fetchArticles = useCallback(async (page: number, search: string = '') => {
     try {
       setLoading(true);
-      const data = await getArticles({ page, pageSize: 10, search });
+      const data = await getArticles({ page, page_size: 10, search });
       setArticles(data.results);
       setTotalPages(Math.ceil(data.count / 10));
     } catch (error) {
@@ -253,12 +253,7 @@ export default function AdminArticlesPage() {
                     </span>
                   </td>
                   <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    {typeof article.author === 'string' 
-                      ? article.author 
-                      : article.author 
-                        ? `${article.author.first_name || ''} ${article.author.last_name || ''}`.trim() || article.author.username || 'Unknown'
-                        : 'Unknown'
-                    }
+                    {article.author || 'Unknown'}
                   </td>
                   <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex px-2 py-1 text-xs leading-5 font-semibold rounded-full ${
@@ -370,12 +365,7 @@ export default function AdminArticlesPage() {
             </div>
             <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
               <div className="flex items-center space-x-4">
-                <span>By {typeof article.author === 'string' 
-                  ? article.author 
-                  : article.author 
-                    ? `${article.author.first_name || ''} ${article.author.last_name || ''}`.trim() || article.author.username || 'Unknown'
-                    : 'Unknown'
-                }</span>
+                <span>By {article.author || 'Unknown'}</span>
                 <div className="flex items-center">
                   <Calendar className="h-4 w-4 mr-1" />
                   {new Date(article.created_at).toLocaleDateString()}

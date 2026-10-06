@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArticleForm } from '../../components/ArticleForm';
 import { getArticleById, updateArticle } from '../../utils/api';
 import { useAuth } from '../../hooks/useAuth.ts';
 import { toast } from 'react-toastify';
-import { Article } from '../../types/Article';
+import { Article, ArticleInput } from '../../types/Article';
 import SkeletonLoader from '../../components/SkeletonLoader';
 export default function EditArticle() {
   const {
@@ -38,7 +38,7 @@ export default function EditArticle() {
     };
     verifyAuthAndFetchArticle();
   }, [id, navigate, isAuthenticated]);
-  const handleSubmit = async (formData: Partial<Article>) => {
+  const handleSubmit = async (formData: ArticleInput) => {
     if (!id) return;
     try {
       setIsSubmitting(true);

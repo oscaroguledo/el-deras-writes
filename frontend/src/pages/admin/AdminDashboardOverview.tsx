@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { getAdminDashboardData } from '../../utils/api';
 import { toast } from 'react-toastify';
 import { UsersIcon, FileText, MessageSquare, Tag, Folder, UserPlus, Eye, Heart, TrendingUp, Clock, AlertTriangle, UserX, BarChart2, List, ThumbsUp } from 'lucide-react';
 import { AdminDashboardData } from '../../types/Admin';
-import { useAuth } from '../../hooks/useAuth.ts';
 import SkeletonLoader from '../../components/SkeletonLoader';
 import ErrorBoundary from '../../components/ErrorBoundary';
 
@@ -37,8 +35,6 @@ const safeValue = (value: any, fallback: any = 'N/A') => {
 export default function AdminDashboardOverview() {
   const [dashboardData, setDashboardData] = useState<AdminDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
-  const { checkAuthStatus } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -236,14 +232,8 @@ export default function AdminDashboardOverview() {
             <ul className="space-y-3">
               {safeArray(dashboardData.recent_articles).length > 0 ? (
                 safeArray(dashboardData.recent_articles).map((article) => {
-                  // Get author name - handle both string and object types
-                  let authorName = 'Unknown';
-                  if (typeof article.author === 'string') {
-                    authorName = article.author;
-                  } else if (article.author) {
-                    authorName = `${article.author.first_name || ''} ${article.author.last_name || ''}`.trim() || article.author.username || 'Unknown';
-                  }
-                  
+                  const authorName = article.author || 'Unknown';
+
                   return (
                     <li key={article.id} className="text-sm text-gray-700 dark:text-gray-300 flex justify-between items-center">
                       <span className="truncate">{safeValue(article.title, 'Untitled')} by {authorName}</span>

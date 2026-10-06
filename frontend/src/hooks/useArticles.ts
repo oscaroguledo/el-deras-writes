@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getArticles, getArticleById, createArticle as apiCreateArticle, updateArticle as apiUpdateArticle, deleteArticle as apiDeleteArticle } from '../utils/api';
-import { Article } from '../types/Article';
+import { Article, ArticleInput } from '../types/Article';
 
 export const useArticles = (status?: 'draft' | 'published') => {
   const [articles, setArticles] = useState<Article[]>([]);
@@ -25,7 +25,7 @@ export const useArticles = (status?: 'draft' | 'published') => {
     fetchArticles();
   }, [fetchArticles]);
 
-  const createArticle = useCallback(async (articleData: Partial<Article>) => {
+  const createArticle = useCallback(async (articleData: ArticleInput) => {
     try {
       const newArticle = await apiCreateArticle(articleData);
       setArticles(prev => [newArticle, ...prev]);
@@ -36,7 +36,7 @@ export const useArticles = (status?: 'draft' | 'published') => {
     }
   }, []);
 
-  const updateArticle = useCallback(async (id: string, articleData: Partial<Article>) => {
+  const updateArticle = useCallback(async (id: string, articleData: Partial<ArticleInput>) => {
     try {
       const updatedArticle = await apiUpdateArticle(id, articleData);
       setArticles(prev => prev.map(article => 

@@ -198,7 +198,7 @@ export default function AdminContactInfoPage() {
                 <input
                   type="text"
                   id="phone"
-                  value={contactInfo.phone}
+                  value={contactInfo.phone ?? ''}
                   onChange={handleChange}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-indigo-500 dark:focus:border-indigo-400 transition-colors duration-200"
                   placeholder="Phone"
@@ -216,7 +216,7 @@ export default function AdminContactInfoPage() {
                 <input
                   type="email"
                   id="email"
-                  value={contactInfo.email}
+                  value={contactInfo.email ?? ''}
                   onChange={handleChange}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-indigo-500 dark:focus:border-indigo-400 transition-colors duration-200"
                   placeholder="Email"

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { Trash, ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import { Feedback } from '../../types/Feedback'; // Assuming you'll create this type

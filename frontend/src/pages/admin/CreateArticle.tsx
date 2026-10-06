@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArticleForm } from '../../components/ArticleForm';
-import { Article } from '../../types/Article';
+import { ArticleInput } from '../../types/Article';
 import { createArticle } from '../../utils/api';
 import { useAuth } from '../../hooks/useAuth.ts';
 import { toast } from 'react-toastify';
@@ -24,7 +24,7 @@ export default function CreateArticle() {
     verifyAuth();
   }, [isAuthenticated, navigate]);
 
-  const handleSubmit = async (articleData: Partial<Article>) => {
+  const handleSubmit = async (articleData: ArticleInput) => {
     try {
       setIsSubmitting(true);
       await createArticle(articleData);

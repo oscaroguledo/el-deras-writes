@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { Article } from '../types/Article';
 import { LazyImage } from './LazyImage';
@@ -29,7 +28,7 @@ export function HeroPost({
               </span>}
           </div>
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif font-medium text-white mb-3">
-            <Link to={`/article/${post._id}`} className="hover:underline">
+            <Link to={`/article/${post.id}`} className="hover:underline">
               {post.title}
             </Link>
           </h2>
@@ -40,18 +39,18 @@ export function HeroPost({
             {post.authorImage ? (
               <LazyImage 
                 src={post.authorImage} 
-                alt={typeof post.author === 'string' ? post.author : post.author.username} 
+                alt={post.author} 
                 className="h-10 w-10 rounded-full border-2 border-white"
                 fallbackType="avatar"
               />
             ) : (
               <div className="h-10 w-10 rounded-full border-2 border-white bg-gray-300 flex items-center justify-center">
-                {typeof post.author === 'string' ? post.author.charAt(0).toUpperCase() : post.author.username?.charAt(0).toUpperCase()}
+                {post.author.charAt(0).toUpperCase()}
               </div>
             )}
             <div className="ml-3">
               <p className="text-white font-medium">
-                {typeof post.author === 'string' ? post.author : `${post.author.first_name} ${post.author.last_name}`}
+                {post.author}
               </p>
               <p className="text-white/70 text-sm">
                 {new Date(post.createdAt).toLocaleDateString('en-US', {

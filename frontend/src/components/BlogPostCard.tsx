@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { Article } from '../types/Article';
 import { LazyImage } from './LazyImage';
@@ -40,17 +39,17 @@ export function BlogPostCard({
           {post.authorImage ? (
             <LazyImage 
               src={post.authorImage} 
-              alt={typeof post.author === 'string' ? post.author : post.author.username} 
+              alt={post.author} 
               className="h-8 w-8 rounded-full"
               fallbackType="avatar"
             />
           ) : (
             <div className="h-8 w-8 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-300">
-              {typeof post.author === 'string' ? post.author.charAt(0).toUpperCase() : post.author?.username?.charAt(0).toUpperCase()}
+              {post.author.charAt(0).toUpperCase()}
             </div>
           )}
           <div className="ml-3">
-          <p className="text-sm text-gray-500 dark:text-gray-400">{typeof post.author === 'string' ? post.author : `${post.author.first_name} ${post.author.last_name}`}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{post.author}</p>
             <p className="text-gray-500 dark:text-gray-400 text-xs">
               {new Date(post.createdAt).toLocaleDateString('en-US', {
               year: 'numeric',

@@ -1,5 +1,5 @@
 import { toast } from 'react-toastify';
-import { Edit, Trash, CheckCircle, Flag, ChevronLeft, ChevronRight, Search, MessageSquare, User, Calendar } from 'lucide-react';
+import { Trash, CheckCircle, Flag, ChevronLeft, ChevronRight, Search, MessageSquare, User, Calendar } from 'lucide-react';
 import { Comment } from '../../types/Comment';
 import { getComments, approveComment, deleteComment, flagComment } from '../../utils/api';
 import SkeletonLoader from '../../components/SkeletonLoader';

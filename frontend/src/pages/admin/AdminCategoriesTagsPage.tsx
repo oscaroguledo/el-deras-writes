@@ -13,6 +13,7 @@ export default function AdminCategoriesTagsPage() {
   const [tags, setTags] = useState<Tag[]>([]);
   const [loading, setLoading] = useState(true);
   const [newCategoryName, setNewCategoryName] = useState('');
+  const [newCategoryParent, setNewCategoryParent] = useState('');
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [newTagName, setNewTagName] = useState('');
   const [editingTag, setEditingTag] = useState<Tag | null>(null);
@@ -63,6 +64,8 @@ export default function AdminCategoriesTagsPage() {
     };
   }, [categorySearchQuery, tagSearchQuery, debouncedFetchCategories, debouncedFetchTags]);
 
+  const sectionName = (c: Category) => categories.find(p => p.id === c.parent_id)?.name ?? '';
+
   const handleCreateCategory = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newCategoryName.trim()) {
@@ -70,13 +73,16 @@ export default function AdminCategoriesTagsPage() {
       return;
     }
     try {
-      await createCategory({ name: newCategoryName });
+      await createCategory({ name: newCategoryName, parent: newCategoryParent || undefined });
       toast.success('Category created successfully!');
       setNewCategoryName('');
+      setNewCategoryParent('');
       fetchCategories(categorySearchQuery); // Re-fetch with current search query
     } catch (error: any) {
       let errorMessage = 'Failed to create category.';
-      if (error.response && error.response.data && error.response.data.name) {
+      if (error.response?.data?.detail) {
+        errorMessage = error.response.data.detail;
+      } else if (error.response && error.response.data && error.response.data.name) {
         errorMessage = `Category: ${error.response.data.name.join(', ')}`;
       }
       toast.error(errorMessage);
@@ -97,7 +103,9 @@ export default function AdminCategoriesTagsPage() {
       fetchCategories(categorySearchQuery); // Re-fetch with current search query
     } catch (error: any) {
       let errorMessage = 'Failed to update category.';
-      if (error.response && error.response.data && error.response.data.name) {
+      if (error.response?.data?.detail) {
+        errorMessage = error.response.data.detail;
+      } else if (error.response && error.response.data && error.response.data.name) {
         errorMessage = `Category: ${error.response.data.name.join(', ')}`;
       }
       toast.error(errorMessage);
@@ -150,7 +158,9 @@ export default function AdminCategoriesTagsPage() {
       fetchTags(tagSearchQuery); // Re-fetch with current search query
     } catch (error: any) {
       let errorMessage = 'Failed to create tag.';
-      if (error.response && error.response.data && error.response.data.name) {
+      if (error.response?.data?.detail) {
+        errorMessage = error.response.data.detail;
+      } else if (error.response && error.response.data && error.response.data.name) {
         errorMessage = `Tag: ${error.response.data.name.join(', ')}`;
       }
       toast.error(errorMessage);
@@ -171,7 +181,9 @@ export default function AdminCategoriesTagsPage() {
       fetchTags(tagSearchQuery); // Re-fetch with current search query
     } catch (error: any) {
       let errorMessage = 'Failed to update tag.';
-      if (error.response && error.response.data && error.response.data.name) {
+      if (error.response?.data?.detail) {
+        errorMessage = error.response.data.detail;
+      } else if (error.response && error.response.data && error.response.data.name) {
         errorMessage = `Tag: ${error.response.data.name.join(', ')}`;
       }
       toast.error(errorMessage);
@@ -323,6 +335,17 @@ export default function AdminCategoriesTagsPage() {
             placeholder="New category name"
             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-l-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-500 dark:focus:ring-gray-400 focus:border-gray-500 dark:focus:border-gray-400 transition-colors duration-200"
           />
+          <select
+            value={newCategoryParent}
+            onChange={(e) => setNewCategoryParent(e.target.value)}
+            aria-label="Parent section"
+            className="px-3 py-2 border-y border-r border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-sm focus:outline-none"
+          >
+            <option value="">Top-level section</option>
+            {categories.filter(c => !c.parent_id).map(section => (
+              <option key={section.id} value={section.slug}>Under {section.name}</option>
+            ))}
+          </select>
           <button 
             type="submit" 
             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-r-md text-white bg-gray-900 dark:bg-gray-600 hover:bg-gray-800 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 dark:focus:ring-gray-400 transition-colors duration-200"
@@ -345,7 +368,7 @@ export default function AdminCategoriesTagsPage() {
                       className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-500 dark:focus:ring-gray-400 transition-colors duration-200"
                     />
                   ) : (
-                    <h3 className="font-medium text-gray-900 dark:text-gray-100">{category.name}</h3>
+                    <h3 className="font-medium text-gray-900 dark:text-gray-100">{category.parent_id ? `${sectionName(category)} › ` : ''}{category.name}</h3>
                   )}
                 </div>
               </div>
@@ -397,7 +420,7 @@ export default function AdminCategoriesTagsPage() {
                         className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-500 dark:focus:ring-gray-400 transition-colors duration-200"
                       />
                     ) : (
-                      category.name
+                      <>{category.parent_id ? `${sectionName(category)} › ` : ''}{category.name}</>
                     )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">

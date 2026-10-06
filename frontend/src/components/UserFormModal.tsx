@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { CustomUser } from '../../types/CustomUser';
+import { CustomUser } from '../types/CustomUser';
 import { createUser, updateUser } from '../utils/api';
+
+type UserFormData = Partial<CustomUser> & { password?: string };
 
 interface UserFormModalProps {
   show: boolean;
@@ -11,7 +13,7 @@ interface UserFormModalProps {
 }
 
 export function UserFormModal({ show, onClose, user, onSubmit }: UserFormModalProps) {
-  const [formData, setFormData] = useState<Partial<CustomUser>>({
+  const [formData, setFormData] = useState<UserFormData>({
     username: '',
     email: '',
     first_name: '',
@@ -52,7 +54,7 @@ export function UserFormModal({ show, onClose, user, onSubmit }: UserFormModalPr
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev: UserFormData) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

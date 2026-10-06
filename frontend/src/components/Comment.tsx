@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Comment as CommentType } from '../types/Comment';
 import { CommentForm } from './CommentForm';
 import { truncateText, getResponsiveTruncateLength } from '../utils/userUtils';
@@ -43,12 +43,8 @@ export function Comment({
     minute: '2-digit'
   });
 
-  const handleReply = (newComment: {
-    articleId: string;
-    parentId?: string;
-    content: string;
-  }) => {
-    onReply(newComment);
+  const handleReply = (newComment: { parentId?: string; content: string }) => {
+    onReply({ articleId, ...newComment });
     setIsReplying(false);
   };
 
