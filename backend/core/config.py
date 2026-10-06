@@ -48,6 +48,12 @@ class Settings(BaseSettings):
     JWT_ISSUER: str = "django-blog-api"  # unchanged so tokens from the old backend stay valid
     PASSWORD_HASH_ITERATIONS: int = 600_000
 
+    # Email (Brevo transactional API). Sending is skipped when BREVO_API_KEY is empty.
+    SITE_NAME: str = "El Dera's Writes"
+    BREVO_API_KEY: str = ""
+    BREVO_FROM_EMAIL: str = "El Dera's Writes <noreply@example.com>"
+    SUPPORT_EMAIL: str = ""  # receives admin notifications (new feedback, new comments)
+
     # Optional owner account, ensured at startup (see services/accounts/superadmin.py)
     ADMIN_EMAIL: str = ""
     ADMIN_PASSWORD: str = ""

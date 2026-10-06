@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% from "macros.html" import button %}
+{% block body %}
+<h2 style="margin:0 0 12px;font-weight:normal;">Welcome, {{ first_name or username }}!</h2>
+<p>An account has been created for you on {{ site_name }}{% if is_admin %} with administrator access{% endif %}.</p>
+<p>Sign in with this email address ({{ email }}). If you were not given a password, ask the person who invited you to set one.</p>
+{{ button(frontend_url ~ ("/admin" if is_admin else ""), "Sign in") }}
+{% endblock %}

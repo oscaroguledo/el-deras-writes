@@ -56,7 +56,16 @@ ruff check .
 | `DATABASE_URL` | PostgreSQL URL; defaults to local SQLite. |
 | `CORS_ALLOWED_ORIGINS`, `FRONTEND_URL` | Allowed frontend origins (comma-separated). |
 | `CORS_ALLOWED_ORIGIN_REGEX` | Optional, e.g. for Cloudflare Pages preview URLs. |
+| `BREVO_API_KEY`, `BREVO_FROM_EMAIL`, `SUPPORT_EMAIL` | Email through Brevo; unset key means no email is sent. `SUPPORT_EMAIL` receives admin notifications. |
 | `ADMIN_EMAIL`, `ADMIN_PASSWORD` | Owner account ensured at startup (12+ chars in production). |
+
+### Emails
+
+Branded with the site logo (loaded from `FRONTEND_URL/brand/mark-black.png`), sent in the background so a
+mail failure never fails a request: new feedback (to `SUPPORT_EMAIL`, reply-to the sender), a
+confirmation to the person who sent feedback, a new-comment notice (to `SUPPORT_EMAIL`, skipped for
+admins' own comments), and a welcome when an admin creates a user. Templates live in
+`backend/core/utils/messages/templates/`.
 
 ### Existing database
 

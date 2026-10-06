@@ -1,14 +1,16 @@
 import uuid
 
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from core.config import settings
 from core.db import get_db, utcnow
 from core.dependencies import require_admin
 from core.exceptions import APIException
+from core.utils.messages.email import send_email
 from core.utils.pagination import PageParams, build_page
 from models.accounts.user import User
 from schemas.common.pagination import Page
@@ -52,8 +54,19 @@ async def visitor_count(db: AsyncSession = Depends(get_db)):
 
 
 @system_router.post("/feedback/", response_model=FeedbackResponse, status_code=201)
-async def submit_feedback(body: FeedbackCreate, db: AsyncSession = Depends(get_db)):
-    return await FeedbackService(db).create(body)
+async def submit_feedback(
+    body: FeedbackCreate, background: BackgroundTasks, db: AsyncSession = Depends(get_db)
+):
+    feedback = await FeedbackService(db).create(body)
+    context = {
+        "name": feedback.name, "email": feedback.email,
+        "feedback_subject": feedback.subject, "message": feedback.message,
+    }
+    background.add_task(
+        send_email, settings.SUPPORT_EMAIL, "feedback_received", context, reply_to=feedback.email
+    )
+    background.add_task(send_email, feedback.email, "feedback_ack", context)
+    return feedback
 
 
 @admin_feedback_router.get("/", response_model=Page[FeedbackResponse])

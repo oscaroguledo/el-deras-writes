@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% from "macros.html" import button, quote %}
+{% block body %}
+<h2 style="margin:0 0 12px;font-weight:normal;">New comment</h2>
+<p><strong>{{ commenter }}</strong> commented on <strong>{{ article_title }}</strong>:</p>
+{{ quote(content) }}
+{{ button(frontend_url ~ "/article/" ~ article_id, "View article") }}
+{% endblock %}

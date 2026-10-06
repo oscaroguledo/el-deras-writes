@@ -1,11 +1,12 @@
 import uuid
 
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.db import get_db
 from core.dependencies import require_admin
 from core.exceptions import APIException
+from core.utils.messages.email import send_email
 from core.utils.pagination import PageParams, build_page
 from models.accounts.user import User
 from schemas.accounts.user import Create, Update
@@ -34,9 +35,15 @@ async def list_users(
 
 @admin_router.post("/", response_model=UserResponse, status_code=201)
 async def create_user(
-    body: Create, _: User = Depends(require_admin), db: AsyncSession = Depends(get_db)
+    body: Create, background: BackgroundTasks,
+    _: User = Depends(require_admin), db: AsyncSession = Depends(get_db),
 ):
-    return await UserService(db).create(body)
+    user = await UserService(db).create(body)
+    background.add_task(send_email, user.email, "welcome", {
+        "first_name": user.first_name, "username": user.username, "email": user.email,
+        "is_admin": user.is_staff,
+    })
+    return user
 
 
 @admin_router.get("/{user_id}/", response_model=UserResponse)

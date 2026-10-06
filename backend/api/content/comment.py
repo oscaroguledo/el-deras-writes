@@ -1,11 +1,13 @@
 import uuid
 
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, BackgroundTasks, Depends, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from core.config import settings
 from core.db import get_db
 from core.dependencies import get_optional_user, is_staff, require_admin
 from core.exceptions import APIException
+from core.utils.messages.email import send_email
 from core.utils.pagination import PageParams, build_page
 from models.accounts.user import User
 from models.content.article import Article
@@ -46,11 +48,18 @@ async def list_comments(
 
 @router.post("/", response_model=CommentResponse, status_code=201)
 async def create_comment(
-    article_id: uuid.UUID, body: Create, user: User | None = Depends(get_optional_user),
-    db: AsyncSession = Depends(get_db),
+    article_id: uuid.UUID, body: Create, background: BackgroundTasks,
+    user: User | None = Depends(get_optional_user), db: AsyncSession = Depends(get_db),
 ):
     article = await _article(db, article_id)
-    return CommentResponse.of(await CommentService(db).create(article, body, user))
+    comment = await CommentService(db).create(article, body, user)
+    if not is_staff(user):  # don't notify admins about their own comments
+        background.add_task(send_email, settings.SUPPORT_EMAIL, "new_comment", {
+            "commenter": str(user) if user else "Someone (anonymous)",
+            "article_title": article.title, "article_id": str(article.id),
+            "content": comment.content,
+        })
+    return CommentResponse.of(comment)
 
 
 @router.get("/{comment_id}/", response_model=CommentResponse)
