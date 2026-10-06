@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FeedbackForm } from './FeedbackForm';
 import { getContactInfo } from '../utils/api';
+import { BrandLogo } from './BrandLogo';
 import { useCategories } from '../hooks/CategoryProvider';
 import { ContactInfo } from '../types/ContactInfo';
 import { Globe, Mail, Phone, ChevronUp } from 'lucide-react';
@@ -71,6 +72,7 @@ export default function Footer() {
             <div className="block md:hidden">
               {/* Brand Section - Always visible on mobile */}
               <div className="mb-8">
+                <BrandLogo variant="full" className="h-24 w-24 -ml-2 mb-2" alt="El Dera's writes" />
                 <h3 className="text-xl font-serif font-medium text-gray-900 dark:text-gray-100 mb-4">
                   El Dera's writes
                 </h3>
@@ -207,6 +209,7 @@ export default function Footer() {
             <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
               {/* Brand Section - Desktop */}
               <div className="lg:col-span-1">
+                <BrandLogo variant="full" className="h-24 w-24 -ml-2 mb-2" alt="El Dera's writes" />
                 <h3 className="text-xl font-serif font-medium text-gray-900 dark:text-gray-100 mb-4">
                   El Dera's writes
                 </h3>

@@ -1,3 +1,4 @@
+import { BrandLogo } from '../../components/BrandLogo';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -44,6 +45,7 @@ export default function AdminLogin() {
   return <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
+          <BrandLogo variant="full" className="mx-auto mb-4 h-28 w-28" alt="El Dera's writes" />
           <h1 className="text-3xl font-serif font-medium text-gray-900 dark:text-gray-100">
             Admin Login
           </h1>

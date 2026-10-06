@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MenuIcon, XIcon, SearchIcon } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { BrandLogo } from './BrandLogo';
 import { useCategories } from '../hooks/CategoryProvider';
 
 export default function Header() {
@@ -44,8 +45,7 @@ export default function Header() {
         <div className="flex justify-between items-center h-16">
           <div className="flex-shrink-0">
             <Link to="/" className="flex items-center gap-2 text-2xl font-serif font-medium tracking-tight text-gray-900 dark:text-gray-100">
-              <img src="/brand/mark-black.png" alt="" className="h-9 w-9 dark:hidden" />
-              <img src="/brand/mark-white.png" alt="" className="hidden h-9 w-9 dark:block" />
+              <BrandLogo variant="mark" className="h-9 w-9" />
               El Dera's writes
             </Link>
           </div>

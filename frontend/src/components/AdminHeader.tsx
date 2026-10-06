@@ -1,9 +1,8 @@
-import { useState, } from 'react';
+import { BrandLogo } from './BrandLogo';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.ts';
 import { Menu, User, LogOut } from 'lucide-react';
-import { SafeImage } from './SafeImage';
-const logo = '/brand/mark-black.png'; // served from /public
 
 interface AdminHeaderProps {
   onMenuClick: () => void;
@@ -35,12 +34,7 @@ export default function AdminHeader({ onMenuClick }: AdminHeaderProps) {
             <Menu size={24} />
           </button>
           <Link to="/" className="flex items-center">
-            <SafeImage 
-              src={logo} 
-              alt="Logo" 
-              className="h-8 w-auto mr-2"
-              fallbackType="avatar"
-            />
+            <BrandLogo variant="mark" className="h-8 w-8 mr-2" alt="El Dera's writes" />
           </Link>
         </div>
 

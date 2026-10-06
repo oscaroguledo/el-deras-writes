@@ -1,7 +1,9 @@
+import { BrandLogo } from '../components/BrandLogo';
 import { Link } from 'react-router-dom';
 export default function About() {
   return <div className="py-12">
       <div className="max-w-3xl mx-auto">
+        <BrandLogo variant="full" className="mb-6 h-40 w-40" alt="El Dera's writes" />
         <h1 className="text-3xl md:text-4xl font-serif font-medium text-gray-900 dark:text-gray-100 mb-6">
           About El Dera's writes
         </h1>
