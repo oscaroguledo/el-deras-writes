@@ -1,9 +1,9 @@
-import React, { useState, useRef } from 'react';
+import { useState, } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.ts';
 import { Menu, User, LogOut } from 'lucide-react';
 import { SafeImage } from './SafeImage';
-import logo from '/logo.webp';
+const logo = '/logo.webp'; // served from /public
 
 interface AdminHeaderProps {
   onMenuClick: () => void;

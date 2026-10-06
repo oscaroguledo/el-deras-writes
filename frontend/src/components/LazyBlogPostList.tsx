@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { BlogPostCard } from './BlogPostCard';
 import { LazyContent } from './LazyContent';
@@ -68,7 +68,7 @@ export function LazyBlogPostList({
       
       {/* Articles Grid */}
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {visiblePosts.map((post, index) => (
+        {visiblePosts.map((post) => (
           <LazyContent
             key={post.id}
             fallback={

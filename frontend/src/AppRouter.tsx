@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import { Suspense } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { routes, App } from "./App";
 import { AuthProvider } from './hooks/AuthProvider';

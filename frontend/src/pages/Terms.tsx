@@ -1,4 +1,3 @@
-import React from 'react';
 export default function Terms() {
   return <div className="py-12">
       <div className="max-w-3xl mx-auto">

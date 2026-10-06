@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "./node_modules/.bin/vite --host 0.0.0.0",
     "build": "npx vite build",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "preview": "npx vite preview"
   },

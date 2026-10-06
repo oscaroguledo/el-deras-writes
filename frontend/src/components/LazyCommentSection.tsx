@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Comment as CommentType } from '../types/Comment';
 import { CommentForm } from './CommentForm';
 import { Comment } from './Comment';
