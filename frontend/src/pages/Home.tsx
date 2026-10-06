@@ -5,6 +5,7 @@ import { BlogPostList } from '../components/BlogPostList';
 import { LazyContent } from '../components/LazyContent';
 import { getArticles } from '../utils/api'; // Removed getTopFiveCategories
 import { Article } from '../types/Article';
+import { BrowseSections } from '../components/BrowseSections';
 import { CategoryList } from '../components/CategoryList';
 import SkeletonLoader from '../components/SkeletonLoader';
 import SkeletonArticleList from '../components/SkeletonArticleList';
@@ -132,6 +133,7 @@ export default function Home() {
           </h2>
         </div>
       )}
+      {!searchQuery && !categoryFilter && <BrowseSections sections={sections} />}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-2">
           {featuredArticle && !searchQuery && !categoryFilter && (
