@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { HeroPost } from '../components/HeroPost';
 import { BlogPostList } from '../components/BlogPostList';
@@ -25,7 +25,8 @@ export default function Home() {
   const [totalPages, setTotalPages] = useState(1);
   const articlesPerPage = 10; // This should match the backend's page_size
 
-  const { categories, loading: categoriesLoading, error: categoriesError } = useCategories(); // Use the hook
+  const { sections, findBySlug, loading: categoriesLoading, error: categoriesError } = useCategories();
+  const activeCategory = findBySlug(categoryFilter);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -127,7 +128,7 @@ export default function Home() {
       {categoryFilter && (
         <div className="mt-8 mb-4">
           <h2 className="text-xl font-medium text-gray-900 dark:text-gray-100">
-            Category: <span className="font-bold">{categoryFilter}</span>
+            Category: <span className="font-bold">{activeCategory?.name ?? categoryFilter}</span>
           </h2>
         </div>
       )}
@@ -161,7 +162,7 @@ export default function Home() {
           )}
         </div>
         <div className="md:col-span-1">
-          <CategoryList categories={categories} /> {/* Use categories from the hook */}
+          <CategoryList sections={sections} activeSlug={categoryFilter} />
         </div>
       </div>
     </>

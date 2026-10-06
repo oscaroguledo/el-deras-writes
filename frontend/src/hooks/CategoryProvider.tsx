@@ -1,10 +1,15 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useMemo } from 'react';
 import { toast } from 'react-toastify';
-import { getCategories } from '../utils/api'; // Assuming getCategories is already defined
-import { Category } from '../types/Category'; // Assuming Category type is defined
+import { getCategoryTree } from '../utils/api';
+import { Category } from '../types/Category';
 
 interface CategoryContextType {
+  /** Top-level sections, each with its sub-sections under `children`. */
+  sections: Category[];
+  /** Every category, sections and sub-sections, in menu order. */
   categories: Category[];
+  /** Find a section or sub-section by slug. */
+  findBySlug: (slug: string | null | undefined) => Category | undefined;
   loading: boolean;
   error: string | null;
   refetchCategories: () => void;
@@ -17,7 +22,7 @@ interface CategoryProviderProps {
 }
 
 export const CategoryProvider: React.FC<CategoryProviderProps> = ({ children }) => {
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [sections, setSections] = useState<Category[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -25,8 +30,7 @@ export const CategoryProvider: React.FC<CategoryProviderProps> = ({ children }) 
     setLoading(true);
     setError(null);
     try {
-      const fetchedCategories = await getCategories();
-      setCategories(fetchedCategories);
+      setSections(await getCategoryTree());
     } catch (err) {
       console.error('Failed to fetch categories:', err);
       setError('Failed to load categories.');
@@ -48,8 +52,14 @@ export const CategoryProvider: React.FC<CategoryProviderProps> = ({ children }) 
     fetchCategories();
   }, [fetchCategories]);
 
+  const categories = useMemo(() => sections.flatMap(s => [s, ...s.children]), [sections]);
+  const findBySlug = useCallback(
+    (slug: string | null | undefined) => (slug ? categories.find(c => c.slug === slug) : undefined),
+    [categories]
+  );
+
   return (
-    <CategoryContext.Provider value={{ categories, loading, error, refetchCategories }}>
+    <CategoryContext.Provider value={{ sections, categories, findBySlug, loading, error, refetchCategories }}>
       {children}
     </CategoryContext.Provider>
   );

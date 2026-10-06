@@ -1,22 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MenuIcon, XIcon, SearchIcon } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getCategories } from '../utils/api';
-import { Category } from '../types/Category';
+import { useCategories } from '../hooks/CategoryProvider';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [topCategories, setTopCategories] = useState<Category[]>([]);
+  const { sections } = useCategories();
   const searchInputRef = useRef<HTMLInputElement>(null);
   const mobileSearchInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    getCategories()
-      .then(data => setTopCategories(data.slice(0, 5))) // Get first 5 categories
-      .catch(error => console.error('Failed to fetch categories:', error));
-  }, []);
 
   // Keyboard shortcut for search
   useEffect(() => {
@@ -78,14 +71,31 @@ export default function Header() {
               <Link to="/contact" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 px-3 py-2 text-sm font-medium">
                 Contact
               </Link>
-              {topCategories.slice(0, 2).map(category => (
-                <Link
-                  key={category.id}
-                  to={`/?category=${category.name}`}
-                  className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 px-3 py-2 text-sm font-medium"
-                >
-                  {category.name.trim()}
-                </Link>
+              {sections.map(section => (
+                <div key={section.id} className="relative group">
+                  <Link
+                    to={`/?category=${encodeURIComponent(section.slug)}`}
+                    className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 px-3 py-2 text-sm font-medium whitespace-nowrap"
+                  >
+                    {section.name}
+                  </Link>
+                  {section.children.length > 0 && (
+                    <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100 transition absolute left-0 top-full pt-2 z-50">
+                      <ul className="min-w-[14rem] rounded-md border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 py-1 shadow-lg">
+                        {section.children.map(child => (
+                          <li key={child.id}>
+                            <Link
+                              to={`/?category=${encodeURIComponent(child.slug)}`}
+                              className="block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100"
+                            >
+                              {child.name}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
               ))}
             </nav>
           </div>
@@ -130,15 +140,26 @@ export default function Header() {
             <Link to="/contact" className="block px-3 py-2 text-base font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 rounded-md" onClick={() => setIsMenuOpen(false)}>
               Contact
             </Link>
-            {topCategories.slice(0, 2).map(category => (
-              <Link
-                key={category.id}
-                to={`/?category=${encodeURIComponent(category.name.trim())}`}
-                className="block px-3 py-2 text-base font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 rounded-md"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {category.name.trim()}
-              </Link>
+            {sections.map(section => (
+              <div key={section.id} className="pt-2">
+                <Link
+                  to={`/?category=${encodeURIComponent(section.slug)}`}
+                  className="block px-3 py-2 text-base font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {section.name}
+                </Link>
+                {section.children.map(child => (
+                  <Link
+                    key={child.id}
+                    to={`/?category=${encodeURIComponent(child.slug)}`}
+                    className="block pl-7 pr-3 py-1.5 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 rounded-md"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {child.name}
+                  </Link>
+                ))}
+              </div>
             ))}
           </nav>
         </div>

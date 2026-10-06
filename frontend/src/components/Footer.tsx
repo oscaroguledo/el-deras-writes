@@ -1,27 +1,22 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FeedbackForm } from './FeedbackForm';
-import { getContactInfo, getCategories } from '../utils/api';
+import { getContactInfo } from '../utils/api';
+import { useCategories } from '../hooks/CategoryProvider';
 import { ContactInfo } from '../types/ContactInfo';
-import { Category } from '../types/Category';
 import { Globe, Mail, Phone, ChevronUp } from 'lucide-react';
 import { FaTiktok, FaWhatsapp, FaLinkedinIn, FaGithub, FaInstagram, FaFacebook, FaTwitter, FaYoutube } from 'react-icons/fa';
 
 export default function Footer() {
   const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null);
-  const [topCategories, setTopCategories] = useState<Category[]>([]);
+  const { sections: topCategories } = useCategories();
   const [isExpanded, setIsExpanded] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [contactInfoData, topCategoriesData] = await Promise.all([
-          getContactInfo(),
-          getCategories(),
-        ]);
-        setContactInfo(contactInfoData);
-        setTopCategories(topCategoriesData.slice(0, 5)); // Get first 5 categories
+        setContactInfo(await getContactInfo());
       } catch (error) {
         console.error('Failed to fetch footer data:', error);
       }
@@ -165,7 +160,7 @@ export default function Footer() {
                       {topCategories.map(category => (
                         <li key={category.id}>
                           <Link 
-                            to={`/?category=${encodeURIComponent(category.name.trim())}`} 
+                            to={`/?category=${encodeURIComponent(category.slug)}`} 
                             className="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors duration-200 block py-1"
                             onClick={() => setIsExpanded(false)}
                           >
@@ -269,7 +264,7 @@ export default function Footer() {
                   {topCategories.map(category => (
                     <li key={category.id}>
                       <Link 
-                        to={`/?category=${encodeURIComponent(category.name.trim())}`} 
+                        to={`/?category=${encodeURIComponent(category.slug)}`} 
                         className="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors duration-200 block py-1 hover:translate-x-1 transform"
                       >
                         {category.name.trim()}
