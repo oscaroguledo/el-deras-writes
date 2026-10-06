@@ -90,5 +90,5 @@ the server in production mode for a smoke test.
 
 ## Deployment
 
-Backend: Render (`render.yaml`). Frontend: set `VITE_API_URL` to the backend URL and host the
-`frontend/` build anywhere static (Netlify today; Cloudflare Pages planned).
+Backend on Render (`render.yaml`), frontend on Cloudflare Pages (GitHub Action included). See
+[DEPLOYMENT.md](DEPLOYMENT.md).

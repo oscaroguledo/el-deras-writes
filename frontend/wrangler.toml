@@ -1,0 +1,4 @@
+# Cloudflare Pages project settings (used by `wrangler pages deploy`).
+name = "el-deras-writes"
+pages_build_output_dir = "dist"
+compatibility_date = "2025-01-01"
